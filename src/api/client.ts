@@ -48,10 +48,12 @@ export function getClient(): PolarisClient {
 export class PolarisClient {
   private baseUrl: string;
   private apiToken: string;
+  private organizationId?: string;
 
   constructor(config: PolarisConfig) {
     this.baseUrl = config.baseUrl;
     this.apiToken = config.apiToken;
+    this.organizationId = config.organizationId;
   }
 
   private buildUrl(
@@ -73,6 +75,9 @@ export class PolarisClient {
     const headers = new Headers({
       "Api-token": this.apiToken,
     });
+    if (this.organizationId) {
+      headers.set("Organization-Id", this.organizationId);
+    }
     if (accept) {
       headers.set("Accept", accept);
     }

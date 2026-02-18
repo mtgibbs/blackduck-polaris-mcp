@@ -11,6 +11,9 @@ import { getRemediationAssistTool } from "./get-remediation-assist.ts";
 import { provideAssistFeedbackTool } from "./provide-assist-feedback.ts";
 import { getTestsTool } from "./get-tests.ts";
 import { getTestMetricsTool } from "./get-test-metrics.ts";
+import { getBugTrackingConfigsTool } from "./get-bug-tracking-configs.ts";
+import { getExternalProjectsTool } from "./get-external-projects.ts";
+import { exportIssuesTool } from "./export-issues.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -25,4 +28,7 @@ export const tools: AnyToolDefinition[] = [
   provideAssistFeedbackTool,
   getTestsTool,
   getTestMetricsTool,
+  getBugTrackingConfigsTool,
+  getExternalProjectsTool,
+  exportIssuesTool,
 ];

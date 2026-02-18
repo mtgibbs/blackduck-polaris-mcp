@@ -276,6 +276,49 @@ export interface TestMetrics {
   lowIssues?: number;
 }
 
+// --- Bug Tracking ---
+
+export type BugTrackingSystemType = "JIRA" | "AZURE";
+
+export type JiraDeploymentType = "CLOUD" | "SERVER";
+
+export interface BugTrackingConfiguration {
+  id: string;
+  name: string;
+  bugTrackingSystemType: BugTrackingSystemType;
+  jiraDeploymentType?: JiraDeploymentType;
+  url?: string;
+  _links: LinkEntry[];
+}
+
+export interface ExternalProject {
+  key: string;
+  name: string;
+}
+
+export interface ExternalIssueType {
+  id: string;
+  name: string;
+}
+
+export interface ProjectMapping {
+  id: string;
+  configurationId: string;
+  projectId: string;
+  branchId?: string;
+  externalProjectKey: string;
+  externalIssueTypeId: string;
+  _links: LinkEntry[];
+}
+
+export interface IssueExportResult {
+  issueId: string;
+  externalTicketId?: string;
+  externalTicketUrl?: string;
+  status: string;
+  error?: string;
+}
+
 // --- Common ---
 
 export interface LinkEntry {

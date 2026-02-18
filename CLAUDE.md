@@ -61,18 +61,21 @@ Each tool is one file exporting a `ToolDefinition<typeof schema>`:
 
 ### MCP Tools
 
-| Tool                     | Purpose                                                |
-| ------------------------ | ------------------------------------------------------ |
-| `get_portfolios`         | Get org portfolio ID (entry point for all queries)     |
-| `get_applications`       | List applications in a portfolio                       |
-| `get_projects`           | List projects (codebases scanned for vulns)            |
-| `get_branches`           | List branches for a project                            |
-| `get_issues`             | Query security issues with severity/tool/delta filters |
-| `get_occurrences`        | Get specific vulnerability instances (file, line)      |
-| `get_code_snippet`       | Source code around a vulnerability                     |
-| `get_remediation_assist` | AI remediation guidance (Polaris Assist)               |
-| `get_tests`              | List scan history (SAST, SCA, DAST)                    |
-| `get_test_metrics`       | Issue counts by severity for a scan                    |
+| Tool                              | Purpose                                                |
+| --------------------------------- | ------------------------------------------------------ |
+| `get_portfolios`                  | Get org portfolio ID (entry point for all queries)     |
+| `get_applications`                | List applications in a portfolio                       |
+| `get_projects`                    | List projects (codebases scanned for vulns)            |
+| `get_branches`                    | List branches for a project                            |
+| `get_issues`                      | Query security issues with severity/tool/delta filters |
+| `get_occurrences`                 | Get specific vulnerability instances (file, line)      |
+| `get_code_snippet`                | Source code around a vulnerability                     |
+| `get_remediation_assist`          | AI remediation guidance (Polaris Assist)               |
+| `get_tests`                       | List scan history (SAST, SCA, DAST)                    |
+| `get_test_metrics`                | Issue counts by severity for a scan                    |
+| `get_bug_tracking_configurations` | List Jira/Azure DevOps integrations                    |
+| `get_external_projects`           | List projects in external bug tracking system          |
+| `export_issues`                   | Export issues to Jira/Azure DevOps tickets             |
 
 ## Polaris API Conventions
 
@@ -127,6 +130,7 @@ Environment variables (see `.env.example`):
 
 - `POLARIS_URL` — Polaris instance URL
 - `POLARIS_API_TOKEN` — API access token (Profile > Access Tokens in Polaris UI)
+- `POLARIS_ORGANIZATION_ID` — (Optional) Organization ID, required for bug tracking integration APIs
 
 ## Release Flow
 
