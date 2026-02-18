@@ -7,6 +7,7 @@ await emptyDir("./npm");
 await build({
   entryPoints: ["./agent.ts"],
   outDir: "./npm",
+  importMap: "deno.json",
   shims: {
     deno: true,
   },
