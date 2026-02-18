@@ -1,5 +1,5 @@
 {
-  "version": "0.1.0",
+  "version": "0.1.1",
   "tasks": {
     "dev": "deno run --allow-net --allow-env --allow-read --watch agent.ts",
     "build": "deno check agent.ts",
@@ -19,11 +19,15 @@
     "lineWidth": 100,
     "indentWidth": 2,
     "singleQuote": false,
-    "exclude": ["CHANGELOG.md"]
+    "exclude": [
+      "CHANGELOG.md"
+    ]
   },
   "lint": {
     "rules": {
-      "tags": ["recommended"]
+      "tags": [
+        "recommended"
+      ]
     }
   }
 }
