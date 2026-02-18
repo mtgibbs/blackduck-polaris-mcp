@@ -1,0 +1,50 @@
+name: Release Please
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+      pr: ${{ steps.release.outputs.pr }}
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+      - name: Dispatch CI for release-please PR
+        if: steps.release.outputs.pr && !steps.release.outputs.release_created
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = JSON.parse('${{ steps.release.outputs.pr }}');
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'ci.yml',
+              ref: pr.headBranchName,
+              inputs: { head_sha: pr.sha },
+            });
+
+      - name: Dispatch publish on release
+        if: steps.release.outputs.release_created
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'publish.yml',
+              ref: 'main',
+              inputs: { tag: '${{ steps.release.outputs.tag_name }}' },
+            });

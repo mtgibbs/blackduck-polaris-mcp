@@ -1,0 +1,24 @@
+{
+  "packages": {
+    ".": {
+      "release-type": "node",
+      "package-name": "@mtgibbs/blackduck-polaris-mcp",
+      "bump-minor-pre-major": true,
+      "bump-patch-for-minor-pre-major": true,
+      "extra-files": [
+        {
+          "type": "json",
+          "path": "deno.json",
+          "jsonpath": "$.version"
+        }
+      ],
+      "changelog-sections": [
+        { "type": "feat", "section": "Features" },
+        { "type": "fix", "section": "Bug Fixes" },
+        { "type": "perf", "section": "Performance Improvements" },
+        { "type": "docs", "section": "Documentation" },
+        { "type": "ci", "section": "CI/CD", "hidden": false }
+      ]
+    }
+  }
+}
