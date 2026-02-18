@@ -26,7 +26,7 @@ await build({
       url: "https://github.com/mtgibbs/blackduck-polaris-mcp/issues",
     },
     bin: {
-      "blackduck-polaris-mcp": "./esm/cli.js",
+      "blackduck-polaris-mcp": "esm/cli.js",
     },
     engines: {
       node: ">=18.0.0",
