@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.2](https://github.com/mtgibbs/blackduck-polaris-mcp/compare/blackduck-polaris-mcp-v0.1.1...blackduck-polaris-mcp-v0.1.2) (2026-02-18)
+
+
+### Bug Fixes
+
+* remove leading ./ from bin path to avoid npm publish warning ([0639cfa](https://github.com/mtgibbs/blackduck-polaris-mcp/commit/0639cfa69c3a6fb151d116801f5b707517056679))
+* use npm trusted publishing (OIDC) instead of NPM_TOKEN ([182968e](https://github.com/mtgibbs/blackduck-polaris-mcp/commit/182968e17cbd27853b12ed28960a99d6c6adfd48))
+
 ## [0.1.1](https://github.com/mtgibbs/blackduck-polaris-mcp/compare/blackduck-polaris-mcp-v0.1.0...blackduck-polaris-mcp-v0.1.1) (2026-02-18)
 
 
