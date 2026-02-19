@@ -127,7 +127,9 @@
       ],
       "priority": 2,
       "passes": false,
-      "notes": "Depends on PRD-R1. The PATCH groups-settings returns 202 with no body. The POST groups-settings/connection returns 200 with no body. Both should return void from the API layer. The group-mapping-status Accept header notably lacks the ;charset=UTF-8 suffix (spec line 2361: application/vnd.polaris.integrations.repos.group-mapping-status-1+json). The GroupsSettingsRequest body has a nested structure with settings.repository and settings.branch sub-objects (spec line 3339-3376)."
+      "notes": "Depends on PRD-R1. The PATCH groups-settings returns 202 with no body. The POST groups-settings/connection returns 200 with no body. Both should return void from the API layer. The group-mapping-status Accept header notably lacks the ;charset=UTF-8 suffix (spec line 2361: application/vnd.polaris.integrations.repos.group-mapping-status-1+json). The GroupsSettingsRequest body has a nested structure with settings.repository and settings.branch sub-objects (spec line 3339-3376).",
+      "claimed_by": "agent-2",
+      "claimed_at": "2026-02-19T21:51:40Z"
     },
     {
       "id": "PRD-R7",
