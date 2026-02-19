@@ -1,0 +1,37 @@
+## Codebase Patterns
+
+- Tool definitions: schema is plain object of Zod types (NOT z.object()), handler destructures args, return jsonResponse(data) or errorResponse(msg)
+- Services use `import * as toolsApi from "../api/tools.ts"` pattern with re-exported functions
+- For non-GET requests (POST/PUT/DELETE): use `client.fetch<T>(path, { method, body, accept, contentType })`
+- For paginated GETs: use `client.getAllOffset<T>(path, params, accept)`
+- For single-item GETs: use `client.get<T>(path, params, accept)`
+- media type constants are module-private (not exported) in the API layer
+- `deno task lint` passes fine in this sandboxed environment; `deno fmt --check` also works
+- Lines >100 chars will fail `deno fmt --check` — always run `deno fmt` before checking
+
+---
+
+## 2026-02-19 - PRD-TL4
+
+- Implemented Tools API foundation (PRD-TL1 types/API/service) + version settings CRUD (PRD-TL4)
+- Files changed:
+  - `src/types/polaris.ts`: Added PolarisTool, DownloadDescriptor, MappedTool, ToolVersionMapping, CompatibleToolVersions, ToolVersionMatrix, ToolVersionSetting, CreateToolVersionSettingRequest interfaces
+  - `src/api/tools.ts` (new): Full Tools API with media type constants; getTools, getTool, getDownloadDescriptor, getToolLicense, getVersionMapping, getVersionMatrix, createVersionSetting, getVersionSettings, getVersionSettingsByContext, updateVersionSetting, deleteVersionSetting
+  - `src/services/tools.ts` (new): Service layer wrappers for all API functions; CreateVersionSettingOptions, UpdateVersionSettingOptions interfaces
+  - `src/services/index.ts`: Added `export * from './tools.ts'`
+  - `src/mcp/tools/create-version-setting.ts` (new): Tool create_version_setting (readOnlyHint: false)
+  - `src/mcp/tools/get-version-settings.ts` (new): Tool get_version_settings (readOnlyHint: true)
+  - `src/mcp/tools/get-version-settings-by-context.ts` (new): Tool get_version_settings_by_context (readOnlyHint: true)
+  - `src/mcp/tools/update-version-setting.ts` (new): Tool update_version_setting (readOnlyHint: false)
+  - `src/mcp/tools/delete-version-setting.ts` (new): Tool delete_version_setting (readOnlyHint: false, destructiveHint: true)
+  - `src/mcp/tools/index.ts`: Registered all 5 new tools
+  - `prd.json`: Set PRD-TL4 passes: true
+- `deno task lint` passes, `deno fmt --check` passes
+- `deno task check` not attempted (requires npm downloads which may stall in network-restricted environment)
+- **Learnings for future iterations:**
+  - PRD-TL1 (foundation) was not yet implemented when I started PRD-TL4, so I implemented both types + api + service layers
+  - deleteVersionSetting returns void (200 response with no body per spec); tool handler returns jsonResponse({success:true, id})
+  - update uses PUT (full replacement), not PATCH — Content-Type is version-settings-request-1, Accept is version-settings-1
+  - getVersionSettingsByContext uses getAllOffset (paginated) not client.get — response is a collection
+  - Run `deno fmt <file>` on individual files when fmt check fails; 100 char width limit
+---

@@ -47,6 +47,11 @@ import { getToolsTool } from "./get-tools.ts";
 import { getToolTool } from "./get-tool.ts";
 import { getDownloadDescriptorTool } from "./get-download-descriptor.ts";
 import { getToolLicenseTool } from "./get-tool-license.ts";
+import { createVersionSettingTool } from "./create-version-setting.ts";
+import { getVersionSettingsTool } from "./get-version-settings.ts";
+import { getVersionSettingsByContextTool } from "./get-version-settings-by-context.ts";
+import { updateVersionSettingTool } from "./update-version-setting.ts";
+import { deleteVersionSettingTool } from "./delete-version-setting.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -97,4 +102,9 @@ export const tools: AnyToolDefinition[] = [
   getToolTool,
   getDownloadDescriptorTool,
   getToolLicenseTool,
+  createVersionSettingTool,
+  getVersionSettingsTool,
+  getVersionSettingsByContextTool,
+  updateVersionSettingTool,
+  deleteVersionSettingTool,
 ];
