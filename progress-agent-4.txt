@@ -35,3 +35,19 @@
   - TriageKey type needed multi-line union format for deno fmt compliance (single-line >100 chars fails fmt)
   - The _group param in the count endpoint spec uses explode:false (comma-separated), consistent with joining the array
 ---
+
+## 2026-02-19 - PRD-F4
+- Implemented issue export and count-over-time endpoints across all layers:
+  1. src/types/polaris.ts: Added IssueExportItem, IssueCountOverTimeEntry, IssueCountOverTimeResponse interfaces
+  2. src/api/findings.ts: Added exportIssues() (GET /api/findings/issues/_actions/export) and getIssueCountOverTime() (GET /api/findings/issues/_actions/count-over-time, NOT paginated — uses client.get())
+  3. src/services/findings.ts: Added exportFindingsIssues() and getIssueCountOverTime() service functions
+  4. src/mcp/tools/export-findings-issues.ts: Created export_findings_issues tool (readOnlyHint: true) — named differently from existing export_issues (bug tracking) to avoid collision
+  5. src/mcp/tools/get-issue-count-over-time.ts: Created get_issue_count_over_time tool with mutual exclusivity validation for last_x_days vs from_date/to_date
+  6. src/mcp/tools/index.ts: Registered both new tools
+- Files changed: src/types/polaris.ts, src/api/findings.ts, src/services/findings.ts, src/mcp/tools/export-findings-issues.ts (new), src/mcp/tools/get-issue-count-over-time.ts (new), src/mcp/tools/index.ts, prd.json
+- **Learnings for future iterations:**
+  - count-over-time is NOT paginated — use client.get<IssueCountOverTimeResponse>() not getAllCursor
+  - export endpoint returns IssueExportItem[] directly (not paginated via cursor), use client.get<T[]>()
+  - Tool name collision: avoid export_issues (reserved for bug tracking); use export_findings_issues for the Findings API export
+  - Mutual exclusivity validation in tool handlers should use errorResponse() and return early before calling service
+---
