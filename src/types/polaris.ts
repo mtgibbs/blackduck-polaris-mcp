@@ -183,7 +183,7 @@ export interface TriageProperty {
 }
 
 export interface TriageAuthor {
-  id: string;
+  id?: string;
   _links?: LinkEntry[];
 }
 
@@ -252,10 +252,10 @@ export interface EventGroup {
 
 export interface AssistResponse {
   id: string;
-  summary: string;
-  codeAnalysis: string;
-  analysis: string;
-  suggestedFix: string | null;
+  summary?: string;
+  codeAnalysis?: string;
+  analysis?: string;
+  suggestedFix?: string | null;
   feedbackResponses: AssistFeedback[];
 }
 

@@ -38,6 +38,9 @@ export interface GetIssuesOptions {
   delta?: string;
   sort?: string;
   first?: number;
+  includeIssueExclusion?: boolean;
+  includeExtensionProperties?: boolean;
+  includeComponentLocations?: boolean;
 }
 
 export function getIssues(options: GetIssuesOptions): Promise<Issue[]> {
@@ -67,6 +70,9 @@ export function getIssues(options: GetIssuesOptions): Promise<Issue[]> {
     includeTriageProperties: true,
     includeFirstDetectedOn: true,
     includeContext: true,
+    includeIssueExclusion: options.includeIssueExclusion,
+    includeExtensionProperties: options.includeExtensionProperties,
+    includeComponentLocations: options.includeComponentLocations,
     first: options.first,
   });
 }
@@ -77,6 +83,8 @@ export interface GetIssueOptions {
   projectId?: string;
   branchId?: string;
   testId?: string;
+  includeIssueExclusion?: boolean;
+  includeExtensionProperties?: boolean;
 }
 
 export function getIssue(options: GetIssueOptions): Promise<Issue> {
@@ -92,6 +100,8 @@ export function getIssue(options: GetIssueOptions): Promise<Issue> {
     includeFirstDetectedOn: true,
     includeContext: true,
     includeComponentLocations: true,
+    includeIssueExclusion: options.includeIssueExclusion,
+    includeExtensionProperties: options.includeExtensionProperties,
   });
 }
 
