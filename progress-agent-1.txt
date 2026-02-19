@@ -23,6 +23,24 @@
   - Both lint and fmt checks pass without network access
 ---
 
+## 2026-02-19 - PRD-P3
+- Implemented full Project CRUD (get, create, update, delete) across all layers
+- Files changed:
+  - `src/api/portfolio.ts`: Refactored getProject to options-object pattern; added createProject (POST), updateProject (PATCH), deleteProject (DELETE)
+  - `src/services/portfolio.ts`: Added GetProjectOptions, CreateProjectOptions, UpdateProjectOptions, DeleteProjectOptions interfaces; refactored getProject and added createProject, updateProject, deleteProject service wrappers
+  - `src/mcp/tools/get-project.ts`: New tool get_project (readOnlyHint: true)
+  - `src/mcp/tools/create-project.ts`: New tool create_project (readOnlyHint: false)
+  - `src/mcp/tools/update-project.ts`: New tool update_project (readOnlyHint: false)
+  - `src/mcp/tools/delete-project.ts`: New tool delete_project (readOnlyHint: false, destructiveHint: true)
+  - `src/mcp/tools/index.ts`: Registered all 4 new tools
+  - `prd.json`: Set PRD-P3 passes: true
+- `deno lint` passes, `deno fmt --check` passes
+- **Learnings for future iterations:**
+  - When refactoring positional-arg functions to options objects, check all callers (grep for `functionName(`) to avoid breaking existing usages
+  - The service layer imports specific types (CreateProjectRequest, UpdateProjectRequest) to construct the body object — avoids spreading unknown fields
+  - All 4 project CRUD tools use the standard pattern: plain Zod schema object, ToolDefinition<typeof schema>, handler calls service then returns jsonResponse
+---
+
 ## 2026-02-19 - PRD-P1
 - Added all 24 TypeScript interfaces to src/types/polaris.ts in the '// --- Portfolio ---' section, between the Branch interface and '// --- Findings ---'
 - Interfaces added: CreateApplicationRequest, UpdateApplicationRequest, CreateProjectRequest, UpdateProjectRequest, CreateBranchRequest, UpdateBranchRequest, ProjectSubResource, ProjectSubResourceCountItem, Profile, ProfileArtifact, CreateProfileArtifactRequest, Label, CreateLabelRequest, MergeLabelRequest, ApplicationEntitlementItem, ApplicationEntitlementsResponse, EntitlementQuantityUpdateRequest, EntitlementQuantityUpdateResponse, PortfolioEntitlement, OrganizationSettings, RiskCategory, RiskFactor, RiskScoringSettings, DashboardItem
