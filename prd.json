@@ -74,7 +74,9 @@
       ],
       "priority": 3,
       "passes": false,
-      "notes": "Depends on PRD-F1. TriageResult type reused by PRD-F10. Triage keys: comment, status, dismissal-reason, is-dismissed, owner, fix-by."
+      "notes": "Depends on PRD-F1. TriageResult type reused by PRD-F10. Triage keys: comment, status, dismissal-reason, is-dismissed, owner, fix-by.",
+      "claimed_by": "agent-4",
+      "claimed_at": "2026-02-19T17:22:00Z"
     },
     {
       "id": "PRD-F4",
