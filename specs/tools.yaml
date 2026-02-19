@@ -11,11 +11,11 @@ info:
     **Deprecation notice for media type and base path changes**
 
     * Media type names used in Polaris APIs were renamed and no longer include “synopsys”. Although media types that include “synopsys” were removed from the API specifications, existing endpoints
-    will continue to support them until March 24, 2026. Please update your scripts to use the new media types.    
+    will continue to support them until March 24, 2026. Please update your scripts to use the new media types.
 
     * Additionally, the base path for Tools is changing (from `/api/tool-service/tools` to `/api/tools`) resulting in several endpoints getting deprecated. Endpoints that are being deprecated include
     additional properties in response headers as shown below
-       
+
     * ```
       "Deprecation":  "Sun, 15 Jun 2025 23:59:59 GMT",
       "Link":         "New version of API link; rel=\"alternate\"",
@@ -87,14 +87,14 @@ paths:
         Tool name, version, platform, and extension can be obtained by calling `GET /tools` API
         *Note: This endpoint is deprecated and will be removed in the future. Please use `/api/tools/download-descriptors/{id}` instead.*
       parameters:
-        - $ref: '#/components/parameters/DownloadDescriptorId'
+        - $ref: "#/components/parameters/DownloadDescriptorId"
       responses:
-        '200':
+        "200":
           description: Download Descriptor Details
           content:
             application/vnd.ts.download-descriptor-1+json:
               schema:
-                $ref: '#/components/schemas/DownloadDescriptorGetResponse'
+                $ref: "#/components/schemas/DownloadDescriptorGetResponse"
               example:
                 id: cov_thin_client:2022.3.0:win64:tar.gz
                 _type: download-descriptors
@@ -108,10 +108,10 @@ paths:
                   - href: https://polaris.blackduck.com/tools/download-descriptors/cov_thin_client:2022.3.0:win64:tar.gz
                     rel: self
                     method: GET
-        '400':
-          $ref: '#/components/responses/BadRequestProblem'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        "400":
+          $ref: "#/components/responses/BadRequestProblem"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
       deprecated: true
   /api/tools/download-descriptors/{id}:
     get:
@@ -150,14 +150,14 @@ paths:
                                 `polaris-snippet-generator` - `zip` <br />
         Tool name, version, platform, and extension can be obtained by calling `GET /tools` API
       parameters:
-        - $ref: '#/components/parameters/DownloadDescriptorId'
+        - $ref: "#/components/parameters/DownloadDescriptorId"
       responses:
-        '200':
+        "200":
           description: Download Descriptor Details
           content:
             application/vnd.polaris.tools.download-descriptor-1+json:
               schema:
-                $ref: '#/components/schemas/DownloadDescriptorGetResponse'
+                $ref: "#/components/schemas/DownloadDescriptorGetResponse"
               example:
                 id: cov_thin_client:2022.3.0:win64:tar.gz
                 _type: download-descriptors
@@ -171,10 +171,10 @@ paths:
                   - href: https://polaris.blackduck.com/tools/download-descriptors/cov_thin_client:2022.3.0:win64:tar.gz
                     rel: self
                     method: GET
-        '400':
-          $ref: '#/components/responses/BadRequestProblem'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        "400":
+          $ref: "#/components/responses/BadRequestProblem"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
   /api/tool-service/tools:
     get:
       operationId: getToolsDeprecated
@@ -183,19 +183,19 @@ paths:
       summary: Returns all available tool information.
       description: |
         Returns tools information for the organization using filter criteria.
-          
+
         *Note: This endpoint is deprecated and will be removed in the future. Please use `/api/tools` instead.*
       parameters:
-        - $ref: '#/components/parameters/ToolsFilter'
-        - $ref: '#/components/parameters/ToolsOffset'
-        - $ref: '#/components/parameters/ToolsLimit'
+        - $ref: "#/components/parameters/ToolsFilter"
+        - $ref: "#/components/parameters/ToolsOffset"
+        - $ref: "#/components/parameters/ToolsLimit"
       responses:
-        '200':
+        "200":
           description: Paged list of tools under an organization
           content:
             application/vnd.polaris.tools.tool-list-1+json:
               schema:
-                $ref: '#/components/schemas/ToolCollectionResponse'
+                $ref: "#/components/schemas/ToolCollectionResponse"
               example:
                 _items:
                   - id: cov_thin_client:2022.3.0
@@ -233,10 +233,10 @@ paths:
                   currentPage: 2
                   pageCount: 10
                   _type: tools
-        '400':
-          $ref: '#/components/responses/BadRequestProblem'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        "400":
+          $ref: "#/components/responses/BadRequestProblem"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
       deprecated: true
   /api/tools:
     get:
@@ -247,16 +247,16 @@ paths:
       description: |
         Returns tools information for the organization using filter criteria.
       parameters:
-        - $ref: '#/components/parameters/ToolsFilter'
-        - $ref: '#/components/parameters/ToolsOffset'
-        - $ref: '#/components/parameters/ToolsLimit'
+        - $ref: "#/components/parameters/ToolsFilter"
+        - $ref: "#/components/parameters/ToolsOffset"
+        - $ref: "#/components/parameters/ToolsLimit"
       responses:
-        '200':
+        "200":
           description: Paged list of tools under an organization
           content:
             application/vnd.polaris.tools.tool-list-1+json:
               schema:
-                $ref: '#/components/schemas/ToolCollectionResponse'
+                $ref: "#/components/schemas/ToolCollectionResponse"
               example:
                 _items:
                   - id: cov_thin_client:2022.3.0
@@ -294,10 +294,10 @@ paths:
                   currentPage: 2
                   pageCount: 10
                   _type: tools
-        '400':
-          $ref: '#/components/responses/BadRequestProblem'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        "400":
+          $ref: "#/components/responses/BadRequestProblem"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
   /api/tools/version-mapping:
     get:
       operationId: getVersionMapping
@@ -307,15 +307,15 @@ paths:
       description: |
         Returns tools information for the organization using filter criteria.
       parameters:
-        - $ref: '#/components/parameters/VersionMappingFilter'
-        - $ref: '#/components/parameters/ToolsOffset'
+        - $ref: "#/components/parameters/VersionMappingFilter"
+        - $ref: "#/components/parameters/ToolsOffset"
       responses:
-        '200':
+        "200":
           description: Paged list of tools under an organization
           content:
             application/vnd.polaris.tools.version-mapping-list-1+json:
               schema:
-                $ref: '#/components/schemas/ToolVersionMappingCollectionResponse'
+                $ref: "#/components/schemas/ToolVersionMappingCollectionResponse"
               example:
                 _items:
                   - type: coverity
@@ -346,10 +346,10 @@ paths:
                   currentPage: 2
                   pageCount: 6
                   _type: version-mapping
-        '400':
-          $ref: '#/components/responses/BadRequestProblem'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        "400":
+          $ref: "#/components/responses/BadRequestProblem"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
   /api/tools/{id}/version-matrix:
     get:
       operationId: getVersionMatrixForToolId
@@ -359,14 +359,14 @@ paths:
       description: |
         Returns version matrix for particular tool Id.
       parameters:
-        - $ref: '#/components/parameters/ToolId'
+        - $ref: "#/components/parameters/ToolId"
       responses:
-        '200':
+        "200":
           description: Details of version matrix for the tool.
           content:
             application/vnd.polaris.tools.version-matrix-1+json:
               schema:
-                $ref: '#/components/schemas/ToolVersionMatrixResponse'
+                $ref: "#/components/schemas/ToolVersionMatrixResponse"
               example:
                 type: coverity
                 version: 2025.6.0
@@ -375,10 +375,10 @@ paths:
                     version:
                       - 2025.3.0
                       - 2025.6.0
-        '400':
-          $ref: '#/components/responses/BadRequestProblem'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        "400":
+          $ref: "#/components/responses/BadRequestProblem"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
   /api/tools/version-settings:
     post:
       operationId: createVersionSettings
@@ -392,7 +392,7 @@ paths:
         content:
           application/vnd.polaris.tools.version-settings-request-1+json:
             schema:
-              $ref: '#/components/schemas/CreateToolVersionSettingsRequest'
+              $ref: "#/components/schemas/CreateToolVersionSettingsRequest"
             example:
               toolType: Coverity
               version: 2024.12.0
@@ -400,12 +400,12 @@ paths:
               entityId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
               settingType: Custom
       responses:
-        '200':
+        "200":
           description: Tool Version created successfully
           content:
             application/vnd.polaris.tools.version-settings-1+json:
               schema:
-                $ref: '#/components/schemas/ToolVersionSettingsResponse'
+                $ref: "#/components/schemas/ToolVersionSettingsResponse"
               example:
                 id: 48a85f64-5717-4562-b3fc-2c963f66afa6
                 toolType: Coverity
@@ -414,10 +414,10 @@ paths:
                 entityId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
                 settingType: Custom
                 _type: version-settings
-        '400':
-          $ref: '#/components/responses/BadRequestProblem'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        "400":
+          $ref: "#/components/responses/BadRequestProblem"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
     get:
       operationId: getVersionSettings
       tags:
@@ -426,14 +426,14 @@ paths:
         Returns tool version settings information using filter criteria.
       description: This API retrieves the tool version settings for the specified ORGANIZATION/APPLICATION/PROJECT/BRANCH.
       parameters:
-        - $ref: '#/components/parameters/VersionSettingsFilter'
+        - $ref: "#/components/parameters/VersionSettingsFilter"
       responses:
-        '200':
+        "200":
           description: Tool Configs fetched successfully
           content:
             application/vnd.polaris.tools.tool-config-list-1+json:
               schema:
-                $ref: '#/components/schemas/ToolVersionSettingsCollectionResponse'
+                $ref: "#/components/schemas/ToolVersionSettingsCollectionResponse"
               example:
                 _items:
                   - id: 48a85f64-5717-4562-b3fc-2c963f66afa6
@@ -464,10 +464,10 @@ paths:
                   currentPage: 2
                   pageCount: 5
                   _type: version-settings
-        '400':
-          $ref: '#/components/responses/BadRequestProblem'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        "400":
+          $ref: "#/components/responses/BadRequestProblem"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
   /api/tools/version-settings/context/{context}:
     get:
       operationId: getVersionSettingsForContext
@@ -477,15 +477,15 @@ paths:
         Get Tool Configs for the given context.
       description: This API is to get Tool Configs for the given context.
       parameters:
-        - $ref: '#/components/parameters/Context'
-        - $ref: '#/components/parameters/EntityIdParam'
+        - $ref: "#/components/parameters/Context"
+        - $ref: "#/components/parameters/EntityIdParam"
       responses:
-        '200':
+        "200":
           description: Tool Configs fetched successfully
           content:
             application/vnd.polaris.tools.tool-config-list-1+json:
               schema:
-                $ref: '#/components/schemas/ToolVersionSettingsCollectionResponse'
+                $ref: "#/components/schemas/ToolVersionSettingsCollectionResponse"
               example:
                 _items:
                   - id: 48a85f64-5717-4562-b3fc-2c963f66afa6
@@ -516,10 +516,10 @@ paths:
                   currentPage: 2
                   pageCount: 5
                   _type: version-settings
-        '400':
-          $ref: '#/components/responses/BadRequestProblem'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        "400":
+          $ref: "#/components/responses/BadRequestProblem"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
   /api/tools/version-settings/{id}:
     put:
       operationId: updateVersionSettings
@@ -529,13 +529,13 @@ paths:
         Update version of an existing version-setting.
       description: This API is to update the tool version in version settings.
       parameters:
-        - $ref: '#/components/parameters/VersionSettingsId'
+        - $ref: "#/components/parameters/VersionSettingsId"
       requestBody:
         required: true
         content:
           application/vnd.polaris.tools.version-settings-request-1+json:
             schema:
-              $ref: '#/components/schemas/CreateToolVersionSettingsRequest'
+              $ref: "#/components/schemas/CreateToolVersionSettingsRequest"
             example:
               toolType: Coverity
               version: 2024.12.0
@@ -543,12 +543,12 @@ paths:
               entityId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
               settingType: Custom
       responses:
-        '200':
+        "200":
           description: Tool Version updated successfully
           content:
             application/vnd.polaris.tools.version-settings-1+json:
               schema:
-                $ref: '#/components/schemas/ToolVersionSettingsResponse'
+                $ref: "#/components/schemas/ToolVersionSettingsResponse"
               example:
                 id: 48a85f64-5717-4562-b3fc-2c963f66afa6
                 toolType: Coverity
@@ -557,10 +557,10 @@ paths:
                 entityId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
                 settingType: Custom
                 _type: version-settings
-        '400':
-          $ref: '#/components/responses/BadRequestProblem'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        "400":
+          $ref: "#/components/responses/BadRequestProblem"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
     delete:
       operationId: deleteVersionSettings
       tags:
@@ -569,12 +569,12 @@ paths:
         Delete version of an existing version-setting.
       description: This API is to delete the tool version in version settings.
       parameters:
-        - $ref: '#/components/parameters/VersionSettingsId'
+        - $ref: "#/components/parameters/VersionSettingsId"
       responses:
-        '200':
+        "200":
           description: Successful response
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        "500":
+          $ref: "#/components/responses/InternalServerError"
   /api/tool-service/tools/{id}:
     get:
       operationId: getToolByIdDeprecated
@@ -589,17 +589,17 @@ paths:
          * version - tool version.
 
         Tool name and Tool version can be obtained by calling `GET /tools` API
-          
+
         *Note: This endpoint is deprecated and will be removed in the future. Please use `/api/tools/{id}` instead.*
       parameters:
-        - $ref: '#/components/parameters/ToolId'
+        - $ref: "#/components/parameters/ToolId"
       responses:
-        '200':
+        "200":
           description: Tool by ID.
           content:
             application/vnd.ts.tool-1+json:
               schema:
-                $ref: '#/components/schemas/ToolGetResponse'
+                $ref: "#/components/schemas/ToolGetResponse"
               example:
                 id: cov_thin_client:2022.3.0
                 _type: tools
@@ -615,10 +615,10 @@ paths:
                   - href: https://polaris.blackduck.com/tools/download-descriptors/cov_thin_client:2022.3.0:macosx:tar.gz
                     rel: download-descriptor-macosx-tar.gz
                     method: GET
-        '400':
-          $ref: '#/components/responses/BadRequestProblem'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        "400":
+          $ref: "#/components/responses/BadRequestProblem"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
       deprecated: true
   /api/tools/{id}:
     get:
@@ -635,14 +635,14 @@ paths:
 
         Tool name and Tool version can be obtained by calling `GET /tools` API
       parameters:
-        - $ref: '#/components/parameters/ToolId'
+        - $ref: "#/components/parameters/ToolId"
       responses:
-        '200':
+        "200":
           description: Tool by ID.
           content:
             application/vnd.polaris.tools.tool-1+json:
               schema:
-                $ref: '#/components/schemas/ToolGetResponse'
+                $ref: "#/components/schemas/ToolGetResponse"
               example:
                 id: cov_thin_client:2022.3.0
                 _type: tools
@@ -667,10 +667,10 @@ paths:
                   - href: https://polaris.blackduck.com/tools/download-descriptors/cov_thin_client:2022.3.0:macos_arm:tar.gz
                     rel: download-descriptor-macos_arm-tar.gz
                     method: GET
-        '400':
-          $ref: '#/components/responses/BadRequestProblem'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        "400":
+          $ref: "#/components/responses/BadRequestProblem"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
   /api/tools/{toolName}/license:
     get:
       operationId: downloadToolLicense
@@ -679,7 +679,7 @@ paths:
       summary: |
         Download the license for a specified tool-name.
       description: |
-        This API enables the license file to be downloaded for the specified tool-name. 
+        This API enables the license file to be downloaded for the specified tool-name.
 
         **Note:** Only coverity-analysis tool-name license is supported to be downloaded.
       parameters:
@@ -691,7 +691,7 @@ paths:
             type: string
           example: coverity-analysis
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/octet-stream:
@@ -702,12 +702,12 @@ paths:
                 -----BEGIN LICENSE-----
                 [License file content]
                 -----END LICENSE-----
-        '400':
-          $ref: '#/components/responses/BadRequestProblem'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        "400":
+          $ref: "#/components/responses/BadRequestProblem"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
 components:
   securitySchemes:
     ApiKeyAuth:
@@ -817,7 +817,7 @@ components:
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/PolarisErrorResponse'
+            $ref: "#/components/schemas/PolarisErrorResponse"
           example:
             type: urn:x-tool-service:bad-request
             title: Bad Request
@@ -828,7 +828,7 @@ components:
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/PolarisErrorResponse'
+            $ref: "#/components/schemas/PolarisErrorResponse"
           example:
             type: urn:x-tool-service:not-found
             title: requested resource does not exist
@@ -839,7 +839,7 @@ components:
       content:
         application/problem+json:
           schema:
-            $ref: '#/components/schemas/PolarisErrorResponse'
+            $ref: "#/components/schemas/PolarisErrorResponse"
           example:
             type: urn:x-tool-service:internal-server-error
             title: Internal Server Error
@@ -865,7 +865,7 @@ components:
         settingType:
           type: string
           description: |
-            Allowed values are Custom or System_Default. 
+            Allowed values are Custom or System_Default.
             Custom - Allows user to set specific version
             System_Default - Always use recommended tool version.
             API returns 400 if version provided when settingType=System_Default
@@ -904,39 +904,39 @@ components:
         _items:
           type: array
           items:
-            $ref: '#/components/schemas/ToolVersionSettingsResponse'
+            $ref: "#/components/schemas/ToolVersionSettingsResponse"
         _links:
           type: array
           items:
-            $ref: '#/components/schemas/link'
+            $ref: "#/components/schemas/link"
         _collection:
-          $ref: '#/components/schemas/collections'
+          $ref: "#/components/schemas/collections"
     ToolCollectionResponse:
       type: object
       properties:
         _items:
           type: array
           items:
-            $ref: '#/components/schemas/ToolGetResponse'
+            $ref: "#/components/schemas/ToolGetResponse"
         _links:
           type: array
           items:
-            $ref: '#/components/schemas/link'
+            $ref: "#/components/schemas/link"
         _collection:
-          $ref: '#/components/schemas/collections'
+          $ref: "#/components/schemas/collections"
     ToolVersionMappingCollectionResponse:
       type: object
       properties:
         _items:
           type: array
           items:
-            $ref: '#/components/schemas/ToolVersionMappingGetResponse'
+            $ref: "#/components/schemas/ToolVersionMappingGetResponse"
         _links:
           type: array
           items:
-            $ref: '#/components/schemas/link'
+            $ref: "#/components/schemas/link"
         _collection:
-          $ref: '#/components/schemas/collections'
+          $ref: "#/components/schemas/collections"
     DownloadDescriptorGetResponse:
       type: object
       properties:
@@ -968,7 +968,7 @@ components:
         _links:
           type: array
           items:
-            $ref: '#/components/schemas/link'
+            $ref: "#/components/schemas/link"
     ToolGetResponse:
       type: object
       properties:
@@ -1000,7 +1000,7 @@ components:
         _links:
           type: array
           items:
-            $ref: '#/components/schemas/link'
+            $ref: "#/components/schemas/link"
     ToolVersionMappingGetResponse:
       type: object
       properties:
@@ -1014,7 +1014,7 @@ components:
           type: array
           description: Specifies the details of mapped tools.
           items:
-            $ref: '#/components/schemas/MappedTools'
+            $ref: "#/components/schemas/MappedTools"
         version:
           type: string
           description: Tool version.
@@ -1040,7 +1040,7 @@ components:
           type: array
           description: Specifies the details of compatible tools.
           items:
-            $ref: '#/components/schemas/CompatibleTools'
+            $ref: "#/components/schemas/CompatibleTools"
         version:
           type: string
           description: Tool version.

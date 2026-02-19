@@ -31,7 +31,7 @@ export const provideAssistFeedbackTool: ToolDefinition<typeof schema> = {
     disposition,
     comment,
   }) => {
-    await provideAssistFeedback({
+    const result = await provideAssistFeedback({
       occurrenceId: occurrence_id,
       assistId: assist_id,
       applicationId: application_id,
@@ -41,6 +41,6 @@ export const provideAssistFeedbackTool: ToolDefinition<typeof schema> = {
       disposition,
       comment,
     });
-    return jsonResponse({ success: true });
+    return jsonResponse(result);
   },
 };

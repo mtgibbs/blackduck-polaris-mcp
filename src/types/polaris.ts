@@ -183,7 +183,7 @@ export interface TriageProperty {
 }
 
 export interface TriageAuthor {
-  id: string;
+  id?: string;
   _links?: LinkEntry[];
 }
 
@@ -252,10 +252,10 @@ export interface EventGroup {
 
 export interface AssistResponse {
   id: string;
-  summary: string;
-  codeAnalysis: string;
-  analysis: string;
-  suggestedFix: string | null;
+  summary?: string;
+  codeAnalysis?: string;
+  analysis?: string;
+  suggestedFix?: string | null;
   feedbackResponses: AssistFeedback[];
 }
 
@@ -279,12 +279,111 @@ export interface Attack {
   target?: string;
 }
 
+// --- Detection History ---
+
+export type DetectionEventType = "FIRST_DETECTED" | "ABSENT" | "DETECTED_AGAIN";
+
+export interface DetectionHistoryEvent {
+  eventType: DetectionEventType;
+  date: string;
+}
+
+export interface DetectionHistory {
+  history: DetectionHistoryEvent[];
+}
+
 // --- Assist Feedback Request ---
 
 export interface AssistFeedbackPatch {
   op: "add";
   path: "/feedbackResponses/-";
   value: AssistFeedback;
+}
+
+// --- Triage ---
+
+export type TriageKey =
+  | "comment"
+  | "status"
+  | "dismissal-reason"
+  | "is-dismissed"
+  | "owner"
+  | "fix-by";
+
+export interface TriagePropertyInput {
+  key: TriageKey;
+  value: string | boolean | null;
+}
+
+export interface TriageRequest {
+  filter?: string;
+  triageProperties: TriagePropertyInput[];
+}
+
+export interface TriageResult {
+  count: number;
+  _type?: string;
+}
+
+// --- Issue Count ---
+
+export interface IssueCountGroup {
+  key: string;
+  value?: string;
+  childTaxaGroup?: string;
+  valueId?: string;
+}
+
+export interface IssueCountItem {
+  group: IssueCountGroup[];
+  count: number;
+  averageAgeInDays?: number | null;
+  _type?: string;
+}
+
+// --- Issue Export ---
+
+export interface IssueExportItem {
+  type: string;
+  severity: string;
+  location: string;
+  fileName?: string;
+  toolType: string;
+  triageStatus?: string;
+  fixByDate?: string;
+  cwe?: string;
+  cve?: string;
+  bdsa?: string;
+  application?: string;
+  project?: string;
+  branch?: string;
+  link: string;
+}
+
+// --- Issue Count Over Time ---
+
+export interface IssueCountOverTimeEntry {
+  detectedCount?: number;
+  absentCount?: number;
+  date?: string;
+  toolType?: string;
+  toolId?: string;
+}
+
+export interface IssueCountOverTimeResponse {
+  issuesOverTime: IssueCountOverTimeEntry[];
+  _links?: LinkEntry[];
+  _type?: string;
+}
+
+// --- Pending Approval ---
+
+export type PendingApprovalAction = "approved" | "rejected";
+
+export interface PendingApprovalRequest {
+  ids: string[];
+  action: PendingApprovalAction;
+  comment?: string;
 }
 
 // --- Tests ---
@@ -356,6 +455,219 @@ export interface LinkedIssue {
   issueLink?: string;
   createdAt?: string;
   _links?: LinkEntry[];
+}
+
+// --- Taxonomy ---
+
+export interface TaxonLocalizedOtherDetail {
+  key: string;
+  value: string;
+}
+
+export interface TaxonLocalized {
+  name?: string;
+  issueTypeNames?: string[];
+  otherDetails: TaxonLocalizedOtherDetail[];
+}
+
+export interface Taxon {
+  id: string;
+  subtaxa: string[];
+  isRoot: boolean;
+  _localized: TaxonLocalized;
+}
+
+export interface Taxonomy {
+  id: string;
+  subtaxa: string[];
+  _localized: TaxonLocalized;
+}
+
+export interface TaxonIssueTypeLocalized {
+  name?: string;
+  otherDetails: TaxonLocalizedOtherDetail[];
+}
+
+export interface TaxonIssueType {
+  id: string;
+  _localized: TaxonIssueTypeLocalized;
+}
+
+// --- Component Versions ---
+
+export type SecurityRisk = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+
+export type MatchType =
+  | "FILE_DEPENDENCY_DIRECT"
+  | "FILE_DEPENDENCY_TRANSITIVE"
+  | "FILE_EXACT"
+  | "FILE_EXACT_FILE_MATCH"
+  | "FILE_FILES_ADDED_DELETED_AND_MODIFIED"
+  | "FILE_SOME_FILES_MODIFIED";
+
+export interface ComponentInfo {
+  id: string;
+  name: string;
+  description?: string;
+  homePage?: string;
+  openHubPage?: string;
+}
+
+export interface LicenseEntry {
+  id?: string;
+  _links?: LinkEntry[];
+}
+
+export interface LicenseDefinition {
+  type?: "CONJUNCTIVE" | "DISJUNCTIVE";
+  licenses?: LicenseEntry[];
+  license?: LicenseEntry[];
+}
+
+export interface ComponentVersionTriageProperty {
+  key: string;
+  value: string | boolean;
+}
+
+export interface ComponentVersion {
+  id: string;
+  version: string;
+  releaseDate?: string;
+  securityRisk?: SecurityRisk;
+  matchTypes: MatchType[];
+  matchScore: number;
+  usages: string[];
+  component?: ComponentInfo;
+  licenseDefinition?: LicenseDefinition;
+  originalLicenseDefinition?: LicenseDefinition;
+  triageProperties?: ComponentVersionTriageProperty[];
+  _links?: LinkEntry[];
+  _type?: string;
+}
+
+export interface ComponentVersionCountGroup {
+  key: string;
+  value: string;
+}
+
+export interface ComponentVersionCountItem {
+  group: ComponentVersionCountGroup[];
+  count: number;
+  _cursor?: string;
+  _type?: string;
+}
+
+export interface ComponentVersionModifyRequest {
+  componentId?: string;
+  componentVersionId?: string;
+  componentOriginId?: string;
+  comment?: string;
+}
+
+export interface ComponentVersionModifyResponse {
+  componentVersionId: string;
+  operationId: string;
+  actionType: string;
+  _type?: string;
+}
+
+export type OperationStatusType = "PROCESSING" | "COMPLETED" | "ERROR";
+export type OperationActionType = "ADD" | "EDIT" | "DELETE";
+
+export interface OperationStatus {
+  status: OperationStatusType;
+  actionType: OperationActionType;
+  timestamp: string;
+  _type?: string;
+}
+
+// --- Component Version Activity Log, Triage History, License Assignment ---
+
+export interface ActivityLogEntry {
+  actionType: string;
+  fromComponentId?: string;
+  fromComponent?: string;
+  fromComponentVersionId?: string;
+  fromComponentVersion?: string;
+  fromComponentOrigin?: number;
+  componentId?: string;
+  component?: string;
+  componentVersionId?: string;
+  componentVersion?: string;
+  componentOriginId?: string;
+  componentOrigin?: string;
+  timestamp: string;
+  comment?: string;
+  projectId?: string;
+  _links?: LinkEntry[];
+  _type?: string;
+}
+
+export interface LicenseDefinitionResponse {
+  licenseDefinition?: LicenseDefinition;
+}
+
+export interface TriageHistoryTransaction {
+  latestAuthor?: { id: string; _links?: LinkEntry[] } | null;
+  latestTimestamp: string;
+  triageProperties: TriageProperty[];
+  _cursor?: string;
+  _type?: string;
+  _links?: LinkEntry[];
+}
+
+// --- Component Origins ---
+
+export interface SecurityRiskCounts {
+  critical?: number;
+  high?: number;
+  medium?: number;
+  low?: number;
+}
+
+export interface UpgradeGuidanceTarget {
+  componentId?: string;
+  componentName?: string;
+  componentVersionId?: string;
+  componentOriginId?: string;
+  externalId?: string;
+  versionName?: string;
+  securityRisk?: SecurityRiskCounts;
+  _links?: LinkEntry[];
+}
+
+export interface UpgradeGuidance {
+  shortTerm?: UpgradeGuidanceTarget;
+  longTerm?: UpgradeGuidanceTarget;
+}
+
+export interface TransitiveUpgradeGuidance {
+  externalId?: string;
+  shortTerm?: UpgradeGuidanceTarget;
+  longTerm?: UpgradeGuidanceTarget;
+}
+
+export interface ComponentOrigin {
+  id: string;
+  componentId: string;
+  externalNamespace: string;
+  externalId: string;
+  packageUrl?: string;
+  matchesCount?: number;
+  securityRisk?: SecurityRiskCounts;
+  upgradeGuidance?: UpgradeGuidance;
+  transitiveUpgradeGuidance?: TransitiveUpgradeGuidance[];
+  _links?: LinkEntry[];
+  _type?: string;
+}
+
+export interface ComponentOriginMatch {
+  id: string;
+  matchType: MatchType;
+  externalIds?: string[];
+  fileUri?: string;
+  _cursor?: string;
+  _type?: string;
 }
 
 // --- Common ---

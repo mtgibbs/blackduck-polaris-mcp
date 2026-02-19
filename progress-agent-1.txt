@@ -1,0 +1,24 @@
+## Codebase Patterns
+
+- IssueQueryParams and GetIssueParams in src/api/findings.ts already had includeIssueExclusion, includeExtensionProperties, includeComponentLocations — these were not being exposed at service/tool layer
+- AssistResponse: spec shows fields as required, but PRD requires making them optional for defensive typing
+- TriageAuthor.id: spec shows it as required but PRD requires making it optional
+- IssueContext.tenantId and _links ARE in the spec — keep them, don't remove
+- deno lint and deno fmt --check both work fine without network access
+
+---
+
+## 2026-02-19 - PRD-F1
+- Implemented all acceptance criteria for PRD-F1 (Fix shared types and existing issue endpoint gaps)
+- Files changed:
+  - `src/types/polaris.ts`: TriageAuthor.id changed to optional (id?: string); AssistResponse fields summary, codeAnalysis, analysis, suggestedFix changed to optional
+  - `src/services/findings.ts`: GetIssuesOptions gained includeIssueExclusion, includeExtensionProperties, includeComponentLocations; getIssues() passes them to API; GetIssueOptions gained includeIssueExclusion, includeExtensionProperties; getIssue() passes them to API
+  - `src/mcp/tools/get-issues.ts`: Added optional schema fields include_issue_exclusion, include_extension_properties, include_component_locations wired to service
+  - `src/mcp/tools/get-issue.ts`: Added optional schema fields include_issue_exclusion, include_extension_properties wired to service
+  - `prd.json`: Set PRD-F1 passes: true
+- `deno lint` passes, `deno fmt --check` passes
+- **Learnings for future iterations:**
+  - The API layer (src/api/findings.ts) already had all three include* params in IssueQueryParams and GetIssueParams — only service and tool layers needed updating
+  - IssueContext spec includes tenantId and _links, so no cleanup was needed there
+  - Both lint and fmt checks pass without network access
+---

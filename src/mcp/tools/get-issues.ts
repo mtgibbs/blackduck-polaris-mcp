@@ -33,6 +33,18 @@ export const schema = {
     .number()
     .optional()
     .describe("Maximum number of issues to return (default: 100, max: 500)"),
+  include_issue_exclusion: z
+    .boolean()
+    .optional()
+    .describe("Include issue exclusion data in the response"),
+  include_extension_properties: z
+    .boolean()
+    .optional()
+    .describe("Include extension properties in the response"),
+  include_component_locations: z
+    .boolean()
+    .optional()
+    .describe("Include component locations in the response"),
 };
 
 export const getIssuesTool: ToolDefinition<typeof schema> = {
@@ -51,6 +63,9 @@ export const getIssuesTool: ToolDefinition<typeof schema> = {
     delta,
     sort,
     max_results,
+    include_issue_exclusion,
+    include_extension_properties,
+    include_component_locations,
   }) => {
     if (!application_id && !project_id) {
       return errorResponse("Either application_id or project_id must be provided");
@@ -69,6 +84,9 @@ export const getIssuesTool: ToolDefinition<typeof schema> = {
       delta,
       sort,
       first: max_results,
+      includeIssueExclusion: include_issue_exclusion,
+      includeExtensionProperties: include_extension_properties,
+      includeComponentLocations: include_component_locations,
     });
     return jsonResponse(issues);
   },

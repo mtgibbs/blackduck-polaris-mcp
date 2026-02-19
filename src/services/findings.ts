@@ -1,5 +1,30 @@
 import * as findingsApi from "../api/findings.ts";
-import type { AssistResponse, CodeSnippet, Issue, Occurrence } from "../types/polaris.ts";
+import type {
+  ActivityLogEntry,
+  AssistResponse,
+  CodeSnippet,
+  ComponentOrigin,
+  ComponentOriginMatch,
+  ComponentVersion,
+  ComponentVersionCountItem,
+  ComponentVersionModifyRequest,
+  ComponentVersionModifyResponse,
+  DetectionHistory,
+  Issue,
+  IssueCountItem,
+  IssueCountOverTimeResponse,
+  IssueExportItem,
+  LicenseDefinition,
+  LicenseDefinitionResponse,
+  Occurrence,
+  OperationStatus,
+  Taxon,
+  TaxonIssueType,
+  Taxonomy,
+  TriageHistoryTransaction,
+  TriagePropertyInput,
+  TriageResult,
+} from "../types/polaris.ts";
 
 // --- Issues ---
 
@@ -13,6 +38,9 @@ export interface GetIssuesOptions {
   delta?: string;
   sort?: string;
   first?: number;
+  includeIssueExclusion?: boolean;
+  includeExtensionProperties?: boolean;
+  includeComponentLocations?: boolean;
 }
 
 export function getIssues(options: GetIssuesOptions): Promise<Issue[]> {
@@ -42,6 +70,9 @@ export function getIssues(options: GetIssuesOptions): Promise<Issue[]> {
     includeTriageProperties: true,
     includeFirstDetectedOn: true,
     includeContext: true,
+    includeIssueExclusion: options.includeIssueExclusion,
+    includeExtensionProperties: options.includeExtensionProperties,
+    includeComponentLocations: options.includeComponentLocations,
     first: options.first,
   });
 }
@@ -52,6 +83,8 @@ export interface GetIssueOptions {
   projectId?: string;
   branchId?: string;
   testId?: string;
+  includeIssueExclusion?: boolean;
+  includeExtensionProperties?: boolean;
 }
 
 export function getIssue(options: GetIssueOptions): Promise<Issue> {
@@ -67,7 +100,49 @@ export function getIssue(options: GetIssueOptions): Promise<Issue> {
     includeFirstDetectedOn: true,
     includeContext: true,
     includeComponentLocations: true,
+    includeIssueExclusion: options.includeIssueExclusion,
+    includeExtensionProperties: options.includeExtensionProperties,
   });
+}
+
+// --- Issue Triage History ---
+
+export interface GetIssueTriageHistoryOptions {
+  issueId: string;
+  applicationId?: string;
+  projectId?: string;
+  branchId?: string;
+  testId?: string;
+  maxResults?: number;
+}
+
+export function getIssueTriageHistory(
+  options: GetIssueTriageHistoryOptions,
+): Promise<TriageHistoryTransaction[]> {
+  return findingsApi.getIssueTriageHistory({
+    issueId: options.issueId,
+    applicationId: options.applicationId,
+    projectId: options.projectId,
+    branchId: options.branchId,
+    testId: options.testId,
+    first: options.maxResults,
+  });
+}
+
+// --- Issue Detection History ---
+
+export interface GetIssueDetectionHistoryOptions {
+  issueId: string;
+  applicationId?: string;
+  projectId?: string;
+  branchId?: string;
+  testId?: string;
+}
+
+export function getIssueDetectionHistory(
+  options: GetIssueDetectionHistoryOptions,
+): Promise<DetectionHistory> {
+  return findingsApi.getIssueDetectionHistory(options);
 }
 
 // --- Occurrences ---
@@ -167,6 +242,323 @@ export interface ProvideAssistFeedbackOptions {
 
 export function provideAssistFeedback(
   options: ProvideAssistFeedbackOptions,
-): Promise<void> {
+): Promise<AssistResponse> {
   return findingsApi.provideAssistFeedback(options);
+}
+
+// --- Triage Issues ---
+
+export interface TriageIssuesOptions {
+  applicationId?: string;
+  projectId?: string;
+  branchId?: string;
+  testId?: string;
+  filter?: string;
+  triageProperties: TriagePropertyInput[];
+}
+
+export function triageIssues(options: TriageIssuesOptions): Promise<TriageResult> {
+  return findingsApi.triageIssues(options);
+}
+
+// --- Issue Count ---
+
+export interface GetIssueCountOptions {
+  applicationId?: string;
+  projectId?: string;
+  branchId?: string;
+  testId?: string;
+  filter?: string;
+  group?: string[];
+  includeAverageAge?: boolean;
+  first?: number;
+}
+
+export function getIssueCount(options: GetIssueCountOptions): Promise<IssueCountItem[]> {
+  return findingsApi.getIssueCount(options);
+}
+
+// --- Export Findings Issues ---
+
+export interface ExportFindingsIssuesOptions {
+  applicationId?: string;
+  projectId?: string;
+  branchId?: string;
+  testId?: string;
+  filter?: string;
+  sort?: string;
+  fileName?: string;
+}
+
+export function exportFindingsIssues(
+  options: ExportFindingsIssuesOptions,
+): Promise<IssueExportItem[]> {
+  return findingsApi.exportIssues(options);
+}
+
+// --- Issue Count Over Time ---
+
+export interface GetIssueCountOverTimeOptions {
+  applicationId?: string;
+  projectId?: string;
+  branchId?: string;
+  lastXDays?: number;
+  fromDate?: string;
+  toDate?: string;
+}
+
+export function getIssueCountOverTime(
+  options: GetIssueCountOverTimeOptions,
+): Promise<IssueCountOverTimeResponse> {
+  return findingsApi.getIssueCountOverTime(options);
+}
+
+// --- Pending Approval ---
+
+export interface ChangePendingFixByOptions {
+  projectId: string;
+  branchId?: string;
+  ids: string[];
+  action: "approved" | "rejected";
+  comment?: string;
+}
+
+export function changePendingFixBy(options: ChangePendingFixByOptions): Promise<void> {
+  return findingsApi.changePendingFixBy(options);
+}
+
+export interface ChangePendingStatusOptions {
+  projectId: string;
+  branchId?: string;
+  ids: string[];
+  action: "approved" | "rejected";
+  comment?: string;
+}
+
+export function changePendingStatus(options: ChangePendingStatusOptions): Promise<void> {
+  return findingsApi.changePendingStatus(options);
+}
+
+// --- Taxonomy ---
+
+export interface GetTaxonomiesOptions {
+  includeDescendants?: boolean;
+  includeOnlyStandards?: boolean;
+  first?: number;
+}
+
+export function getTaxonomies(options: GetTaxonomiesOptions): Promise<Taxonomy[]> {
+  return findingsApi.getTaxonomies(options);
+}
+
+export function getTaxon(taxonId: string): Promise<Taxon> {
+  return findingsApi.getTaxon({ taxonId });
+}
+
+export interface GetTaxonSubtaxaOptions {
+  taxonId: string;
+  first?: number;
+}
+
+export function getTaxonSubtaxa(options: GetTaxonSubtaxaOptions): Promise<Taxon[]> {
+  return findingsApi.getTaxonSubtaxa(options);
+}
+
+export interface GetTaxonIssueTypesOptions {
+  taxonId: string;
+  first?: number;
+}
+
+export function getTaxonIssueTypes(options: GetTaxonIssueTypesOptions): Promise<TaxonIssueType[]> {
+  return findingsApi.getTaxonIssueTypes(options);
+}
+
+// --- Component Versions ---
+
+export interface GetComponentVersionsOptions {
+  projectId?: string;
+  applicationId?: string;
+  branchId?: string;
+  testId?: string;
+  filter?: string;
+  includeComponent?: boolean;
+  includeLicense?: boolean;
+  first?: number;
+}
+
+export function getComponentVersions(
+  options: GetComponentVersionsOptions,
+): Promise<ComponentVersion[]> {
+  return findingsApi.getComponentVersions(options);
+}
+
+export interface GetComponentVersionOptions {
+  id: string;
+  projectId?: string;
+  applicationId?: string;
+  includeComponent?: boolean;
+  includeLicense?: boolean;
+}
+
+export function getComponentVersion(
+  options: GetComponentVersionOptions,
+): Promise<ComponentVersion> {
+  return findingsApi.getComponentVersion(options);
+}
+
+export interface GetComponentVersionCountOptions {
+  projectId?: string;
+  applicationId?: string;
+  branchId?: string;
+  testId?: string;
+  filter?: string;
+  group?: string[];
+  first?: number;
+}
+
+export function getComponentVersionCount(
+  options: GetComponentVersionCountOptions,
+): Promise<ComponentVersionCountItem[]> {
+  return findingsApi.getComponentVersionCount(options);
+}
+
+export interface AddComponentVersionOptions {
+  projectId: string;
+  branchId?: string;
+  body: ComponentVersionModifyRequest;
+}
+
+export function addComponentVersion(
+  options: AddComponentVersionOptions,
+): Promise<ComponentVersionModifyResponse> {
+  return findingsApi.addComponentVersion(options);
+}
+
+export interface EditComponentVersionOptions {
+  id: string;
+  projectId: string;
+  branchId?: string;
+  applyOnProjectLevel?: boolean;
+  body: ComponentVersionModifyRequest;
+}
+
+export function editComponentVersion(
+  options: EditComponentVersionOptions,
+): Promise<ComponentVersionModifyResponse> {
+  return findingsApi.editComponentVersion(options);
+}
+
+export interface ResetComponentVersionOptions {
+  id: string;
+  projectId: string;
+  branchId?: string;
+  comment?: string;
+}
+
+export function resetComponentVersion(options: ResetComponentVersionOptions): Promise<void> {
+  return findingsApi.resetComponentVersion(options);
+}
+
+export interface DeleteComponentVersionOptions {
+  id: string;
+  projectId: string;
+  branchId?: string;
+}
+
+export function deleteComponentVersion(
+  options: DeleteComponentVersionOptions,
+): Promise<ComponentVersionModifyResponse> {
+  return findingsApi.deleteComponentVersion(options);
+}
+
+export function getOperationStatus(id: string): Promise<OperationStatus> {
+  return findingsApi.getOperationStatus(id);
+}
+
+export interface GetComponentVersionActivityLogOptions {
+  id: string;
+  projectId: string;
+  first?: number;
+}
+
+export function getComponentVersionActivityLog(
+  options: GetComponentVersionActivityLogOptions,
+): Promise<ActivityLogEntry[]> {
+  return findingsApi.getComponentVersionActivityLog(options);
+}
+
+export interface GetComponentVersionTriageHistoryOptions {
+  id: string;
+  projectId?: string;
+  applicationId?: string;
+  branchId?: string;
+  testId?: string;
+  first?: number;
+}
+
+export function getComponentVersionTriageHistory(
+  options: GetComponentVersionTriageHistoryOptions,
+): Promise<TriageHistoryTransaction[]> {
+  return findingsApi.getComponentVersionTriageHistory(options);
+}
+
+export interface TriageComponentVersionsOptions {
+  projectId?: string;
+  applicationId?: string;
+  filter?: string;
+  triageProperties: Array<{ key: string; value: string | boolean }>;
+}
+
+export function triageComponentVersions(
+  options: TriageComponentVersionsOptions,
+): Promise<TriageResult> {
+  return findingsApi.triageComponentVersions(options);
+}
+
+export interface AssignComponentVersionLicenseOptions {
+  id: string;
+  projectId?: string;
+  applicationId?: string;
+  body: LicenseDefinition;
+}
+
+export function assignComponentVersionLicense(
+  options: AssignComponentVersionLicenseOptions,
+): Promise<LicenseDefinitionResponse> {
+  return findingsApi.assignComponentVersionLicense(options);
+}
+
+// --- Component Origins ---
+
+export interface GetComponentOriginsOptions {
+  projectId: string;
+  filter?: string;
+  first?: number;
+}
+
+export function getComponentOrigins(
+  options: GetComponentOriginsOptions,
+): Promise<ComponentOrigin[]> {
+  return findingsApi.getComponentOrigins(options);
+}
+
+export interface GetComponentOriginOptions {
+  id: string;
+  projectId: string;
+}
+
+export function getComponentOrigin(options: GetComponentOriginOptions): Promise<ComponentOrigin> {
+  return findingsApi.getComponentOrigin(options);
+}
+
+export interface GetComponentOriginMatchesOptions {
+  id: string;
+  projectId: string;
+  first?: number;
+}
+
+export function getComponentOriginMatches(
+  options: GetComponentOriginMatchesOptions,
+): Promise<ComponentOriginMatch[]> {
+  return findingsApi.getComponentOriginMatches(options);
 }
