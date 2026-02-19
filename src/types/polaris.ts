@@ -4,14 +4,16 @@ export type SubscriptionType = "PARALLEL" | "CONCURRENT";
 
 export type SubItemType = "PROJECT" | "DAST";
 
-export type BranchSource = "USER";
+export type BranchSource = "USER" | "SCM" | "CI";
 
+// Note: The OpenAPI spec only defines `id` for Portfolio. The additional fields
+// (name, organizationId, description, _links) are not in the spec but may be returned by the API.
 export interface Portfolio {
   id: string;
-  name: string;
+  name?: string;
   organizationId?: string;
   description?: string;
-  _links: LinkEntry[];
+  _links?: LinkEntry[];
 }
 
 export interface Entitlements {
@@ -22,18 +24,19 @@ export interface Entitlements {
 export interface Application {
   id: string;
   name: string;
-  description?: string;
-  subscriptionTypeUsed?: SubscriptionType;
-  portfolioId?: string;
+  description: string;
+  subscriptionTypeUsed: SubscriptionType;
+  portfolioId: string;
   labelIds?: string[];
   entitlements?: Entitlements;
   riskFactorMapping?: Record<string, string>;
-  inTrash?: boolean;
-  createdAt?: string;
-  updatedAt?: string;
-  autoDeleteSetting?: boolean;
-  branchRetentionPeriodSetting?: number;
-  _links: LinkEntry[];
+  inTrash: boolean;
+  createdAt: string;
+  updatedAt: string;
+  autoDeleteSetting: boolean;
+  branchRetentionPeriodSetting: number;
+  // Note: _links is not in the OpenAPI spec for applications but may be returned by the API.
+  _links?: LinkEntry[];
 }
 
 export interface DefaultBranch {
@@ -42,6 +45,9 @@ export interface DefaultBranch {
   description?: string;
   source?: BranchSource;
   isDefault?: boolean;
+  autoDeleteSetting?: boolean;
+  branchRetentionPeriodSetting?: number;
+  autoDeleteSettingsCustomized?: boolean;
 }
 
 export interface Project {
@@ -58,7 +64,26 @@ export interface Project {
   autoDeleteSetting?: boolean;
   branchRetentionPeriodSetting?: number;
   autoDeleteSettingsCustomized?: boolean;
-  _links: LinkEntry[];
+  // Present in org-wide projects response (PortfolioCatalogProjectDetails)
+  applicationId?: string;
+  branches?: CatalogBranch[];
+  // _links is present in app-scoped response but not in org-wide response
+  _links?: LinkEntry[];
+}
+
+// Branch details returned in the org-wide projects response (PortfolioCatalogBranchDetails)
+export interface CatalogBranch {
+  id: string;
+  name: string;
+  description?: string;
+  source?: BranchSource;
+  isDefault?: boolean;
+  projectId?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  autoDeleteSetting?: boolean;
+  autoDeleteSettingsCustomized?: boolean;
+  branchRetentionPeriodSetting?: number;
 }
 
 export interface Branch {
@@ -67,7 +92,12 @@ export interface Branch {
   description?: string;
   source?: BranchSource;
   isDefault?: boolean;
-  _links: LinkEntry[];
+  labelIds?: string[];
+  autoDeleteSetting?: boolean;
+  autoDeleteSettingsCustomized?: boolean;
+  branchRetentionPeriodSetting?: number;
+  // _links present in single-branch response but not in GET-all list items per spec
+  _links?: LinkEntry[];
 }
 
 // --- Findings ---
@@ -100,7 +130,7 @@ export type AttackSegment =
 
 export interface Issue {
   id: string;
-  tenantId?: string;
+  _type: string;
   weaknessId?: string;
   excluded?: boolean;
   updatedAt?: string;
@@ -135,6 +165,8 @@ export interface IssueContext {
   scanMode?: string;
   toolVersion?: string;
   date?: string;
+  tenantId?: string;
+  _links?: LinkEntry[];
 }
 
 export interface OccurrenceProperty {
@@ -151,8 +183,8 @@ export interface TriageProperty {
 }
 
 export interface TriageAuthor {
-  id?: string;
-  name?: string;
+  id: string;
+  _links?: LinkEntry[];
 }
 
 export interface ComponentLocation {
@@ -174,10 +206,10 @@ export interface ColumnLocation {
 
 export interface Occurrence {
   id: string;
-  tenantId?: string;
+  tenantId: string;
   properties?: OccurrenceProperty[];
   type?: FindingsType;
-  _type?: string;
+  _type: string;
   _links: LinkEntry[];
 }
 
@@ -189,6 +221,7 @@ export interface CodeSnippet {
   language?: string;
   events?: SnippetEvent[];
   "example-events-groups"?: EventGroup[];
+  "example-events-caption"?: string;
 }
 
 export interface SnippetEvent {
@@ -211,6 +244,7 @@ export interface SourceContext {
 }
 
 export interface EventGroup {
+  "event-set"?: number;
   events?: SnippetEvent[];
 }
 
@@ -218,11 +252,11 @@ export interface EventGroup {
 
 export interface AssistResponse {
   id: string;
-  summary?: string;
-  codeAnalysis?: string;
-  analysis?: string;
-  suggestedFix?: string | null;
-  feedbackResponses?: AssistFeedback[];
+  summary: string;
+  codeAnalysis: string;
+  analysis: string;
+  suggestedFix: string | null;
+  feedbackResponses: AssistFeedback[];
 }
 
 export interface AssistFeedback {
@@ -233,7 +267,7 @@ export interface AssistFeedback {
 // --- DAST Evidence ---
 
 export interface Evidence {
-  label?: string;
+  label: string;
   attack?: Attack;
   _links?: LinkEntry[];
 }
@@ -329,5 +363,5 @@ export interface LinkedIssue {
 export interface LinkEntry {
   href: string;
   rel: string;
-  method?: string;
+  method: string;
 }

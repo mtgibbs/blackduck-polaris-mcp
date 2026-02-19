@@ -13,7 +13,7 @@ export interface PaginatedResponse<T> {
 export interface LinkEntry {
   href: string;
   rel: string;
-  method?: string;
+  method: string;
 }
 
 export interface ProblemDetail {
@@ -216,8 +216,11 @@ export class PolarisClient {
     while (true) {
       const requestParams: Record<string, string | number | boolean | undefined> = {
         ...params,
-        _first: pageSize,
       };
+      // Only set _first if _last wasn't explicitly provided (they're mutually exclusive)
+      if (!requestParams._last) {
+        requestParams._first = pageSize;
+      }
       if (cursor) {
         requestParams._cursor = cursor;
       }

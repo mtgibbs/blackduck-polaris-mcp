@@ -4,8 +4,8 @@ import type { AssistResponse, CodeSnippet, Issue, Occurrence } from "../types/po
 // --- Issues ---
 
 export interface GetIssuesOptions {
-  projectId: string;
   applicationId?: string;
+  projectId?: string;
   branchId?: string;
   testId?: string;
   severity?: string[];
@@ -31,8 +31,8 @@ export function getIssues(options: GetIssuesOptions): Promise<Issue[]> {
   }
 
   return findingsApi.getIssues({
-    projectId: options.projectId,
     applicationId: options.applicationId,
+    projectId: options.projectId,
     branchId: options.branchId,
     testId: options.testId,
     filter: filters.length > 0 ? filters.join(";") : undefined,
@@ -48,6 +48,7 @@ export function getIssues(options: GetIssuesOptions): Promise<Issue[]> {
 
 export interface GetIssueOptions {
   issueId: string;
+  applicationId?: string;
   projectId?: string;
   branchId?: string;
   testId?: string;
@@ -56,17 +57,24 @@ export interface GetIssueOptions {
 export function getIssue(options: GetIssueOptions): Promise<Issue> {
   return findingsApi.getIssue({
     issueId: options.issueId,
+    applicationId: options.applicationId,
     projectId: options.projectId,
     branchId: options.branchId,
     testId: options.testId,
+    includeType: true,
+    includeOccurrenceProperties: true,
+    includeTriageProperties: true,
+    includeFirstDetectedOn: true,
+    includeContext: true,
+    includeComponentLocations: true,
   });
 }
 
 // --- Occurrences ---
 
 export interface GetOccurrencesOptions {
-  projectId: string;
   applicationId?: string;
+  projectId?: string;
   branchId?: string;
   testId?: string;
   issueId?: string;
@@ -111,30 +119,54 @@ export function getOccurrence(options: GetOccurrenceOptions): Promise<Occurrence
     projectId: options.projectId,
     branchId: options.branchId,
     testId: options.testId,
+    includeProperties: true,
+    includeType: true,
   });
 }
 
 // --- Snippet ---
 
-export function getCodeSnippet(occurrenceId: string): Promise<CodeSnippet> {
-  return findingsApi.getOccurrenceSnippet({ occurrenceId });
+export interface GetCodeSnippetOptions {
+  occurrenceId: string;
+  applicationId?: string;
+  projectId?: string;
+  branchId?: string;
+  testId?: string;
+}
+
+export function getCodeSnippet(options: GetCodeSnippetOptions): Promise<CodeSnippet> {
+  return findingsApi.getOccurrenceSnippet(options);
 }
 
 // --- Remediation Assist ---
 
-export function getRemediationAssist(occurrenceId: string): Promise<AssistResponse> {
-  return findingsApi.getOccurrenceAssist({ occurrenceId });
+export interface GetRemediationAssistOptions {
+  occurrenceId: string;
+  applicationId?: string;
+  projectId?: string;
+  branchId?: string;
+  testId?: string;
+}
+
+export function getRemediationAssist(
+  options: GetRemediationAssistOptions,
+): Promise<AssistResponse> {
+  return findingsApi.getOccurrenceAssist(options);
 }
 
 export interface ProvideAssistFeedbackOptions {
   occurrenceId: string;
   assistId: string;
+  applicationId?: string;
+  projectId?: string;
+  branchId?: string;
+  testId?: string;
   disposition: boolean;
   comment?: string;
 }
 
 export function provideAssistFeedback(
   options: ProvideAssistFeedbackOptions,
-): Promise<AssistResponse> {
+): Promise<void> {
   return findingsApi.provideAssistFeedback(options);
 }
