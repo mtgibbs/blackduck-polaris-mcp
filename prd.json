@@ -194,7 +194,9 @@
       ],
       "priority": 7,
       "passes": false,
-      "notes": "Depends on PRD-F1. Blocks PRD-F9, F10, F11. ComponentVersion and MatchType types reused by downstream stories."
+      "notes": "Depends on PRD-F1. Blocks PRD-F9, F10, F11. ComponentVersion and MatchType types reused by downstream stories.",
+      "claimed_by": "agent-4",
+      "claimed_at": "2026-02-19T18:00:50Z"
     },
     {
       "id": "PRD-F9",
