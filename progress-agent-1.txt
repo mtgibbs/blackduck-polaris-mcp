@@ -22,3 +22,16 @@
   - IssueContext spec includes tenantId and _links, so no cleanup was needed there
   - Both lint and fmt checks pass without network access
 ---
+
+## 2026-02-19 - PRD-P1
+- Added all 24 TypeScript interfaces to src/types/polaris.ts in the '// --- Portfolio ---' section, between the Branch interface and '// --- Findings ---'
+- Interfaces added: CreateApplicationRequest, UpdateApplicationRequest, CreateProjectRequest, UpdateProjectRequest, CreateBranchRequest, UpdateBranchRequest, ProjectSubResource, ProjectSubResourceCountItem, Profile, ProfileArtifact, CreateProfileArtifactRequest, Label, CreateLabelRequest, MergeLabelRequest, ApplicationEntitlementItem, ApplicationEntitlementsResponse, EntitlementQuantityUpdateRequest, EntitlementQuantityUpdateResponse, PortfolioEntitlement, OrganizationSettings, RiskCategory, RiskFactor, RiskScoringSettings, DashboardItem
+- Files changed: src/types/polaris.ts, prd.json
+- Dependency order respected: RiskCategory before RiskFactor before RiskScoringSettings; ApplicationEntitlementItem before ApplicationEntitlementsResponse
+- `deno lint` passes, `deno fmt --check` passes
+- **Learnings for future iterations:**
+  - Profile uses `LinkEntry[]` for _links — the LinkEntry type is defined later in the file (// --- Common --- section) but TypeScript handles forward references in interfaces fine
+  - ProjectSubResource.additionalProperties field name is the same as TypeScript's `additionalProperties` but that's fine since it's an explicit typed field, not an index signature
+  - All portfolio types live in src/types/polaris.ts (not separate files); add them after the Branch interface in the Portfolio section
+  - MergeLabelRequest.targetLabel uses inline object type `{ name: string; description?: string }` per spec
+---
