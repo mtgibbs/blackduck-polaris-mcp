@@ -159,7 +159,9 @@
       ],
       "priority": 3,
       "passes": false,
-      "notes": "Depends on PRD-P1 for CreateProfileArtifactRequest, ProfileArtifact, ApplicationEntitlementsResponse, EntitlementQuantityUpdateRequest, EntitlementQuantityUpdateResponse, PortfolioEntitlement types."
+      "notes": "Depends on PRD-P1 for CreateProfileArtifactRequest, ProfileArtifact, ApplicationEntitlementsResponse, EntitlementQuantityUpdateRequest, EntitlementQuantityUpdateResponse, PortfolioEntitlement types.",
+      "claimed_by": "agent-1",
+      "claimed_at": "2026-02-19T21:02:50Z"
     },
     {
       "id": "PRD-P7",
