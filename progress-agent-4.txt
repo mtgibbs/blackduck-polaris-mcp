@@ -33,6 +33,26 @@
   - PRD-F9 and PRD-F10 need ACCEPT_COMPONENT_VERSIONS from this story; it's module-private so those stories will re-declare it
 ---
 
+## 2026-02-19 - PRD-F9
+- Implemented component versions write endpoints across all layers:
+  1. src/types/polaris.ts: Added ComponentVersionModifyRequest, ComponentVersionModifyResponse, OperationStatusType, OperationActionType, OperationStatus interfaces
+  2. src/api/findings.ts: Added addComponentVersion() (POST), editComponentVersion() (POST), resetComponentVersion() (POST, returns void), deleteComponentVersion() (DELETE), getOperationStatus() (single GET)
+  3. src/services/findings.ts: Added all five corresponding service functions
+  4. src/mcp/tools/add-component-version.ts: Created add_component_version tool (readOnlyHint: false)
+  5. src/mcp/tools/edit-component-version.ts: Created edit_component_version tool (readOnlyHint: false)
+  6. src/mcp/tools/reset-component-version.ts: Created reset_component_version tool (readOnlyHint: false)
+  7. src/mcp/tools/delete-component-version.ts: Created delete_component_version tool (readOnlyHint: false, destructiveHint: true)
+  8. src/mcp/tools/get-operation-status.ts: Created get_operation_status tool (readOnlyHint: true)
+  9. src/mcp/tools/index.ts: Registered all five new tools
+- Files changed: src/types/polaris.ts, src/api/findings.ts, src/services/findings.ts, 5 new tool files, src/mcp/tools/index.ts, prd.json
+- **Learnings for future iterations:**
+  - add/edit return ComponentVersionModifyResponse with componentVersionId, operationId, actionType
+  - reset returns void (200 Success with no schema defined)
+  - delete also returns ComponentVersionModifyResponse (same schema as add/edit response)
+  - getOperationStatus is a simple GET with no query params (just path param id)
+  - OperationStatus has status (PROCESSING|COMPLETED|ERROR), actionType (ADD|EDIT|DELETE), timestamp
+---
+
 ## Codebase Patterns
 - Tool definitions: schema is plain object of Zod types (NOT z.object()), handler destructures args, return jsonResponse(data) or errorResponse(msg)
 - API layer uses client.fetch<T>() for non-GET requests with {method, params, body, accept, contentType}
