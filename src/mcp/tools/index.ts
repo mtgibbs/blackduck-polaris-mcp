@@ -36,6 +36,9 @@ import { getComponentVersionActivityLogTool } from "./get-component-version-acti
 import { getComponentVersionTriageHistoryTool } from "./get-component-version-triage-history.ts";
 import { triageComponentVersionsTool } from "./triage-component-versions.ts";
 import { assignComponentVersionLicenseTool } from "./assign-component-version-license.ts";
+import { getComponentOriginsTool } from "./get-component-origins.ts";
+import { getComponentOriginTool } from "./get-component-origin.ts";
+import { getComponentOriginMatchesTool } from "./get-component-origin-matches.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -75,4 +78,7 @@ export const tools: AnyToolDefinition[] = [
   getComponentVersionTriageHistoryTool,
   triageComponentVersionsTool,
   assignComponentVersionLicenseTool,
+  getComponentOriginsTool,
+  getComponentOriginTool,
+  getComponentOriginMatchesTool,
 ];

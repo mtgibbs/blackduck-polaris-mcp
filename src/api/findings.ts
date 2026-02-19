@@ -4,6 +4,8 @@ import type {
   AssistFeedbackPatch,
   AssistResponse,
   CodeSnippet,
+  ComponentOrigin,
+  ComponentOriginMatch,
   ComponentVersion,
   ComponentVersionCountItem,
   ComponentVersionModifyRequest,
@@ -938,5 +940,70 @@ export function assignComponentVersionLicense(
       accept: ACCEPT_COMPONENT_VERSIONS,
       contentType: ACCEPT_COMPONENT_VERSIONS,
     },
+  );
+}
+
+// --- Component Origins ---
+
+const ACCEPT_COMPONENT_ORIGINS = "application/vnd.polaris.findings.component-origins-1+json";
+
+export interface GetComponentOriginsParams {
+  projectId: string;
+  filter?: string;
+  first?: number;
+}
+
+export function getComponentOrigins(params: GetComponentOriginsParams): Promise<ComponentOrigin[]> {
+  const client = getClient();
+  const queryParams: Record<string, string | number | undefined> = {
+    projectId: params.projectId,
+    _first: params.first ?? 100,
+  };
+  if (params.filter) queryParams._filter = params.filter;
+
+  return client.getAllCursor<ComponentOrigin>(
+    "/api/findings/component-origins",
+    queryParams,
+    ACCEPT_COMPONENT_ORIGINS,
+  );
+}
+
+export interface GetComponentOriginParams {
+  id: string;
+  projectId: string;
+}
+
+export function getComponentOrigin(params: GetComponentOriginParams): Promise<ComponentOrigin> {
+  const client = getClient();
+  const queryParams: Record<string, string | undefined> = {
+    projectId: params.projectId,
+  };
+
+  return client.get<ComponentOrigin>(
+    `/api/findings/component-origins/${params.id}`,
+    queryParams,
+    ACCEPT_COMPONENT_ORIGINS,
+  );
+}
+
+export interface GetComponentOriginMatchesParams {
+  id: string;
+  projectId: string;
+  first?: number;
+}
+
+export function getComponentOriginMatches(
+  params: GetComponentOriginMatchesParams,
+): Promise<ComponentOriginMatch[]> {
+  const client = getClient();
+  const queryParams: Record<string, string | number | undefined> = {
+    projectId: params.projectId,
+    _first: params.first ?? 100,
+  };
+
+  return client.getAllCursor<ComponentOriginMatch>(
+    `/api/findings/component-origins/${params.id}/matches`,
+    queryParams,
+    ACCEPT_COMPONENT_ORIGINS,
   );
 }

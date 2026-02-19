@@ -603,6 +603,60 @@ export interface TriageHistoryTransaction {
   _links?: LinkEntry[];
 }
 
+// --- Component Origins ---
+
+export interface SecurityRiskCounts {
+  critical?: number;
+  high?: number;
+  medium?: number;
+  low?: number;
+}
+
+export interface UpgradeGuidanceTarget {
+  componentId?: string;
+  componentName?: string;
+  componentVersionId?: string;
+  componentOriginId?: string;
+  externalId?: string;
+  versionName?: string;
+  securityRisk?: SecurityRiskCounts;
+  _links?: LinkEntry[];
+}
+
+export interface UpgradeGuidance {
+  shortTerm?: UpgradeGuidanceTarget;
+  longTerm?: UpgradeGuidanceTarget;
+}
+
+export interface TransitiveUpgradeGuidance {
+  externalId?: string;
+  shortTerm?: UpgradeGuidanceTarget;
+  longTerm?: UpgradeGuidanceTarget;
+}
+
+export interface ComponentOrigin {
+  id: string;
+  componentId: string;
+  externalNamespace: string;
+  externalId: string;
+  packageUrl?: string;
+  matchesCount?: number;
+  securityRisk?: SecurityRiskCounts;
+  upgradeGuidance?: UpgradeGuidance;
+  transitiveUpgradeGuidance?: TransitiveUpgradeGuidance[];
+  _links?: LinkEntry[];
+  _type?: string;
+}
+
+export interface ComponentOriginMatch {
+  id: string;
+  matchType: MatchType;
+  externalIds?: string[];
+  fileUri?: string;
+  _cursor?: string;
+  _type?: string;
+}
+
 // --- Common ---
 
 export interface LinkEntry {

@@ -57,10 +57,29 @@
 - Tool definitions: schema is plain object of Zod types (NOT z.object()), handler destructures args, return jsonResponse(data) or errorResponse(msg)
 - API layer uses client.fetch<T>() for non-GET requests with {method, params, body, accept, contentType}
 - Format check includes YAML files in specs/ — run `deno fmt` on that directory if needed
-- `deno task lint` lints only .ts files (33 files); `deno fmt --check` checks all 50 files including YAMLs
+- `deno task lint` lints only .ts files; `deno fmt --check` checks all files including YAMLs
 - PolarisClient queryParams must be Record<string, string | number | boolean | undefined> — no string[] allowed; join arrays with .join(",") before passing
 - getAllCursor<T>() for cursor-paginated GET endpoints; client.fetch<T>() for POST/PATCH/DELETE; client.get<T>() for single-item GETs
+- Component origins endpoints require projectId (not optional), use cursor pagination for list and matches
 
+---
+
+## 2026-02-19 - PRD-F11
+- Implemented component origins endpoints across all layers:
+  1. src/types/polaris.ts: Added SecurityRiskCounts, UpgradeGuidanceTarget, UpgradeGuidance, TransitiveUpgradeGuidance, ComponentOrigin, ComponentOriginMatch interfaces
+  2. src/api/findings.ts: Added ACCEPT_COMPONENT_ORIGINS constant; getComponentOrigins() (cursor-paginated), getComponentOrigin() (single GET), getComponentOriginMatches() (cursor-paginated)
+  3. src/services/findings.ts: Added getComponentOrigins(), getComponentOrigin(), getComponentOriginMatches() service functions
+  4. src/mcp/tools/get-component-origins.ts: Created get_component_origins tool with project_id (required), filter, max_results
+  5. src/mcp/tools/get-component-origin.ts: Created get_component_origin tool with required id and project_id
+  6. src/mcp/tools/get-component-origin-matches.ts: Created get_component_origin_matches tool with id, project_id, max_results
+  7. src/mcp/tools/index.ts: Registered all three new tools
+- Files changed: src/types/polaris.ts, src/api/findings.ts, src/services/findings.ts, src/mcp/tools/get-component-origins.ts (new), src/mcp/tools/get-component-origin.ts (new), src/mcp/tools/get-component-origin-matches.ts (new), src/mcp/tools/index.ts, prd.json
+- **Learnings for future iterations:**
+  - ACCEPT_COMPONENT_ORIGINS = "application/vnd.polaris.findings.component-origins-1+json"
+  - Component origins require projectId as required param (not optional like other endpoints)
+  - ComponentOrigin.securityRisk is SecurityRiskCounts (critical/high/medium/low integer counts), not a string enum
+  - upgradeGuidance has shortTerm and longTerm targets; transitiveUpgradeGuidance is an array
+  - deno fmt will catch function signatures that exceed 100 chars — run `deno fmt` and re-check
 ---
 
 ## 2026-02-19 - PRD-F6

@@ -3,6 +3,8 @@ import type {
   ActivityLogEntry,
   AssistResponse,
   CodeSnippet,
+  ComponentOrigin,
+  ComponentOriginMatch,
   ComponentVersion,
   ComponentVersionCountItem,
   ComponentVersionModifyRequest,
@@ -473,4 +475,39 @@ export function assignComponentVersionLicense(
   options: AssignComponentVersionLicenseOptions,
 ): Promise<LicenseDefinitionResponse> {
   return findingsApi.assignComponentVersionLicense(options);
+}
+
+// --- Component Origins ---
+
+export interface GetComponentOriginsOptions {
+  projectId: string;
+  filter?: string;
+  first?: number;
+}
+
+export function getComponentOrigins(
+  options: GetComponentOriginsOptions,
+): Promise<ComponentOrigin[]> {
+  return findingsApi.getComponentOrigins(options);
+}
+
+export interface GetComponentOriginOptions {
+  id: string;
+  projectId: string;
+}
+
+export function getComponentOrigin(options: GetComponentOriginOptions): Promise<ComponentOrigin> {
+  return findingsApi.getComponentOrigin(options);
+}
+
+export interface GetComponentOriginMatchesOptions {
+  id: string;
+  projectId: string;
+  first?: number;
+}
+
+export function getComponentOriginMatches(
+  options: GetComponentOriginMatchesOptions,
+): Promise<ComponentOriginMatch[]> {
+  return findingsApi.getComponentOriginMatches(options);
 }
