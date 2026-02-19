@@ -38,6 +38,17 @@ export function getExternalProjects(
   return bugTrackingApi.getExternalProjects(options);
 }
 
+export interface GetExternalProjectByKeyOptions {
+  configurationId: string;
+  projectKey: string;
+}
+
+export function getExternalProjectByKey(
+  options: GetExternalProjectByKeyOptions,
+): Promise<ExternalProject> {
+  return bugTrackingApi.getExternalProjectByKey(options.configurationId, options.projectKey);
+}
+
 // --- External Issue Types ---
 
 export interface GetExternalIssueTypesOptions {

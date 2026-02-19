@@ -57,6 +57,18 @@ export function getExternalProjects(
   );
 }
 
+export function getExternalProjectByKey(
+  configurationId: string,
+  projectKey: string,
+): Promise<ExternalProject> {
+  const client = getClient();
+  return client.get<ExternalProject>(
+    `/api/integrations/bugtracking/configurations/${configurationId}/projects/${projectKey}`,
+    undefined,
+    ACCEPT,
+  );
+}
+
 // --- External Issue Types ---
 
 export interface GetExternalIssueTypesParams {
