@@ -108,7 +108,9 @@
       ],
       "priority": 2,
       "passes": false,
-      "notes": "Depends on PRD-BT1. Simple single-endpoint story. The projectKey path parameter is case-sensitive. Reuses the existing ExternalProject type."
+      "notes": "Depends on PRD-BT1. Simple single-endpoint story. The projectKey path parameter is case-sensitive. Reuses the existing ExternalProject type.",
+      "claimed_by": "agent-2",
+      "claimed_at": "2026-02-19T22:00:20Z"
     },
     {
       "id": "PRD-BT5",
