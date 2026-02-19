@@ -30,3 +30,24 @@
   - New tool files follow exact same pattern as get-issue.ts: schema object + ToolDefinition export
   - npm package downloads may stall indefinitely in this sandbox (network restriction); deno lint/fmt work fine
 ---
+
+## 2026-02-19 - PRD-BT2
+- Implemented config CRUD and test connection endpoints across all layers:
+  1. src/types/polaris.ts: Added CreateBugTrackingConfigRequest, UpdateBugTrackingConfigRequest, TestConnectionResult, CreateProjectMappingRequest, UpdateProjectMappingRequest, ExportCommentRequest interfaces (PRD-BT1 had not added these yet; added here since PRD-BT2 depends on them)
+  2. src/api/bug-tracking.ts: Added createConfiguration() (POST with system query param), updateConfiguration() (PATCH), deleteConfiguration() (DELETE, returns void), testConnection() (POST /connection, returns TestConnectionResult)
+  3. src/services/bug-tracking.ts: Added createBugTrackingConfiguration(), updateBugTrackingConfiguration(), deleteBugTrackingConfiguration(), testBugTrackingConnection() service wrappers with Options interfaces
+  4. src/mcp/tools/create-bug-tracking-config.ts: New tool create_bug_tracking_config (readOnlyHint: false)
+  5. src/mcp/tools/update-bug-tracking-config.ts: New tool update_bug_tracking_config (readOnlyHint: false)
+  6. src/mcp/tools/delete-bug-tracking-config.ts: New tool delete_bug_tracking_config (readOnlyHint: false, destructiveHint: true)
+  7. src/mcp/tools/test-bug-tracking-connection.ts: New tool test_bug_tracking_connection (readOnlyHint: true)
+  8. src/mcp/tools/index.ts: Registered all four new tools
+  9. prd.json: Set PRD-BT2 passes: true
+- `deno task lint` passes, `deno fmt --check` passes
+- **Learnings for future iterations:**
+  - PRD-BT1 (foundation types) was not yet completed when starting PRD-BT2; the types needed (CreateBugTrackingConfigRequest etc.) were added here directly to polaris.ts
+  - createConfiguration uses client.fetch() with method POST and a `params: { system }` field for the query param
+  - deleteConfiguration returns void (204 response); tool handler returns jsonResponse({success: true, id})
+  - testConnection uses POST but is considered read-only from user's perspective (readOnlyHint: true)
+  - deno fmt catches ternary operator formatting on tool handler code — run `deno fmt` before checking
+  - All six types required by PRD-BT1 were added (CreateBugTrackingConfigRequest, UpdateBugTrackingConfigRequest, TestConnectionResult, CreateProjectMappingRequest, UpdateProjectMappingRequest, ExportCommentRequest)
+---
