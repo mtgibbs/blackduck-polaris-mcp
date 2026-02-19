@@ -75,7 +75,7 @@ Each tool is one file exporting a `ToolDefinition<typeof schema>`:
 | `get_test_metrics`                | Issue counts by severity for a scan                    |
 | `get_bug_tracking_configurations` | List Jira/Azure DevOps integrations                    |
 | `get_external_projects`           | List projects in external bug tracking system          |
-| `export_issues`                   | Export issues to Jira/Azure DevOps tickets             |
+| `export_issues`                   | Export a single issue to Jira/Azure DevOps ticket      |
 
 ## Polaris API Conventions
 

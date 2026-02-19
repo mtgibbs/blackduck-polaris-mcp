@@ -3,7 +3,7 @@ import type {
   BugTrackingConfiguration,
   ExternalIssueType,
   ExternalProject,
-  IssueExportResult,
+  LinkedIssue,
   ProjectMapping,
 } from "../types/polaris.ts";
 
@@ -42,7 +42,7 @@ export function getExternalProjects(
 
 export interface GetExternalIssueTypesOptions {
   configurationId: string;
-  externalProjectKey: string;
+  projectKey: string;
 }
 
 export function getExternalIssueTypes(
@@ -63,20 +63,32 @@ export function getProjectMappings(
   return bugTrackingApi.getProjectMappings(options);
 }
 
-// --- Export Issues ---
+// --- Export / Linked Issues ---
 
-export interface ExportIssuesOptions {
+export interface ExportIssueOptions {
   configurationId: string;
-  projectId: string;
-  issueIds: string[];
+  projectMappingId: string;
+  issueFamilyId: string;
+  btsIssueTypeId?: string;
+  btsKey?: string;
   branchId?: string;
-  externalProjectKey?: string;
-  externalIssueTypeId?: string;
-  externalTicketId?: string;
 }
 
-export function exportIssues(
-  options: ExportIssuesOptions,
-): Promise<IssueExportResult[]> {
-  return bugTrackingApi.exportIssues(options);
+export function exportIssue(
+  options: ExportIssueOptions,
+): Promise<LinkedIssue> {
+  return bugTrackingApi.exportIssue(options);
+}
+
+export function getLinkedIssues(
+  configurationId: string,
+): Promise<LinkedIssue[]> {
+  return bugTrackingApi.getLinkedIssues(configurationId);
+}
+
+export function getLinkedIssue(
+  configurationId: string,
+  issueId: string,
+): Promise<LinkedIssue> {
+  return bugTrackingApi.getLinkedIssue(configurationId, issueId);
 }

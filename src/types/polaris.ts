@@ -280,18 +280,19 @@ export interface TestMetrics {
 
 export type BugTrackingSystemType = "JIRA" | "AZURE";
 
-export type JiraDeploymentType = "CLOUD" | "SERVER";
-
 export interface BugTrackingConfiguration {
   id: string;
-  name: string;
-  bugTrackingSystemType: BugTrackingSystemType;
-  jiraDeploymentType?: JiraDeploymentType;
+  type: BugTrackingSystemType;
   url?: string;
-  _links: LinkEntry[];
+  enabled?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+  details?: { deploymentType?: string };
+  _links?: LinkEntry[];
 }
 
 export interface ExternalProject {
+  id: string;
   key: string;
   name: string;
 }
@@ -303,20 +304,24 @@ export interface ExternalIssueType {
 
 export interface ProjectMapping {
   id: string;
-  configurationId: string;
   projectId: string;
-  branchId?: string;
-  externalProjectKey: string;
-  externalIssueTypeId: string;
-  _links: LinkEntry[];
+  configurationId: string;
+  btsProjectKey: string;
+  btsProjectId?: string;
+  btsIssueType: string;
+  _links?: LinkEntry[];
 }
 
-export interface IssueExportResult {
+export interface LinkedIssue {
+  id: string;
+  tenantId?: string;
   issueId: string;
-  externalTicketId?: string;
-  externalTicketUrl?: string;
+  branchId?: string;
   status: string;
-  error?: string;
+  issueKey?: string;
+  issueLink?: string;
+  createdAt?: string;
+  _links?: LinkEntry[];
 }
 
 // --- Common ---

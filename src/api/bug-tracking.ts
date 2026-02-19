@@ -3,7 +3,7 @@ import type {
   BugTrackingConfiguration,
   ExternalIssueType,
   ExternalProject,
-  IssueExportResult,
+  LinkedIssue,
   ProjectMapping,
 } from "../types/polaris.ts";
 
@@ -51,7 +51,7 @@ export function getExternalProjects(
   const queryParams: Record<string, string | undefined> = {};
   if (params.filter) queryParams._filter = params.filter;
   return client.getAllOffset<ExternalProject>(
-    `/api/integrations/bugtracking/configurations/${params.configurationId}/external-projects`,
+    `/api/integrations/bugtracking/configurations/${params.configurationId}/projects`,
     queryParams,
     ACCEPT,
   );
@@ -61,7 +61,7 @@ export function getExternalProjects(
 
 export interface GetExternalIssueTypesParams {
   configurationId: string;
-  externalProjectKey: string;
+  projectKey: string;
 }
 
 export function getExternalIssueTypes(
@@ -69,7 +69,7 @@ export function getExternalIssueTypes(
 ): Promise<ExternalIssueType[]> {
   const client = getClient();
   return client.getAllOffset<ExternalIssueType>(
-    `/api/integrations/bugtracking/configurations/${params.configurationId}/external-projects/${params.externalProjectKey}/external-issue-types`,
+    `/api/integrations/bugtracking/configurations/${params.configurationId}/projects/${params.projectKey}/types`,
     undefined,
     ACCEPT,
   );
@@ -94,41 +94,61 @@ export function getProjectMappings(
   );
 }
 
-// --- Export Issues ---
+// --- Export / Linked Issues ---
 
-export interface ExportIssuesParams {
+export interface ExportIssueParams {
   configurationId: string;
-  projectId: string;
-  issueIds: string[];
+  projectMappingId: string;
+  issueFamilyId: string;
+  btsIssueTypeId?: string;
+  btsKey?: string;
   branchId?: string;
-  externalProjectKey?: string;
-  externalIssueTypeId?: string;
-  externalTicketId?: string;
 }
 
-export function exportIssues(
-  params: ExportIssuesParams,
-): Promise<IssueExportResult[]> {
+export function exportIssue(
+  params: ExportIssueParams,
+): Promise<LinkedIssue> {
   const client = getClient();
 
   const body: Record<string, unknown> = {
-    configurationId: params.configurationId,
-    projectId: params.projectId,
-    issueIds: params.issueIds,
+    projectMappingId: params.projectMappingId,
+    issueFamilyId: params.issueFamilyId,
   };
 
+  if (params.btsIssueTypeId) body.btsIssueTypeId = params.btsIssueTypeId;
+  if (params.btsKey) body.btsKey = params.btsKey;
   if (params.branchId) body.branchId = params.branchId;
-  if (params.externalProjectKey) body.externalProjectKey = params.externalProjectKey;
-  if (params.externalIssueTypeId) body.externalIssueTypeId = params.externalIssueTypeId;
-  if (params.externalTicketId) body.externalTicketId = params.externalTicketId;
 
-  return client.fetch<IssueExportResult[]>(
-    "/api/integrations/bugtracking/issue-exports",
+  return client.fetch<LinkedIssue>(
+    `/api/integrations/bugtracking/configurations/${params.configurationId}/issues-export`,
     {
       method: "POST",
       body,
       accept: ACCEPT,
       contentType: ACCEPT,
     },
+  );
+}
+
+export function getLinkedIssues(
+  configurationId: string,
+): Promise<LinkedIssue[]> {
+  const client = getClient();
+  return client.getAllOffset<LinkedIssue>(
+    `/api/integrations/bugtracking/configurations/${configurationId}/issues-export`,
+    undefined,
+    ACCEPT,
+  );
+}
+
+export function getLinkedIssue(
+  configurationId: string,
+  issueId: string,
+): Promise<LinkedIssue> {
+  const client = getClient();
+  return client.get<LinkedIssue>(
+    `/api/integrations/bugtracking/configurations/${configurationId}/issues-export/${issueId}`,
+    undefined,
+    ACCEPT,
   );
 }
