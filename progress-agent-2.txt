@@ -1,3 +1,21 @@
+## 2026-02-19T23:30:00Z - PRD-R7
+- Implemented Test settings management (create, get, delete)
+- Files changed:
+  - `src/api/repos.ts`: Added `TestSettingsResponse` type import; added `createTestSettings()`, `getTestSettings()`, `deleteTestSettings()` API functions with interfaces (CreateTestSettingsParams, GetTestSettingsParams, DeleteTestSettingsParams)
+  - `src/services/repos.ts`: Added `TestSettingsResponse` type import; added `createScmTestSettings()`, `getScmTestSettings()`, `deleteScmTestSettings()` service functions with Options interfaces; `createScmTestSettings` constructs nested testSyncSettings from flat options
+  - `src/mcp/tools/create-scm-test-settings.ts` (new): Write tool for creating test settings; splits comma-separated assessment types into arrays
+  - `src/mcp/tools/get-scm-test-settings.ts` (new): Read tool for getting test settings by scopeId and scope
+  - `src/mcp/tools/delete-scm-test-settings.ts` (new): Write+destructive tool for deleting test settings (includes destructiveHint: true)
+  - `src/mcp/tools/index.ts`: Registered all 3 new tools
+  - `prd.json`: Set PRD-R7 passes: true
+- All checks pass: `deno task check`, `deno lint`, `deno fmt --check`
+- **Learnings for future iterations:**
+  - `deleteTestSettings` uses `client.fetch()` with method DELETE and passes scope as query param via `params` option
+  - `createTestSettings` POST uses only contentType (no accept) per spec; returns void (202)
+  - The delete tool requires `destructiveHint: true` in annotations
+  - Nested testSyncSettings structure is built in the service layer from flat options for cleaner MCP tool interface
+---
+
 ## 2026-02-19T23:15:00Z - PRD-R6
 - Implemented Groups settings, connection testing, and mapping status
 - Files changed:

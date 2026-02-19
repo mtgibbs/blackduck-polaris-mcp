@@ -15,6 +15,7 @@ import type {
   ScmRepositoryPatchResponse,
   ScmRepositoryTestConnectionResponse,
   ScmRepositoryWithBranch,
+  TestSettingsResponse,
 } from "../types/polaris.ts";
 
 // --- Media Type Constants ---
@@ -609,5 +610,68 @@ export function getGroupMappingStatus(
     "/api/integrations/repos/group-mapping-status",
     queryParams,
     ACCEPT_GROUP_MAPPING_STATUS,
+  );
+}
+
+// --- Test Settings ---
+
+export interface CreateTestSettingsParams {
+  scope: "organization" | "application" | "project" | "branch";
+  scopeId: string;
+  testSyncSettings?: {
+    branch?: {
+      default?: {
+        pullRequestMerged?: boolean;
+        assessmentTypes?: string[];
+      };
+      nonDefault?: {
+        pullRequestMerged?: boolean;
+        assessmentTypes?: string[];
+      };
+    };
+  };
+}
+
+export function createTestSettings(params: CreateTestSettingsParams): Promise<void> {
+  const client = getClient();
+  const body: Record<string, unknown> = {
+    scope: params.scope,
+    scopeId: params.scopeId,
+  };
+  if (params.testSyncSettings) body.testSyncSettings = params.testSyncSettings;
+  return client.fetch<void>("/api/integrations/repos/test-settings", {
+    method: "POST",
+    body,
+    contentType: ACCEPT_TEST_SETTINGS_CREATE,
+  });
+}
+
+export interface GetTestSettingsParams {
+  scopeId: string;
+  scope: string;
+}
+
+export function getTestSettings(params: GetTestSettingsParams): Promise<TestSettingsResponse> {
+  const client = getClient();
+  return client.get<TestSettingsResponse>(
+    `/api/integrations/repos/test-settings/${params.scopeId}`,
+    { scope: params.scope },
+    ACCEPT_TEST_SETTINGS,
+  );
+}
+
+export interface DeleteTestSettingsParams {
+  scopeId: string;
+  scope: string;
+}
+
+export function deleteTestSettings(params: DeleteTestSettingsParams): Promise<void> {
+  const client = getClient();
+  return client.fetch<void>(
+    `/api/integrations/repos/test-settings/${params.scopeId}`,
+    {
+      method: "DELETE",
+      params: { scope: params.scope },
+    },
   );
 }

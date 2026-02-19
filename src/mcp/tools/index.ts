@@ -63,6 +63,9 @@ import { updateScmGroupSettingsTool } from "./update-scm-group-settings.ts";
 import { getScmGroupSettingsTool } from "./get-scm-group-settings.ts";
 import { testScmGroupConnectionTool } from "./test-scm-group-connection.ts";
 import { getScmGroupMappingStatusTool } from "./get-scm-group-mapping-status.ts";
+import { createScmTestSettingsTool } from "./create-scm-test-settings.ts";
+import { getScmTestSettingsTool } from "./get-scm-test-settings.ts";
+import { deleteScmTestSettingsTool } from "./delete-scm-test-settings.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -129,4 +132,7 @@ export const tools: AnyToolDefinition[] = [
   getScmGroupSettingsTool,
   testScmGroupConnectionTool,
   getScmGroupMappingStatusTool,
+  createScmTestSettingsTool,
+  getScmTestSettingsTool,
+  deleteScmTestSettingsTool,
 ];

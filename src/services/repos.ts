@@ -15,6 +15,7 @@ import type {
   ScmRepositoryPatchResponse,
   ScmRepositoryTestConnectionResponse,
   ScmRepositoryWithBranch,
+  TestSettingsResponse,
 } from "../types/polaris.ts";
 
 // --- Repositories ---
@@ -351,4 +352,70 @@ export function getScmGroupMappingStatus(
   options: GetScmGroupMappingStatusOptions,
 ): Promise<GroupMappingStatus[]> {
   return reposApi.getGroupMappingStatus(options);
+}
+
+// --- Test Settings ---
+
+export interface CreateScmTestSettingsOptions {
+  scope: "organization" | "application" | "project" | "branch";
+  scopeId: string;
+  pullRequestMergedDefault?: boolean;
+  assessmentTypesDefault?: string[];
+  pullRequestMergedNonDefault?: boolean;
+  assessmentTypesNonDefault?: string[];
+}
+
+export function createScmTestSettings(options: CreateScmTestSettingsOptions): Promise<void> {
+  const hasDefault = options.pullRequestMergedDefault !== undefined ||
+    (options.assessmentTypesDefault && options.assessmentTypesDefault.length > 0);
+  const hasNonDefault = options.pullRequestMergedNonDefault !== undefined ||
+    (options.assessmentTypesNonDefault && options.assessmentTypesNonDefault.length > 0);
+
+  const defaultSettings: Record<string, unknown> = {};
+  if (options.pullRequestMergedDefault !== undefined) {
+    defaultSettings.pullRequestMerged = options.pullRequestMergedDefault;
+  }
+  if (options.assessmentTypesDefault && options.assessmentTypesDefault.length > 0) {
+    defaultSettings.assessmentTypes = options.assessmentTypesDefault;
+  }
+
+  const nonDefaultSettings: Record<string, unknown> = {};
+  if (options.pullRequestMergedNonDefault !== undefined) {
+    nonDefaultSettings.pullRequestMerged = options.pullRequestMergedNonDefault;
+  }
+  if (options.assessmentTypesNonDefault && options.assessmentTypesNonDefault.length > 0) {
+    nonDefaultSettings.assessmentTypes = options.assessmentTypesNonDefault;
+  }
+
+  const branchSettings: Record<string, unknown> = {};
+  if (hasDefault) branchSettings.default = defaultSettings;
+  if (hasNonDefault) branchSettings.nonDefault = nonDefaultSettings;
+
+  const testSyncSettings = hasDefault || hasNonDefault ? { branch: branchSettings } : undefined;
+
+  return reposApi.createTestSettings({
+    scope: options.scope,
+    scopeId: options.scopeId,
+    testSyncSettings: testSyncSettings as reposApi.CreateTestSettingsParams["testSyncSettings"],
+  });
+}
+
+export interface GetScmTestSettingsOptions {
+  scopeId: string;
+  scope: string;
+}
+
+export function getScmTestSettings(
+  options: GetScmTestSettingsOptions,
+): Promise<TestSettingsResponse> {
+  return reposApi.getTestSettings(options);
+}
+
+export interface DeleteScmTestSettingsOptions {
+  scopeId: string;
+  scope: string;
+}
+
+export function deleteScmTestSettings(options: DeleteScmTestSettingsOptions): Promise<void> {
+  return reposApi.deleteTestSettings(options);
 }
