@@ -1,0 +1,3781 @@
+openapi: 3.1.0
+info:
+  title: Repos Integration
+  description: >
+    Repos Integration retrieves and updates information about projects and repos where you have deployed integrations to scan code. It can test the connection between Polaris and the host of your
+    remote repository.
+  version: 1.0.0
+  x-logo:
+    icon: fa-user-robot
+    primary: null
+    secondary: null
+  contact:
+    name: Black Duck, Inc.
+    url: https://polaris.blackduck.com
+servers:
+  - url: https://polaris.blackduck.com
+    description: Repos Integration
+tags:
+  - name: Repository Integrations APIs
+    description: APIs to search for and retrieve repository details, testing the connection and integrations with the repository or group for a given project.
+  - name: Bulk import APIs
+    description: APIs to bulk import repositories and retrieve the import details.
+  - name: Sync Settings APIs
+    description: APIs to get and update sync settings for repositories.
+security:
+  - ApiKeyAuth: []
+paths:
+  /api/integrations/repos:
+    get:
+      tags:
+        - Repository Integrations APIs
+      operationId: searchRepositoriesWithFilters
+      summary: Retrieve configured SCM repositories with filters
+      description: >-
+        Retrieves all the SCM repositories related to the applications accessible to the given user. It supports filtering on repositoryId and projectId only. The result will be sorted by default
+        based on the creation date of the repository, latest first. Custom sorting parameters are not supported. The response will be paginated by default with 10 items per page with a maximum limit
+        to 100.
+      parameters:
+        - name: _filter
+          in: query
+          description: >-
+            Filters the collection of repositories. The filter follows the RSQL syntax. Available keys for filtering are `repositoryId` and `projectId`. Supported RSQL operators on the keys are - =in=
+            (in operator only). Multiple logical operators and repeated keys are not allowed and only UUID values are supported for the values. More details at `https://github.com/jirutka/rsql-parser`
+          schema:
+            type: string
+            example: |
+              [ 
+                  repositoryId=in=(1d44c6d4-dde4-4c37-b068-9e7eb21c4a19, 1d44c6d4-dde4-4c37-b068-9e7eb21c4a19),
+                  projectId=in=(0a50c9ab-7c75-498e-8b18-0d695ca4ef03);repositoryId=in=(1d44c6d4-dde4-4c37-b068-9e7eb21c4a19, 1d44c6d4-dde4-4c37-b068-9e7eb21c4a19), projectId=in=(0a50c9ab-7c75-498e-8b18-0d695ca4ef03, 0a50c9ab-7c75-498e-8b18-0d695ca4ef02)
+              ]
+        - name: _limit
+          in: query
+          description: >-
+            Restricts the number of results to the given limit. The default of 100 is used if no value is provided. If a limit greater than 100 is provided, the response will be "HTTP 400 Bad
+            Request."
+          schema:
+            type: integer
+            default: 100
+        - name: _offset
+          in: query
+          description: >-
+            Returns results, starting from a given position within the response. For example, if the offset is set to 5, the first four records are not returned. A default value of 0 is used if no
+            value is provided. If the offset is beyond the range of the collection, no results are returned.
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/vnd.polaris.integrations.repos.repo-list-1+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ScmRepositoryV1CollectionResponse'
+        '400':
+          description: Bad request.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:bad-request
+                title: Bad Request
+                status: 400
+                detail: Limit value must not be less than 0 and cannot be more than 100
+        '401':
+          description: Unauthorized.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:unauthorized
+                title: Unauthorized
+                status: 401
+                detail: Could not extract Organization-ID from request, Please retry the request.
+        '403':
+          description: Forbidden.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:forbidden
+                title: Forbidden
+                status: 403
+                detail: You are not authorized to access this repository.
+        '500':
+          description: Internal server error.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:internal-error
+                title: Internal Server Error
+                status: 500
+                detail: An unexpected error occurred.
+    post:
+      tags:
+        - Repository Integrations APIs
+      operationId: createScmRepo
+      summary: Create SCM repository for a project
+      description: API to create an SCM repository for a given project.
+      requestBody:
+        content:
+          application/vnd.polaris.integrations.repos.repo-create-1+json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/ScmRepositoryRequestV1'
+        required: true
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/vnd.polaris.integrations.repos.repo-1+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/CreateScmRepositoryResponseV1'
+        '400':
+          description: Bad request.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:bad-request
+                title: Bad Request
+                status: 400
+                detail: SCM provider is required
+        '401':
+          description: Unauthorized.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:unauthorized
+                title: Unauthorized
+                status: 401
+                detail: Could not extract Organization-ID from request, Please retry the request.
+        '403':
+          description: Forbidden.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:forbidden
+                title: Forbidden
+                status: 403
+                detail: You are not authorized to create the repository settings.
+        '409':
+          description: Conflict.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:conflict
+                title: Conflict
+                status: 409
+                detail: A repository record already exist for the project
+        '500':
+          description: Internal server error.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:internal-error
+                title: Internal Server Error
+                status: 500
+                detail: An unexpected error occurred
+  /api/integrations/repos/{repoId}:
+    patch:
+      tags:
+        - Repository Integrations APIs
+      operationId: updateRepositoryConfigByRepositoryId
+      summary: Update SCM repository for a given project by repositoryId
+      description: API to update an SCM repository for a given project and repository.
+      parameters:
+        - name: repoId
+          in: path
+          description: The repository ID which is a UUID that can be obtained from SCM get repository API
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: 0c50c9ab-b068-498e-b068-0d695ca4ed04
+      requestBody:
+        content:
+          application/vnd.polaris.integrations.repos.repo-update-1+json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/ScmRepositoryRequestV1'
+        required: true
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/vnd.polaris.integrations.repos.repo-1+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ScmRepositoryPatchResponseV1'
+        '400':
+          description: Bad request.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:bad-request
+                title: Bad Request
+                status: 400
+                detail: SCM provider is required
+        '401':
+          description: Unauthorized.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:unauthorized
+                title: Unauthorized
+                status: 401
+                detail: Could not extract Organization-ID from request, Please retry the request.
+        '403':
+          description: Forbidden.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:forbidden
+                title: Forbidden
+                status: 403
+                detail: You are not authorized to update the repository settings.
+        '500':
+          description: Internal server error.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:internal-error
+                title: Internal Server Error
+                status: 500
+                detail: An unexpected error occurred.
+    get:
+      tags:
+        - Repository Integrations APIs
+      operationId: getRepository
+      summary: Get SCM repository by ID
+      description: API to retrieve an SCM repository for a given repository ID. Repository ID can be retrieved using POST/GET project's repository APIs.
+      parameters:
+        - name: repoId
+          in: path
+          description: The repository ID which is a UUID that is stored in SCM integrations service
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: 0a50c9ab-b068-498e-b068-0d695ca4ef03
+        - name: _include
+          in: query
+          description: >-
+            Accepted value for `_include` is 'defaultBranchName'. This parameter defines if defaultBranchName is needed with the response. If _include parameter is not specified, the response object
+            does not have the defaultBranchName attribute.
+          required: false
+          schema:
+            type: string
+            example: _include=defaultBranchName
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/vnd.polaris.integrations.repos.repo-1+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ScmRepositoryResponseWithBranchV1'
+              example:
+                body:
+                  id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                  organizationId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                  repositoryUrl: https://www.github.com/te-repo
+                  scmProvider: GITHUB_STANDARD
+                  applicationId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                  projectId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                  createdAt: '2023-10-26T09:56:54.333Z'
+                  updatedAt: '2023-10-26T09:56:54.333Z'
+                  createdBy: Chuck Norris
+                  updatedBy: Chuck Norris
+                  defaultBranchName: main
+                  _links:
+                    - href: https://polaris.blackduck.com/api/integrations/repos/3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      rel: self
+                      method: GET
+        '400':
+          description: Bad request.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:bad-request
+                title: Bad Request
+                status: 400
+                detail: repositoryId value is in invalid format.
+        '401':
+          description: Unauthorized.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:unauthorized
+                title: Unauthorized
+                status: 401
+                detail: Could not extract Organization-ID from request, Please retry the request.
+        '403':
+          description: Forbidden.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:forbidden
+                title: Forbidden
+                status: 403
+                detail: You are not authorized to access this repository.
+        '500':
+          description: Internal server error.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:internal-error
+                title: Internal Server Error
+                status: 500
+                detail: An unexpected error occurred.
+  /api/integrations/repos/test-connection:
+    post:
+      tags:
+        - Repository Integrations APIs
+      operationId: testConnectionRepo
+      summary: Test connection for a given project with SCM repository
+      description: API to test and verify validity of an SCM repository connection for a given project.
+      requestBody:
+        content:
+          application/vnd.polaris.integrations.repos.connection-request-1+json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/ScmRepositoryRequestV1'
+        required: true
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/vnd.polaris.integrations.repos.repo-connection-1+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ScmRepositoryTestConnectionResponseV1'
+        '400':
+          description: Bad request.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:bad-request
+                title: Bad Request
+                status: 400
+                detail: projectId value is in invalid format.
+        '401':
+          description: Unauthorized.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:unauthorized
+                title: Unauthorized
+                status: 401
+                detail: Could not extract Organization-ID from request, Please retry the request.
+        '403':
+          description: Forbidden.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:forbidden
+                title: Forbidden
+                status: 403
+                detail: You are not authorized to perform test connection operation on this repository.
+        '500':
+          description: Internal server error.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:internal-error
+                title: Internal Server Error
+                status: 500
+                detail: An unexpected error occurred.
+  /api/integrations/repos/{repoId}/branches:
+    get:
+      operationId: getAllBranchesForRepo
+      tags:
+        - Repository Integrations APIs
+      summary: Get SCM branches for given project ID and repository ID
+      description: Retrieves all the SCM branches for a given project ID and repository ID
+      parameters:
+        - name: repoId
+          in: path
+          description: The repository ID which is a UUID that can be obtained from SCM get repository API
+          required: true
+          schema:
+            type: string
+            format: uuid
+          example: 0a50c9ab-b068-498e-b068-0d695ca4ef03
+        - name: _offset
+          in: query
+          description: >-
+            Returns results, starting from a given position within the response. The offset needs to be a multiple of limit, otherwise an error will be thrown. For example, if the offset is set to 10,
+            the first 4 records are not returned. A default value of 0 is used if no value is provided. If the offset is beyond the range of the collection, no results are returned.
+          schema:
+            type: integer
+            default: 0
+            example: 0
+        - name: _limit
+          in: query
+          description: Restricts the number of results to the given limit. The default of 100 is used if no value is provided. If a limit greater than 100 is provided, the response will be "HTTP 400 Bad Request.
+          schema:
+            type: integer
+            default: 100
+            example: 10
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/vnd.polaris.integrations.repos.repo-branch-list-1+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/RepositoryBranchesV1CollectionResponse'
+        '400':
+          description: Bad request.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:bad-request
+                title: Bad Request
+                status: 400
+                detail: repoId value is in invalid format.
+        '401':
+          description: Unauthorized.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:unauthorized
+                title: Unauthorized
+                status: 401
+                detail: Could not extract Organization-ID from request, Please retry the request.
+        '403':
+          description: Forbidden.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:forbidden
+                title: Forbidden
+                status: 403
+                detail: Not authorized to list repository branches.
+        '500':
+          description: Internal server error.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:internal-error
+                title: Internal Server Error
+                status: 500
+                detail: An unexpected error occurred.
+  /api/integrations/repos/scm/groups/auth:
+    post:
+      operationId: createGroupAuthenticationForRepo
+      tags:
+        - Repository Integrations APIs
+      summary: Create SCM-Repository Authentication configuration for specified Application
+      description: This API configures the PAT specified in the payload on the given `applicationId`. The PAT that is set on the application is utilised by all the projects created under the application.
+      requestBody:
+        content:
+          application/vnd.polaris.integrations.repos.scm.groups-auth-1+json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/UpdateScmRepositoryByAppIdRequestV1'
+        required: true
+      responses:
+        '201':
+          description: Resource has been created.
+        '400':
+          description: Bad request.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                missingScmProvider:
+                  value:
+                    type: urn:x-scm-integrations:bad-request
+                    title: Bad Request
+                    status: 400
+                    detail: SCM provider is required
+                missingEmail:
+                  value:
+                    type: urn:x-scm-integrations:bad-request
+                    title: Bad Request
+                    status: 400
+                    detail: emailID is required for Bitbucket Cloud bulk onboarding.
+                invalidEmail:
+                  value:
+                    type: urn:x-scm-integrations:bad-request
+                    title: Bad Request
+                    status: 400
+                    detail: emailID is not valid for Bitbucket Cloud bulk onboarding.
+        '401':
+          description: Unauthorized.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:unauthorized
+                title: Unauthorized
+                status: 401
+                detail: Could not extract Organization-ID from request, Please retry the request.
+        '403':
+          description: Forbidden.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:forbidden
+                title: Forbidden
+                status: 403
+                detail: You are not authorized to update the repository settings.
+        '500':
+          description: Internal server error.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:internal-error
+                title: Internal Server Error
+                status: 500
+                detail: An unexpected error occurred.
+        '501':
+          description: Feature Not implemented
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:not-implemented
+                title: Not Implemented
+                status: 501
+                detail: Bulk onboarding is not supported for '<SCM_PROVIDER>' currently.
+                hint: SCM_PROVIDER can be one of the following options. Azure, Bitbucket, GitHub, GitLab, and Bitbucket Data Center.
+  /api/integrations/repos/providers:
+    get:
+      operationId: listRepoIntegrationsProviders
+      tags:
+        - Bulk import APIs
+      summary: Listing of all SCM providers.
+      description: This API lists all the SCM providers supported (including both cloud-hosted & self-hosted) and includes the version details if the hosting type is self-hosted.
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/vnd.scm.providers-list-1+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ScmProviderResponseV1Response'
+        '400':
+          description: Bad request.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:bad-request
+                title: Bad Request
+                status: 400
+                detail: An unexpected error happened while listing versions for scm providers from the library.
+        '401':
+          description: Unauthorized.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:unauthorized
+                title: Unauthorized
+                status: 401
+                detail: Could not extract Organization-ID from request, Please retry the request.
+        '500':
+          description: Internal server error.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:internal-error
+                title: Internal Server Error
+                status: 500
+                detail: An unexpected error happened while listing versions.
+        '501':
+          description: Feature Not implemented
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:not-implemented
+                title: Not Implemented
+                status: 501
+                detail: Bitbucket data center (self-hosted) is disabled.
+  /api/integrations/repos/bulk-repo-import:
+    post:
+      tags:
+        - Bulk import APIs
+      operationId: importReposForAGroup
+      summary: Bulk import SCM repositories for a group
+      description: Creates a bulk import job for the given group and repositories. Only users assigned to the application really have access to the projects underneath them.
+      parameters:
+        - in: header
+          name: X-Polaris-SCM-PAT
+          description: Personal Access Token
+          schema:
+            type: string
+          required: true
+        - name: X-Polaris-SCM-Email
+          in: header
+          description: Email Address. (Note - For scmProvider - Bitbucket Cloud, it is a mandatory header.)
+          required: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/vnd.polaris.integrations.repos.bulk-repo-import-1+json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/ImportRepositoriesForAGroupRequestV1'
+            examples:
+              Bulk import request for Github:
+                description: Bulk import request for SCM providers like Github with flat repository structure (organization -> repositories)
+                value:
+                  applicationId: 3ea85f61-3317-4562-b3fc-3d683f66aeb9
+                  scmProvider: GITHUB_STANDARD
+                  policySettings:
+                    issuePolicyIds:
+                      - 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      - 4fa85f64-5717-4562-b3fc-2c963f66afa6
+                    scanPolicyIds:
+                      - 5fa85f64-5717-4562-b3fc-2c963f66afa6
+                      - 6fa85f64-5717-4562-b3fc-2c963f66afa6
+                  repositories:
+                    - groupName: my-organization
+                      allRepositoriesInGroup: false
+                      includeRepositories:
+                        - repo-1
+                        - repo-2
+                      excludeRepositories: []
+              Bulk import request for Gitlab:
+                description: Bulk import request for SCM providers like GitLab with nested repository structure (group -> sub-groups -> repositories)
+                value:
+                  applicationId: 3ea85f61-3317-4562-b3fc-3d683f66aeb9
+                  scmProvider: GITLAB_SAAS
+                  policySettings:
+                    issuePolicyIds:
+                      - 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      - 4fa85f64-5717-4562-b3fc-2c963f66afa6
+                    scanPolicyIds:
+                      - 5fa85f64-5717-4562-b3fc-2c963f66afa6
+                      - 6fa85f64-5717-4562-b3fc-2c963f66afa6
+                  repositories:
+                    - groupName: my-organization
+                      allRepositoriesInGroup: false
+                      includeRepositories:
+                        - subgroup/repo-1
+                        - subgroup/repo-2
+                      excludeRepositories: []
+              Bulk import request for Azure:
+                description: Bulk import request for SCM providers like Azure with nested repository structure (organization -> sub-groups -> repositories)
+                value:
+                  applicationId: 3ea85f61-3317-4562-b3fc-3d683f66aeb9
+                  scmProvider: AZURE_CLOUD
+                  policySettings:
+                    issuePolicyIds:
+                      - 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      - 4fa85f64-5717-4562-b3fc-2c963f66afa6
+                    scanPolicyIds:
+                      - 5fa85f64-5717-4562-b3fc-2c963f66afa6
+                      - 6fa85f64-5717-4562-b3fc-2c963f66afa6
+                  repositories: []
+                  nestedRepositories:
+                    - groupName: azure-organization
+                      allSubGroupsInGroup: false
+                      subGroupRepositories:
+                        - subGroupName: azure-project
+                          allRepositoriesInSubGroup: false
+                          includeRepositories:
+                            - azure-repo-1
+                            - azure-repo-2
+                          excludeRepositories: []
+              Bulk import request for BitBucket:
+                description: Bulk import request for SCM providers like BitBucket Cloud with flat repository structure (Workspace -> Projects -> Repositories)
+                value:
+                  applicationId: 8be36f61-2317-4342-a3fc-6d323ey6wde2
+                  scmProvider: BITBUCKET_CLOUD
+                  policySettings:
+                    issuePolicyIds:
+                      - 1fa85f64-5717-4562-b3fc-2c963f66afa6
+                      - 5fa85f64-5717-4562-b3fc-2c963f66afa6
+                    scanPolicyIds:
+                      - 9fa85f64-5717-4562-b3fc-2c963f66afa6
+                      - 5fa85f64-5717-4562-b3fc-2c963f66afa6
+                  repositories:
+                    - groupName: my-workspace
+                      allRepositoriesInGroup: false
+                      includeRepositories:
+                        - repo-1
+                        - repo-2
+                      excludeRepositories: []
+        required: true
+      responses:
+        '202':
+          description: Request Accepted for Processing.
+          headers:
+            Location:
+              required: true
+              schema:
+                type: string
+                format: url
+                example: https://polaris.synopsys.com/repositories-import/b2dbb34e-ce92-4218-a78f-8f20a2300a54
+              description: URL to check the status of import job.
+        '400':
+          description: Bad request.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:bad-request
+                title: Bad Request
+                status: 400
+                detail: SCM provider required.
+              examples:
+                missingScmProvider:
+                  value:
+                    type: urn:x-scm-integrations:bad-request
+                    title: Bad Request
+                    status: 400
+                    detail: SCM provider is required
+                missingEmail:
+                  value:
+                    type: urn:x-scm-integrations:bad-request
+                    title: Bad Request
+                    status: 400
+                    detail: emailID is required for Bitbucket Cloud bulk onboarding.
+                invalidEmail:
+                  value:
+                    type: urn:x-scm-integrations:bad-request
+                    title: Bad Request
+                    status: 400
+                    detail: emailID is not valid for Bitbucket Cloud bulk onboarding.
+        '401':
+          description: Unauthorized.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:unauthorized
+                title: Unauthorized
+                status: 401
+                detail: Could not extract Organization-ID from request, Please retry the request.
+        '403':
+          description: Forbidden.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:forbidden
+                title: Forbidden
+                status: 403
+                detail: User does not have required access to any repository-group.
+        '409':
+          description: Conflict.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:conflict
+                title: Conflict
+                status: 409
+                detail: Another Import Job is under process, please try again after sometime (or abort previous job).
+        '500':
+          description: Internal server error.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:internal-error
+                title: Internal Server Error
+                status: 500
+                detail: An unexpected error occurred while importing the groups and repositories.
+        '501':
+          description: Feature Not implemented
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:not-implemented
+                title: Not Implemented
+                status: 501
+                detail: Bulk onboarding is not supported for '<SCM_PROVIDER>' currently.
+                hint: SCM_PROVIDER can be one of the following options. Azure, Bitbucket, GitHub, GitLab, and Bitbucket Data Center.
+  /api/integrations/repos/bulk-repo-import/groups/status:
+    get:
+      tags:
+        - Bulk import APIs
+      operationId: getReposImportGroupsStatus
+      summary: Get import statistics per group and its constituent repositories
+      description: >-
+        Fetches the cumulative status of available groups along with repository level statistics. The results are by default sorted with jobs creation date in desc order, custom sorting is not
+        supported.
+      parameters:
+        - name: _limit
+          in: query
+          description: >-
+            Restricts the number of results to the given limit. The default of 100 is used if no value is provided. If a limit greater than 100 is provided, the response will be "HTTP 400 Bad
+            Request."
+          schema:
+            type: integer
+            default: 100
+            example: 100
+        - name: _offset
+          in: query
+          description: >-
+            Returns results, starting from a given position within the response. For example, if the offset is set to 5, the first four records are not returned. A default value of 0 is used if no
+            value is provided. If the offset is beyond the range of the collection, no results are returned.
+          schema:
+            type: integer
+            default: 0
+            example: 0
+        - name: _filter
+          in: query
+          description: |
+            Filters the collection of groups import. The filter follows the RSQL syntax. More details at `https://github.com/jirutka/rsql-parser`.
+
+            __Note__: Supported filter 'keys' are ['__state__','__portfolioItemId__'].
+
+            Valid state's for a group is: [NOT_STARTED, IN_PROGRESS, FAILED, COMPLETED]
+          schema:
+            type: string
+            example: |
+              [ state==COMPLETED, state=in=(COMPLETED,NOT_STARTED), portfolioItemId==3fa85f64-5717-4562-b3fc-2c963f66afa6 ]
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/vnd.polaris.integrations.repos.bulk-repo-import-groups-status-1+json;charset=UTF-8:
+              schema:
+                type: object
+                properties:
+                  _items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/GetRepoImportGroupsStatusResponseV1'
+                  _links:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        href:
+                          type: string
+                        rel:
+                          type: string
+                        method:
+                          type: string
+                    example:
+                      - href: https://polaris.synopsys.com/api/scm/repositories-import/groups/status?_limit=10
+                        rel: self
+                        method: GET
+                      - href: https://polaris.synopsys.com/api/scm/repositories-import/groups/status?_limit=10
+                        rel: first
+                        method: GET
+                      - href: https://polaris.synopsys.com/api/scm/repositories-import/groups/status?_limit=10
+                        rel: last
+                        method: GET
+                  _collection:
+                    $ref: '#/components/schemas/RepoImportStatusPageInformation'
+        '400':
+          description: Bad request.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:bad-request
+                title: Bad Request
+                status: 400
+                detail: Limit value must not be less than 0 and cannot be more than 100.
+        '401':
+          description: Unauthorized.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:unauthorized
+                title: Unauthorized
+                status: 401
+                detail: Could not extract Organization-ID from request, Please retry the request.
+        '500':
+          description: Internal server error.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:internal-error
+                title: Internal Server Error
+                status: 500
+                detail: An unexpected error occurred while getting repositories import groups status.
+        '501':
+          description: Feature Not implemented
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:not-implemented
+                title: Not Implemented
+                status: 501
+                detail: Bulk onboarding is not supported for '<SCM_PROVIDER>' currently.
+                hint: SCM_PROVIDER can be one of the following options. Azure, Bitbucket, GitHub, GitLab, and Bitbucket Data Center.
+  /api/integrations/repos/bulk-group-import:
+    post:
+      tags:
+        - Bulk import APIs
+      operationId: importGroupsRepos
+      summary: Bulk import SCM groups and repositories
+      description: Creates a bulk import job for the given groups and repositories. Ensure that the users assigned to the applications really have access to the projects underneath them.
+      parameters:
+        - in: header
+          name: X-Polaris-SCM-PAT
+          description: Personal Access Token
+          schema:
+            type: string
+          required: true
+        - name: X-Polaris-SCM-Email
+          in: header
+          description: Email Address. (Note - For scmProvider - Bitbucket Cloud, it is a mandatory header.)
+          required: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/vnd.polaris.integrations.repos.bulk-group-import-1+json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/UpdatedImportRepositoriesRequestV1'
+            examples:
+              Bulk import request for Github:
+                description: Bulk import request for SCM providers like Github with flat repository structure (organization -> repositories)
+                value:
+                  scmProvider: GITHUB_STANDARD
+                  automaticMapping: false
+                  policySettings:
+                    issuePolicyIds:
+                      - 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      - 4fa85f64-5717-4562-b3fc-2c963f66afa6
+                    scanPolicyIds:
+                      - 5fa85f64-5717-4562-b3fc-2c963f66afa6
+                      - 6fa85f64-5717-4562-b3fc-2c963f66afa6
+                  roleUsersMappings:
+                    - roleId: 1fa85f64-5717-4562-b3fc-2c963f66afa6
+                      userId: 4fa85f64-5717-4562-b3fc-2c963f66afa6
+                  repositorySelections:
+                    - applicationName: App A
+                      repositories:
+                        - groupName: my-organization
+                          allRepositoriesInGroup: false
+                          includeRepositories:
+                            - repo-1
+                            - repo-2
+                          excludeRepositories: []
+              Bulk import request for GitLab:
+                description: Bulk import request for SCM providers like GitLab with nested repository structure (group -> sub-groups -> repositories)
+                value:
+                  scmProvider: GITLAB_SAAS
+                  automaticMapping: false
+                  policySettings:
+                    issuePolicyIds:
+                      - 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      - 4fa85f64-5717-4562-b3fc-2c963f66afa6
+                    scanPolicyIds:
+                      - 5fa85f64-5717-4562-b3fc-2c963f66afa6
+                      - 6fa85f64-5717-4562-b3fc-2c963f66afa6
+                  roleUsersMappings:
+                    - roleId: 1fa85f64-5717-4562-b3fc-2c963f66afa6
+                      userId: 4fa85f64-5717-4562-b3fc-2c963f66afa6
+                  repositorySelections:
+                    - applicationName: App A
+                      repositories:
+                        - groupName: my-organization
+                          allRepositoriesInGroup: false
+                          includeRepositories:
+                            - subgroup/repo-1
+                            - subgroup/repo-2
+                          excludeRepositories: []
+              Bulk import request for Azure:
+                description: Bulk import request for SCM providers like Azure with nested repository structure (organization -> sub-groups -> repositories)
+                value:
+                  scmProvider: AZURE_CLOUD
+                  automaticMapping: false
+                  policySettings:
+                    issuePolicyIds:
+                      - 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                      - 4fa85f64-5717-4562-b3fc-2c963f66afa6
+                    scanPolicyIds:
+                      - 5fa85f64-5717-4562-b3fc-2c963f66afa6
+                      - 6fa85f64-5717-4562-b3fc-2c963f66afa6
+                  roleUsersMappings:
+                    - roleId: 1fa85f64-5717-4562-b3fc-2c963f66afa6
+                      userId: 4fa85f64-5717-4562-b3fc-2c963f66afa6
+                  repositorySelections:
+                    - applicationName: App B
+                      applicationNameTemplate: ${azure-org}-${azure-project}
+                      repositories: []
+                      nestedRepositories:
+                        - groupName: azure-organization
+                          allSubGroupsInGroup: false
+                          subGroupRepositories:
+                            - subGroupName: azure-project
+                              allRepositoriesInSubGroup: false
+                              includeRepositories:
+                                - azure-repo-1
+                                - azure-repo-2
+                              excludeRepositories: []
+              Bulk import request for Bitbucket:
+                description: Bulk import request for SCM providers like BitBucket with flat repository structure (Workspace -> Projects -> Repositories)
+                value:
+                  scmProvider: BITBUCKET_CLOUD
+                  automaticMapping: false
+                  policySettings:
+                    issuePolicyIds:
+                      - 1fa85f64-5717-4562-b3fc-2c963f66afa6
+                      - 5fa85f64-5717-4562-b3fc-2c963f66afa6
+                    scanPolicyIds:
+                      - 9fa85f64-5717-4562-b3fc-2c963f66afa6
+                      - 5fa85f64-5717-4562-b3fc-2c963f66afa6
+                  roleUsersMappings:
+                    - roleId: 2fa85f64-5717-3562-b3fc-2c963f66afa6
+                      userId: 9fa85f64-5717-4562-b3fc-2c963f66afa6
+                  repositorySelections:
+                    - repositories:
+                        - groupName: my-workspace
+                          allRepositoriesInGroup: false
+                          includeRepositories:
+                            - repo-1
+                            - repo-2
+                          excludeRepositories: []
+        required: true
+      responses:
+        '202':
+          description: Request Accepted for Processing.
+          headers:
+            Location:
+              required: true
+              schema:
+                type: string
+                format: url
+                example: https://polaris.synopsys.com/groups-repositories-import/b2dbb34e-ce92-4218-a78f-8f20a2300a54
+              description: URL to check the status of import job.
+        '400':
+          description: Bad request.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:bad-request
+                title: Bad Request
+                status: 400
+                detail: SCM provider required.
+              examples:
+                missingScmProvider:
+                  value:
+                    type: urn:x-scm-integrations:bad-request
+                    title: Bad Request
+                    status: 400
+                    detail: SCM provider is required
+                missingEmail:
+                  value:
+                    type: urn:x-scm-integrations:bad-request
+                    title: Bad Request
+                    status: 400
+                    detail: emailID is required for Bitbucket Cloud bulk onboarding.
+                invalidEmail:
+                  value:
+                    type: urn:x-scm-integrations:bad-request
+                    title: Bad Request
+                    status: 400
+                    detail: emailID is not valid for Bitbucket Cloud bulk onboarding.
+        '401':
+          description: Unauthorized.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:unauthorized
+                title: Unauthorized
+                status: 401
+                detail: Could not extract Organization-ID from request, Please retry the request.
+        '403':
+          description: Forbidden.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:forbidden
+                title: Forbidden
+                status: 403
+                detail: User does not have required access to any repository-group.
+        '409':
+          description: Conflict.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:conflict
+                title: Conflict
+                status: 409
+                detail: Another Import Job is under process, please try again after sometime (or abort previous job).
+        '500':
+          description: Internal server error.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:internal-error
+                title: Internal Server Error
+                status: 500
+                detail: An unexpected error occurred while importing the groups and repositories.
+        '501':
+          description: Feature Not implemented
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:not-implemented
+                title: Not Implemented
+                status: 501
+                detail: Bulk onboarding is not supported for '<SCM_PROVIDER>' currently.
+                hint: SCM_PROVIDER can be one of the following options. Azure, Bitbucket, GitHub, GitLab, and Bitbucket Data Center.
+  /api/integrations/repos/bulk-group-import/{jobId}:
+    patch:
+      tags:
+        - Bulk import APIs
+      operationId: updateImportGroupsReposJob
+      summary: Update groups repositories import job
+      description: Update groups repositories import job for the given job id, only supported action is [ABORT] .
+      parameters:
+        - name: jobId
+          in: path
+          description: The groups repositories import job ID which is a UUID. Can be found in location header of POST API response.
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/vnd.polaris.integrations.repos.bulk-group-import-1+json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/UpdateRepositoriesImportRequestV1'
+        required: true
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/vnd.polaris.integrations.repos.bulk-group-import-1+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/UpdatedRepositoriesImportResponseV1'
+        '400':
+          description: Bad request.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:bad-request
+                title: Bad Request
+                status: 400
+                detail: Specified action is invalid, only action allowed is ABORT.
+        '401':
+          description: Unauthorized.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:unauthorized
+                title: Unauthorized
+                status: 401
+                detail: Could not extract Organization-ID from request, Please retry the request.
+        '403':
+          description: Forbidden.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:forbidden
+                title: Forbidden
+                status: 403
+                detail: Access is denied.
+        '404':
+          description: Not found.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:not-found
+                title: Not found
+                status: 404
+                detail: No matching records found for repositories import jobId - 0a50c9ab-b068-498e-b068-0d695ca4ef03
+        '500':
+          description: Internal server error.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:internal-error
+                title: Internal Server Error
+                status: 500
+                detail: An unexpected error occurred while updating repositories.
+        '501':
+          description: Feature Not implemented
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:not-implemented
+                title: Not Implemented
+                status: 501
+                detail: Bulk onboarding is not supported for '<SCM_PROVIDER>' currently.
+                hint: SCM_PROVIDER can be one of the following options. Azure, Bitbucket, GitHub, GitLab, and Bitbucket Data Center.
+  /api/integrations/repos/bulk-group-import/{jobId}/status:
+    get:
+      tags:
+        - Bulk import APIs
+      operationId: getGroupsReposImportStatusById
+      summary: Get groups repositories import job status by job id
+      description: Fetches the cumulative status of the given job and includes the statistics for all the groups.
+      parameters:
+        - name: jobId
+          in: path
+          description: The repositories import job ID which is a UUID. Can be found in location header of POST API response.
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/vnd.polaris.integrations.repos.bulk-group-import-status-1+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/GetGroupsRepositoriesImportStatusResponseV1'
+        '400':
+          description: Bad request.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:bad-request
+                title: Bad Request
+                status: 400
+                detail: Please provide valid UUID for repositoriesImportJobId field.
+        '401':
+          description: Unauthorized.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:unauthorized
+                title: Unauthorized
+                status: 401
+                detail: Could not extract Organization-ID from request, Please retry the request.
+        '404':
+          description: Not found.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:not-found
+                title: Not found
+                status: 404
+                detail: No matching records found for repositories import jobId - 0a50c9ab-b068-498e-b068-0d695ca4ef03
+        '500':
+          description: Internal server error.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:internal-error
+                title: Internal Server Error
+                status: 500
+                detail: An unexpected error occurred while getting repositories import status by id.
+        '501':
+          description: Feature Not implemented
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:not-implemented
+                title: Not Implemented
+                status: 501
+                detail: Bulk onboarding is not supported for '<SCM_PROVIDER>' currently.
+                hint: SCM_PROVIDER can be one of the following options. Azure, Bitbucket, GitHub, GitLab, and Bitbucket Data Center.
+  /api/integrations/repos/bulk-group-import/status:
+    get:
+      tags:
+        - Bulk import APIs
+      operationId: getAllGroupsReposImportStatus
+      summary: Get groups repositories import status for all jobs
+      description: Fetches the cumulative status of available jobs along with group level statistics. The results are by default sorted with their creation date in desc order, custom sorting is not supported.
+      parameters:
+        - name: _limit
+          in: query
+          description: >-
+            Restricts the number of results to the given limit. The default of 100 is used if no value is provided. If a limit greater than 100 is provided, the response will be "HTTP 400 Bad
+            Request."
+          schema:
+            type: integer
+            default: 100
+            example: 100
+        - name: _offset
+          in: query
+          description: >-
+            Returns results, starting from a given position within the response. For example, if the offset is set to 5, the first four records are not returned. A default value of 0 is used if no
+            value is provided. If the offset is beyond the range of the collection, no results are returned.
+          schema:
+            type: integer
+            default: 0
+            example: 0
+        - name: _filter
+          in: query
+          description: |
+            Filters the collection of repository import jobs. The filter follows the RSQL syntax. More details at `https://github.com/jirutka/rsql-parser`.
+
+            __Note__: Only supported filter 'key' is '__state__'.
+
+            Valid state's for a job is: [NOT_STARTED, IN_PROGRESS, FAILED, ABORTED, TIMED_OUT, PARTIALLY_COMPLETED, COMPLETED]
+          schema:
+            type: string
+            example: |
+              [ state==COMPLETED, state=in=(COMPLETED,ABORTED) ]
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/vnd.polaris.integrations.repos.bulk-group-import-status-1+json;charset=UTF-8:
+              schema:
+                type: object
+                properties:
+                  _items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                          description: Repositories import job Id.
+                          example: 0a50c9ab-b068-498e-b068-0d695ca4ef03
+                        progressPercentage:
+                          type: integer
+                          description: Overall progress of repositories import job.
+                          example: 100
+                        state:
+                          type: string
+                          description: Indicate the present state of repositories import job.
+                          example: Failed
+                        stateInfo:
+                          type: string
+                          description: Indicate user friendly error message in case of error.
+                          example: Repositories import job failed, Group import failed.
+                        groupsImportStats:
+                          type: object
+                          properties:
+                            notStarted:
+                              type: integer
+                              description: Indicates count of groups that are yet to begin the import.
+                              example: 0
+                            inProgress:
+                              type: integer
+                              description: Indicates count of groups whose import is in-progress.
+                              example: 0
+                            completed:
+                              type: integer
+                              description: Indicates the count of groups that are imported successfully.
+                              example: 200
+                            failed:
+                              type: integer
+                              description: Indicates the count of groups that have failed to import.
+                              example: 100
+                            total:
+                              type: integer
+                              description: Indicates the count of groups that were requested for on-boarding.
+                              example: 300
+                  _links:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        href:
+                          type: string
+                        rel:
+                          type: string
+                        method:
+                          type: string
+                    example:
+                      - href: https://polaris.synopsys.com/api/scm/groups-repositories-import/status?_offset=20&_limit=10
+                        rel: self
+                        method: GET
+                      - href: https://polaris.synopsys.com/api/scm/groups-repositories-import/?_offset=0&_limit=10
+                        rel: first
+                        method: GET
+                      - href: https://polaris.synopsys.com/api/scm/groups-repositories-import/?_offset=1000&_limit=10
+                        rel: last
+                        method: GET
+                  _collection:
+                    $ref: '#/components/schemas/GroupsRepoImportStatusPageInformation'
+        '400':
+          description: Bad request.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:bad-request
+                title: Bad Request
+                status: 400
+                detail: Limit value must not be less than 0 and cannot be more than 100.
+        '401':
+          description: Unauthorized.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:unauthorized
+                title: Unauthorized
+                status: 401
+                detail: Could not extract Organization-ID from request, Please retry the request.
+        '500':
+          description: Internal server error.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:internal-error
+                title: Internal Server Error
+                status: 500
+                detail: An unexpected error occurred while getting repositories import status by id.
+        '501':
+          description: Feature Not implemented
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:not-implemented
+                title: Not Implemented
+                status: 501
+                detail: Bulk onboarding is not supported for '<SCM_PROVIDER>' currently.
+                hint: SCM_PROVIDER can be one of the following options. Azure, Bitbucket, GitHub, GitLab, and Bitbucket Data Center.
+  /api/integrations/repos/scm/test-connection:
+    get:
+      tags:
+        - Bulk import APIs
+      operationId: testReposConnection
+      summary: Test connection to a scm provider
+      description: Test connection to a scm provider using a personal access token
+      parameters:
+        - name: scmProvider
+          in: query
+          description: Name of the scm provider
+          schema:
+            $ref: '#/components/schemas/ScmProvider'
+          required: true
+        - name: X-Polaris-SCM-PAT
+          in: header
+          description: Personal Access Token
+          schema:
+            type: string
+          required: true
+        - name: X-Polaris-SCM-Email
+          in: header
+          description: Email Address. (Note - For scmProvider - Bitbucket Cloud, it is a mandatory header.)
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success.
+          content:
+            application/vnd.polaris.integrations.repos.scm.repo-connection-1+json;charset=UTF-8:
+              schema:
+                type: object
+                properties:
+                  object:
+                    type: boolean
+                  _links:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        href:
+                          type: string
+                        rel:
+                          type: string
+                        method:
+                          type: string
+                    example:
+                      - href: https://polaris.synopsys.com/api/scm/integrations/connection
+                        rel: self
+                        method: GET
+        '400':
+          description: Bad request.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                blankToken:
+                  value:
+                    type: urn:x-scm-integrations:bad-request
+                    title: Bad Request
+                    status: 400
+                    detail: SCM token cannot be blank.
+                missingEmail:
+                  value:
+                    type: urn:x-scm-integrations:bad-request
+                    title: Bad Request
+                    status: 400
+                    detail: emailID is required for Bitbucket Cloud bulk onboarding.
+                invalidEmail:
+                  value:
+                    type: urn:x-scm-integrations:bad-request
+                    title: Bad Request
+                    status: 400
+                    detail: emailID is not valid for Bitbucket Cloud bulk onboarding.
+        '401':
+          description: Unauthorized.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:unauthorized
+                title: Unauthorized
+                status: 401
+                detail: Could not extract Organization-ID from request, Please retry the request.
+        '500':
+          description: Internal server error.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:internal-error
+                title: Internal Server Error
+                status: 500
+                detail: An unexpected error happened while testing connection for given provider and token.
+        '501':
+          description: Feature Not implemented
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:not-implemented
+                title: Not Implemented
+                status: 501
+                detail: Bulk onboarding is not supported for '<SCM_PROVIDER>' currently.
+                hint: SCM_PROVIDER can be one of the following options. Azure, Bitbucket, GitHub, GitLab, and Bitbucket Data Center.
+  /api/integrations/repos/scm/groups:
+    get:
+      tags:
+        - Bulk import APIs
+      operationId: listGroupsForRepos
+      summary: Get groups from a scm provider
+      description: Get list of available groups from a scm provider using a personal access token
+      parameters:
+        - name: scmProvider
+          in: query
+          description: Name of the scm provider
+          schema:
+            $ref: '#/components/schemas/ScmProvider'
+          required: true
+        - name: _cursor
+          in: query
+          description: >-
+            Number of records to be skipped in relation with the provided limit value, (n-1) * _limit. if the limit is 100 and _cursor value is 2. First 100 records will be skipped. Default value is 1
+            if not specified.
+          schema:
+            type: string
+            example: '1'
+        - name: _limit
+          in: query
+          description: Restricts the number of results to the given limit. The default of 100 is used if no value is provided.
+          schema:
+            type: integer
+            default: 100
+        - name: topLevelOnly
+          in: query
+          description: >-
+            Determines whether to fetch only top-level groups during onboarding. This parameter is optional and applies exclusively to GitLab integrations. When set to true, only top-level groups are
+            retrieved, excluding any nested sub-groups. Defaults to false.
+          schema:
+            type: boolean
+            default: false
+        - name: X-Polaris-SCM-PAT
+          in: header
+          description: Personal Access Token
+          schema:
+            type: string
+          required: true
+        - name: X-Polaris-SCM-Email
+          in: header
+          description: Email Address. (Note - For scmProvider - Bitbucket Cloud, it is a mandatory header.)
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/vnd.polaris.integrations.repos.scm.group-list-1+json;charset=UTF-8:
+              schema:
+                type: object
+                properties:
+                  _items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/group'
+                  _links:
+                    type: array
+                    items:
+                      properties:
+                        href:
+                          type: string
+                        rel:
+                          type: string
+                        method:
+                          type: string
+                    example:
+                      - href: https://polaris.synopsys.com/api/scm/integrations/groups?_cursor=20&_limit=10
+                        rel: self
+                        method: GET
+                      - href: https://polaris.synopsys.com/api/scm/integrations/groups?_cursor=10&_limit=10
+                        rel: prev
+                        method: GET
+                      - href: https://polaris.synopsys.com/api/scm/integrations/groups?_cursor=30&_limit=10
+                        rel: next
+                        method: GET
+                  _collection:
+                    $ref: '#/components/schemas/groupCollection'
+        '400':
+          description: Bad request.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                unsupportedProvider:
+                  value:
+                    type: urn:x-scm-integrations:bad-request
+                    title: Bad Request
+                    status: 400
+                    detail: Bulk onboarding is not supported for '<SCM_PROVIDER>' currently.
+                    hint: SCM_PROVIDER can be one of the following options. Azure, Bitbucket, GitHub, GitLab, and Bitbucket Data Center.
+                missingEmail:
+                  summary: Missing email for Bitbucket
+                  value:
+                    type: urn:x-scm-integrations:bad-request
+                    title: Bad Request
+                    status: 400
+                    detail: emailID is required for Bitbucket Cloud bulk onboarding.
+                invalidEmail:
+                  summary: Invalid email format
+                  value:
+                    type: urn:x-scm-integrations:bad-request
+                    title: Bad Request
+                    status: 400
+                    detail: emailID is not valid for Bitbucket Cloud bulk onboarding.
+        '401':
+          description: Unauthorized.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:unauthorized
+                title: Unauthorized
+                status: 401
+                detail: Could not extract Organization-ID from request, Please retry the request.
+        '500':
+          description: Internal server error.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:internal-error
+                title: Internal Server Error
+                status: 500
+                detail: An error occurred while listing group details for the given provider and token.
+        '501':
+          description: Feature Not implemented
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:not-implemented
+                title: Not Implemented
+                status: 501
+                detail: Bulk onboarding is not supported for '<SCM_PROVIDER>' currently.
+                hint: SCM_PROVIDER can be one of the following options. Azure, Bitbucket, GitHub, GitLab, and Bitbucket Data Center.
+  /api/integrations/repos/scm:
+    get:
+      tags:
+        - Bulk import APIs
+      operationId: listRepos
+      summary: Get repositories from a scm provider
+      description: Get list of available repositories of a group from a scm provider using a personal access token
+      parameters:
+        - name: scmProvider
+          in: query
+          description: Name of the scm provider
+          schema:
+            $ref: '#/components/schemas/ScmProvider'
+        - name: groupName
+          in: query
+          description: Name of the group
+          schema:
+            type: string
+        - name: projectName
+          in: query
+          description: Name of the project within the specified group
+          schema:
+            type: string
+            example: test-project
+        - name: repoSearchTerm
+          in: query
+          description: Search term to use when fetch repositories. Repository names matching this term will be fetched.
+          schema:
+            type: string
+        - name: includeSubGroups
+          in: query
+          description: >-
+            Determines whether to include repositories from sub-groups during onboarding. This parameter is optional and applies exclusively to GitLab integrations. When set to true, repositories from
+            nested sub-groups will be fetched; otherwise, only top-level group repositories are retrieved. Defaults to false.
+          schema:
+            type: boolean
+            default: false
+        - name: _cursor
+          in: query
+          description: >-
+            Number of records to be skipped in relation with the provided limit value, (n-1) * _limit. if the limit is 100 and _cursor value is 2. First 100 records will be skipped. Default value is 1
+            if not specified.
+          schema:
+            type: string
+            example: '1'
+        - name: _limit
+          in: query
+          description: Restricts the number of results to the given limit. The default of 100 is used if no value is provided.
+          schema:
+            type: integer
+            default: 100
+        - name: X-Polaris-SCM-PAT
+          in: header
+          description: Personal Access Token
+          schema:
+            type: string
+          required: true
+        - name: X-Polaris-SCM-Email
+          in: header
+          description: Email Address. (Note - For scmProvider - Bitbucket Cloud, it is a mandatory header.)
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/vnd.polaris.integrations.repos.scm.repo-list-1+json;charset=UTF-8:
+              schema:
+                type: object
+                properties:
+                  _items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/repository'
+                  _links:
+                    type: array
+                    items:
+                      properties:
+                        href:
+                          type: string
+                        rel:
+                          type: string
+                        method:
+                          type: string
+                    example:
+                      - href: https://polaris.synopsys.com/api/scm/integrations/repositories?_cursor=20&_limit=10
+                        rel: self
+                        method: GET
+                      - href: https://polaris.synopsys.com/api/scm/integrations/repositories?_cursor=10&_limit=10
+                        rel: prev
+                        method: GET
+                      - href: https://polaris.synopsys.com/api/scm/integrations/repositories?_cursor=30&_limit=10
+                        rel: next
+                        method: GET
+                  _collection:
+                    $ref: '#/components/schemas/repositoryCollection'
+        '400':
+          description: Bad request.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                unsupportedProvider:
+                  value:
+                    type: urn:x-scm-integrations:bad-request
+                    title: Bad Request
+                    status: 400
+                    detail: Bulk onboarding is not supported for '<SCM_PROVIDER>' currently.
+                    hint: SCM_PROVIDER can be one of the following options. Azure, Bitbucket, GitHub, GitLab, and Bitbucket Data Center.
+                missingEmail:
+                  summary: Missing email for Bitbucket
+                  value:
+                    type: urn:x-scm-integrations:bad-request
+                    title: Bad Request
+                    status: 400
+                    detail: emailID is required for Bitbucket Cloud bulk onboarding.
+                invalidEmail:
+                  summary: Invalid email format
+                  value:
+                    type: urn:x-scm-integrations:bad-request
+                    title: Bad Request
+                    status: 400
+                    detail: emailID is not valid for Bitbucket Cloud bulk onboarding.
+        '401':
+          description: Unauthorized.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:unauthorized
+                title: Unauthorized
+                status: 401
+                detail: Could not extract Organization-ID from request, Please retry the request.
+        '500':
+          description: Internal server error.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:internal-error
+                title: Internal Server Error
+                status: 500
+                detail: An error occurred while listing repositories for the given provider and token. Please check the provider and token info and try again.
+        '501':
+          description: Feature Not implemented
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:not-implemented
+                title: Not Implemented
+                status: 501
+                detail: Bulk onboarding is not supported for '<SCM_PROVIDER>' currently.
+                hint: SCM_PROVIDER can be one of the following options. Azure, Bitbucket, GitHub, GitLab, and Bitbucket Data Center.
+  /api/integrations/repos/scm/groups/{groupName}/projects:
+    get:
+      tags:
+        - Bulk import APIs
+      operationId: listProjectsByGroup
+      summary: Get list of projects from a scm provider for a given group name. This API is supported for Azure SCM provider only.
+      description: Get list of projects from a scm provider for a given group name using a personal access token. This API is supported for Azure SCM provider only.
+      parameters:
+        - name: groupName
+          in: path
+          description: The name of the group for which projects will be fetched.
+          required: true
+          schema:
+            type: string
+        - name: scmProvider
+          in: query
+          description: Name of the scm provider
+          schema:
+            $ref: '#/components/schemas/ScmProvider'
+        - name: _cursor
+          in: query
+          description: >-
+            Number of records to be skipped in relation with the provided limit value, (n-1) * _limit. if the limit is 100 and _cursor value is 2. First 100 records will be skipped. Default value is 1
+            if not specified.
+          schema:
+            type: string
+            example: '1'
+        - name: _limit
+          in: query
+          description: Restricts the number of results to the given limit. The default of 100 is used if no value is provided.
+          schema:
+            type: integer
+            default: 100
+        - name: x-polaris-scm-pat
+          in: header
+          description: Personal Access Token
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/vnd.polaris.integrations.repos.scm.project-list-1+json;charset=UTF-8:
+              schema:
+                type: object
+                properties:
+                  _items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/project'
+                  _links:
+                    type: array
+                    items:
+                      properties:
+                        href:
+                          type: string
+                        rel:
+                          type: string
+                        method:
+                          type: string
+                    example:
+                      - href: https://polaris.synopsys.com/api/scm/integrations/repos/scm/groups/{groupName}/projects?_cursor=20&_limit=10
+                        rel: self
+                        method: GET
+                      - href: https://polaris.synopsys.com/api/scm/integrations/repos/scm/groups/{groupName}/projects?_cursor=10&_limit=10
+                        rel: prev
+                        method: GET
+                      - href: https://polaris.synopsys.com/api/scm/integrations/repos/scm/groups/{groupName}/projects?_cursor=30&_limit=10
+                        rel: next
+                        method: GET
+                  _collection:
+                    $ref: '#/components/schemas/repositoryCollection'
+        '400':
+          description: Bad request.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:bad-request
+                title: Bad Request
+                status: 400
+                detail: Bulk onboarding is not supported for the Azure.
+        '401':
+          description: Unauthorized.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:unauthorized
+                title: Unauthorized
+                status: 401
+                detail: Could not extract Organization-ID from request, Please retry the request.
+        '500':
+          description: Internal server error.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:internal-error
+                title: Internal Server Error
+                status: 500
+                detail: An error occurred while listing projects for the given provider and token. Please check the provider and token info and try again.
+        '501':
+          description: Feature Not implemented
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:not-implemented
+                title: Not Implemented
+                status: 501
+                detail: Bulk onboarding is not supported for the Azure.
+  /api/integrations/repos/groups-settings:
+    patch:
+      tags:
+        - Sync Settings APIs
+      operationId: groupSettings
+      summary: Update the repository synchronisation settings on the Group
+      description: API to Update the repository synchronisation settings on the Group
+      requestBody:
+        content:
+          application/vnd.polaris.integrations.repos.groups-settings-update-1+json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/GroupsSettingsRequest'
+        required: true
+      responses:
+        '202':
+          description: Accepted.
+        '400':
+          description: Bad request.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:bad-request
+                title: Bad Request
+                status: 400
+                detail: Application ID required.
+        '401':
+          description: Unauthorized.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:unauthorized
+                title: Unauthorized
+                status: 401
+                detail: Not authorized to update the group settings.
+        '500':
+          description: Internal server error.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:internal-error
+                title: Internal Server Error
+                status: 500
+                detail: An unexpected error occurred.
+        '501':
+          description: Feature Not implemented.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:not-implemented
+                title: Not Implemented
+                status: 501
+                detail: Github automatically repository onboarding feature disabled..
+    get:
+      tags:
+        - Sync Settings APIs
+      operationId: getGroupSettings
+      summary: Get the repository synchronisation settings on the Group.
+      description: API to Get the repository synchronisation settings on the Group.
+      parameters:
+        - name: _filter
+          in: query
+          description: >-
+            Filters the collection of repositories. The filter follows the RSQL syntax. Available keys for filtering are `applicationId` and `groupId`. Supported RSQL operators on the keys are - =in=
+            (in operator only). Multiple logical operators and repeated keys are not allowed and only UUID values are supported for the values. More details at `https://github.com/jirutka/rsql-parser`
+          schema:
+            type: string
+            example: |
+              [ 
+                  applicationId=in=(1d44c6d4-dde4-4c37-b068-9e7eb21c4a19, 1d44c6d4-dde4-4c37-b068-9e7eb21c4a19),
+                  groupId=in=(0a50c9ab-7c75-498e-8b18-0d695ca4ef03);repositoryId=in=(1d44c6d4-dde4-4c37-b068-9e7eb21c4a19, 1d44c6d4-dde4-4c37-b068-9e7eb21c4a19), projectId=in=(0a50c9ab-7c75-498e-8b18-0d695ca4ef03, 0a50c9ab-7c75-498e-8b18-0d695ca4ef02)
+              ]
+        - name: _limit
+          in: query
+          description: >-
+            Restricts the number of results to the given limit. The default of 100 is used if no value is provided. If a limit greater than 100 is provided, the response will be "HTTP 400 Bad
+            Request."
+          schema:
+            type: integer
+            default: 100
+        - name: _offset
+          in: query
+          description: >-
+            Returns results, starting from a given position within the response. For example, if the offset is set to 5, the first four records are not returned. A default value of 0 is used if no
+            value is provided. If the offset is beyond the range of the collection, no results are returned.
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/vnd.polaris.integrations.repos.groups-settings-1+json;charset=UTF-8:
+              schema:
+                type: object
+                properties:
+                  _items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/GroupsSettingsResponse'
+                  _links:
+                    type: array
+                    items:
+                      properties:
+                        href:
+                          type: string
+                        rel:
+                          type: string
+                        method:
+                          type: string
+                    example:
+                      - href: https://polaris.synopsys.com/api/integrations/repos/groups-settings?_limit=0
+                        rel: self
+                        method: GET
+                      - href: https://polaris.synopsys.com/api/integrations/repos/groups-settings?_limit=10
+                        rel: prev
+                        method: GET
+                      - href: https://polaris.synopsys.com/api/integrations/repos/groups-settings?_limit=10
+                        rel: next
+                        method: GET
+                  _collection:
+                    $ref: '#/components/schemas/groupCollection'
+        '400':
+          description: Bad request.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:bad-request
+                title: Bad Request
+                status: 400
+                detail: Please provide valid filter param, example value==demo.
+        '500':
+          description: Internal server error.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:internal-error
+                title: Internal Server Error
+                status: 500
+                detail: An unexpected error occurred.
+        '501':
+          description: Feature Not implemented.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:not-implemented
+                title: Not Implemented
+                status: 501
+                detail: Github automatically repository onboarding feature disabled..
+  /api/integrations/repos/groups-settings/connection:
+    post:
+      tags:
+        - Sync Settings APIs
+      operationId: groupSettingsConnection
+      summary: Test Group Connection
+      description: Test Group Connection
+      parameters:
+        - in: header
+          name: X-Polaris-SCM-PAT
+          description: Personal Access Token
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/vnd.polaris.integrations.repos.groups-connection-request-1+json;charset=UTF-8:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/GroupConnectionRequest'
+                - properties:
+                    email:
+                      type: string
+                      format: email
+                      description: Email Address. (Note - For scmProvider - Bitbucket Cloud, it is a mandatory field.)
+                      example: user@email.com
+        required: true
+      responses:
+        '200':
+          description: OK.
+        '400':
+          description: Bad Request.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                invalidWorkspaceUrl:
+                  summary: Invalid workspace URL
+                  value:
+                    type: urn:x-scm-integrations:bad-request
+                    title: Bad Request
+                    status: 400
+                    detail: Bitbucket bulk onboarding only accepts workspace URLs in the given format https://bitbucket.org/[workspace].
+                missingEmail:
+                  summary: Missing email for Bitbucket
+                  value:
+                    type: urn:x-scm-integrations:bad-request
+                    title: Bad Request
+                    status: 400
+                    detail: emailID is required for Bitbucket Cloud bulk onboarding.
+                invalidEmail:
+                  summary: Invalid email format
+                  value:
+                    type: urn:x-scm-integrations:bad-request
+                    title: Bad Request
+                    status: 400
+                    detail: emailID is not valid for Bitbucket Cloud bulk onboarding.
+        '403':
+          description: Bad Request.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:bad-request
+                title: Unauthorized
+                status: 403
+                detail: SCM provider is required
+        '500':
+          description: Internal server error.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:internal-error
+                title: Internal Server Error
+                status: 500
+                detail: An unexpected error occurred.
+        '501':
+          description: Feature Not implemented.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:not-implemented
+                title: Not Implemented
+                status: 501
+                detail: Github automatically repository onboarding feature disabled..
+  /api/integrations/repos/group-mapping-status:
+    get:
+      tags:
+        - Sync Settings APIs
+      operationId: groupMappingStatus
+      summary: Get group mapping status with it's corresponding repositories.
+      description: >
+        This API retrieves the mapping status of an application to its associated projects. 
+
+
+        It verifies whether the application is correctly configured with groups or organizations in the SCM provider and whether the projects are properly mapped to repositories within those groups or
+        organizations, helping to identify misconfigurations such as projects not being linked to the correct application and ensuring proper synchronization between applications, projects, and
+        repositories.
+      parameters:
+        - name: applicationId
+          required: true
+          in: query
+          description: the unique identifier of the application
+          schema:
+            type: string
+            format: uuid
+          example: dd90103e-3ace-47f2-843e-c39906d8899e
+        - name: projectId
+          required: false
+          in: query
+          description: the unique identifier of the project
+          schema:
+            type: string
+            format: uuid
+          example: b538497c-24ad-4fe8-b787-c3bd5f959549
+        - name: _limit
+          in: query
+          description: >-
+            Restricts the number of results to the given limit. The default of 100 is used if no value is provided. If a limit greater than 100 is provided, the response will be "HTTP 400 Bad
+            Request."
+          schema:
+            type: integer
+            default: 100
+        - name: _offset
+          in: query
+          description: >-
+            Returns results, starting from a given position within the response. For example, if the offset is set to 5, the first four records are not returned. A default value of 0 is used if no
+            value is provided. If the offset is beyond the range of the collection, no results are returned.
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/vnd.polaris.integrations.repos.group-mapping-status-1+json:
+              schema:
+                $ref: '#/components/schemas/GroupMappingStatusResponse'
+        '400':
+          description: Bad request.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:bad-request
+                title: Bad Request
+                status: 400
+                detail: applicationId is missing
+        '403':
+          description: Unauthorized request.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:forbidden
+                title: Forbidden
+                status: 403
+                detail: Not authorized to list group mapping status.
+        '500':
+          description: Internal server error.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:internal-error
+                title: Internal Server Error
+                status: 500
+                detail: An unexpected error occurred.
+  /api/integrations/repos/test-settings:
+    post:
+      tags:
+        - Sync Settings APIs
+      operationId: createTestSettings
+      summary: Test automation synchronization settings
+      description: |
+        Configure or update test automation synchronization settings at any scope, including organization, application, project, or branch.
+
+          - **Organization scope**: The test sync settings apply to all applications, projects, and branches within the organization.
+          - **Application scope**: The test sync settings apply to all projects and branches within the application.
+          - **Project scope**: The test sync settings apply to all branches within the project.
+          - **Branch scope**: The test sync settings apply to the specified branch.
+      requestBody:
+        content:
+          application/vnd.polaris.integrations.repos.test-settings-create-1+json;charset=UTF-8:
+            schema:
+              $ref: '#/components/schemas/TestSettingsRequest'
+        required: true
+      responses:
+        '202':
+          description: Accepted.
+        '400':
+          description: Bad request.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:bad-request
+                title: Bad Request
+                status: 400
+                detail: 'Invalid scope: invalid_scope'
+        '403':
+          description: Unauthorized request.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:forbidden
+                title: Forbidden
+                status: 403
+                detail: Not authorized to create the test settings.
+        '500':
+          description: Internal server error.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:internal-error
+                title: Internal Server Error
+                status: 500
+                detail: An unexpected error occurred.
+  /api/integrations/repos/test-settings/{scopeId}:
+    get:
+      tags:
+        - Sync Settings APIs
+      operationId: getTestSettings
+      summary: Get test automation synchronization settings
+      description: Get test automation synchronization settings of a specified scope and its identifier.
+      parameters:
+        - name: scopeId
+          required: true
+          in: path
+          description: >-
+            The unique identifier of the scope resource. Use the organization ID for an organization scope, the application ID for an application scope, the project ID for a project scope, or the
+            branch ID for a branch scope.
+          schema:
+            type: string
+            format: uuid
+            example: 1d44c6d4-dde4-4c37-b068-9e7eb21c4a19
+        - name: scope
+          required: true
+          in: query
+          description: the scope of the test settings.
+          schema:
+            type: string
+            enum:
+              - organization
+              - application
+              - project
+              - branch
+            example: application
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/vnd.polaris.integrations.repos.test-settings+json:
+              schema:
+                $ref: '#/components/schemas/TestSettingsResponse'
+        '400':
+          description: Bad request.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:bad-request
+                title: Bad Request
+                status: 400
+                detail: scope is missing
+        '403':
+          description: Unauthorized request.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:forbidden
+                title: Forbidden
+                status: 403
+                detail: Not authorized to read the test settings.
+        '500':
+          description: Internal server error.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:internal-error
+                title: Internal Server Error
+                status: 500
+                detail: An unexpected error occurred.
+    delete:
+      tags:
+        - Sync Settings APIs
+      operationId: deleteTestSettings
+      summary: Delete test automation synchronization settings
+      description: Delete test automation synchronization settings of a specified scope identifier.
+      parameters:
+        - name: scopeId
+          required: true
+          in: path
+          description: >-
+            The unique identifier of the scope resource. Use the organization ID for an organization scope, the application ID for an application scope, the project ID for a project scope, or the
+            branch ID for a branch scope.
+          schema:
+            type: string
+            format: uuid
+            example: 1d44c6d4-dde4-4c37-b068-9e7eb21c4a19
+        - name: scope
+          required: true
+          in: query
+          description: the scope of the test settings.
+          schema:
+            type: string
+            enum:
+              - organization
+              - application
+              - project
+              - branch
+            example: application
+      responses:
+        '200':
+          description: Successful response
+        '400':
+          description: Bad request.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:bad-request
+                title: Bad Request
+                status: 400
+                detail: scope is missing
+        '403':
+          description: Unauthorized request.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:forbidden
+                title: Forbidden
+                status: 403
+                detail: Not authorized to delete the test settings.
+        '500':
+          description: Internal server error.
+          content:
+            application/problem+json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                type: urn:x-scm-integrations:internal-error
+                title: Internal Server Error
+                status: 500
+                detail: An unexpected error occurred.
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Api-Token
+  schemas:
+    RepositoryBranchesV1CollectionResponse:
+      type: object
+      properties:
+        _items:
+          type: array
+          items:
+            $ref: '#/components/schemas/RepositoryBranchesResponseV1'
+        _links:
+          type: array
+          items:
+            type: object
+            properties:
+              href:
+                type: string
+              rel:
+                type: string
+              method:
+                type: string
+          example:
+            - href: https://polaris.blackduck.com/api/scm/projects/0a50c9ab-b068-498e-b068-0d695ca4ef03/repository/0a50c9ab-b068-498e-b068-0d695ca4ef03/branches?_limit=10
+              rel: self
+              method: GET
+            - href: https://polaris.blackduck.com/api/scm/projects/0a50c9ab-b068-498e-b068-0d695ca4ef03/repository/0a50c9ab-b068-498e-b068-0d695ca4ef03/branches?_limit=10
+              rel: first
+              method: GET
+            - href: https://polaris.blackduck.com/api/scm/projects/0a50c9ab-b068-498e-b068-0d695ca4ef03/repository/0a50c9ab-b068-498e-b068-0d695ca4ef03/branches?_limit=10
+              rel: last
+              method: GET
+        _collection:
+          $ref: '#/components/schemas/PageInformation'
+    RepositoryBranchesResponseV1:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the branch.
+          example: branch-1234
+        sha:
+          type: string
+          description: The unique identifier for the commit.
+          example: 5af53a13790bf123a6128cbe89e548f8ea74df98
+        isDefault:
+          type: boolean
+          description: Indicator for default branch.
+        isSynchronisedWithScm:
+          type: boolean
+          description: Indicator if branch is synced with SCM. Only applicable when automatic onbaording feature is available.
+    PageInformation:
+      type: object
+      properties:
+        itemCount:
+          type: integer
+          format: int64
+          example: 1
+        currentPage:
+          type: integer
+          format: int32
+          example: 1
+        pageCount:
+          type: integer
+          format: int32
+          example: 1
+    ScmRepositoryRequestV1:
+      type: object
+      properties:
+        projectId:
+          type: string
+          format: uuid
+          description: The unique identifier of the project
+          example: 2d3da7e5-c722-43ac-8e44-51f2f3661ea2
+        applicationId:
+          type: string
+          description: The applicationId of the project.
+          format: uuid
+        repositoryUrl:
+          type: string
+          description: The repository URL from SCM the provider.
+          example: https://github.com/Org-A/repo-1
+        scmProvider:
+          $ref: '#/components/schemas/ScmProvider'
+        scmAuthentication:
+          $ref: '#/components/schemas/CreateScmAuthRequestV1'
+    GroupConnectionRequest:
+      type: object
+      properties:
+        repositoryUrl:
+          type: string
+          description: The SCM group url.
+        scmProvider:
+          $ref: '#/components/schemas/ScmProvider'
+    GroupMappingStatusResponse:
+      type: object
+      properties:
+        _items:
+          type: array
+          items:
+            $ref: '#/components/schemas/GroupMappingStatus'
+          description: The list of status for each project in the given application.
+        _links:
+          type: array
+          description: represents a collection of hypermedia links associated with this resource. Each link provides additional context or actions that can be performed on the resource.
+          items:
+            type: object
+            description: an array of link objects, where each object contains details about a specific link.
+            properties:
+              href:
+                type: string
+                description: The URL of the link that points to the related resource or action.
+              rel:
+                type: string
+                description: The relationship between the current resource and the linked resource, indicating the purpose or type of the link.
+              method:
+                type: string
+                description: The HTTP method (e.g., GET, POST, PATCH) to be used when interacting with the linked resource.
+          example:
+            - href: https://polaris.blackduck.com/api/integrations/repos/group-mapping-status?applicationId=424da90f-d219-4ac6-9c51-210d7c8871be&_offset=0&_limit=100
+              rel: self
+              method: GET
+            - href: https://polaris.blackduck.com/api/integrations/repos/group-mapping-status?applicationId=424da90f-d219-4ac6-9c51-210d7c8871be&_offset=0&_limit=100
+              rel: first
+              method: GET
+            - href: https://polaris.blackduck.com/api/integrations/repos/group-mapping-status?applicationId=424da90f-d219-4ac6-9c51-210d7c8871be&_offset=0&_limit=100
+              rel: last
+              method: GET
+        _collection:
+          $ref: '#/components/schemas/PageInformation'
+    GroupMappingStatus:
+      type: object
+      properties:
+        projectId:
+          type: string
+          format: uuid
+          description: The unique identifier of the project
+          example: 2d3da7e5-c722-43ac-8e44-51f2f3661ea2
+        repoUrl:
+          type: string
+          description: the repository URL
+          example: https://www.github.com/hello-world
+        isValidMapping:
+          type: boolean
+          description: >-
+            Indicates whether the mapping between a project and its application is valid. A mapping is considered valid if the repository associated with the project belongs to the same organization
+            or group in the SCM provider.
+          example: true
+    TestSettingsResponse:
+      type: object
+      properties:
+        scope:
+          type: string
+          enum:
+            - organization
+            - application
+            - project
+            - branch
+          description: Specifies the scope of the test settings from which the test synchronization settings are inherited. If the settings are not inherited, the scope matches the requested scope.
+          example: application
+        scopeId:
+          type: string
+          format: uuid
+          description: >-
+            Specifies the unique identifier of the scope resource from which the test synchronization settings are inherited. If the settings are not inherited, the identifier matches the requested
+            scope.
+          example: 2d3da7e5-c722-43ac-8e44-51f2f3661ea2
+        inherited:
+          type: boolean
+          description: Indicates whether the test settings are inherited from a parent scope.
+          example: false
+        testSyncSettings:
+          $ref: '#/components/schemas/TestSyncSettings'
+        _links:
+          type: array
+          description: represents a collection of hypermedia links associated with this resource. Each link provides additional context or actions that can be performed on the resource.
+          items:
+            type: object
+            description: an array of link objects, where each object contains details about a specific link.
+            properties:
+              href:
+                type: string
+                description: The URL of the link that points to the related resource or action.
+              rel:
+                type: string
+                description: The relationship between the current resource and the linked resource, indicating the purpose or type of the link.
+              method:
+                type: string
+                description: The HTTP method (e.g., GET, POST, PATCH) to be used when interacting with the linked resource.
+          example:
+            - href: https://polaris.blackduck.com/api/integrations/repos/test-settings?scope=application&id=424da90f-d219-4ac6-9c51-210d7c8871be
+              rel: self
+              method: GET
+    TestSettingsRequest:
+      type: object
+      properties:
+        scope:
+          type: string
+          enum:
+            - organization
+            - application
+            - project
+            - branch
+          description: the scope of the test settings.
+          example: application
+        scopeId:
+          type: string
+          format: uuid
+          description: >-
+            The unique identifier of the scope resource. Use the organization ID for an organization scope, the application ID for an application scope, the project ID for a project scope, or the
+            branch ID for a branch scope.
+          example: 2d3da7e5-c722-43ac-8e44-51f2f3661ea2
+        testSyncSettings:
+          $ref: '#/components/schemas/TestSyncSettings'
+    TestSyncSettings:
+      type: object
+      properties:
+        branch:
+          $ref: '#/components/schemas/BranchTestSyncSettings'
+    BranchTestSyncSettings:
+      type: object
+      properties:
+        default:
+          $ref: '#/components/schemas/DefaultBranchSyncSettings'
+        nonDefault:
+          $ref: '#/components/schemas/NonDefaultBranchSyncSettings'
+    DefaultBranchSyncSettings:
+      type: object
+      properties:
+        pullRequestMerged:
+          type: boolean
+          description: Indicates whether test creation is required when a pull request is merged on a default branch within a specified scope.
+          example: true
+        assessmentTypes:
+          type: array
+          description: determines the type of tests to be created.
+          items:
+            type: string
+          example:
+            - SAST
+            - SCA
+    NonDefaultBranchSyncSettings:
+      type: object
+      properties:
+        pullRequestMerged:
+          type: boolean
+          description: Indicates whether test creation is required when a pull request is merged on a non default branch within a specified scope.
+          example: true
+        assessmentTypes:
+          type: array
+          description: determines the type of tests to be created.
+          items:
+            type: string
+          example:
+            - SAST
+            - SCA
+    ScmRepositoryV1CollectionResponse:
+      type: object
+      required:
+        - _items
+        - _links
+        - _collection
+      properties:
+        _items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScmRepositoriesResponseV1'
+          description: The list of repositories.
+        _links:
+          type: array
+          items:
+            type: object
+            properties:
+              href:
+                type: string
+              rel:
+                type: string
+              method:
+                type: string
+          example:
+            - href: https://polaris.blackduck.com/api/scm/repositories?_offset=20&_limit=10
+              rel: self
+              method: GET
+            - href: https://polaris.blackduck.com/api/scm/repositories?_offset=0&_limit=10
+              rel: first
+              method: GET
+            - href: https://polaris.blackduck.com/api/scm/repositories?_offset=1000&_limit=10
+              rel: last
+              method: GET
+        _collection:
+          $ref: '#/components/schemas/PageInformation'
+    ScmRepositoriesResponseV1:
+      type: object
+      required:
+        - id
+        - organizationId
+        - repositoryUrl
+        - scmProvider
+        - applicationId
+        - projectId
+        - createdAt
+        - createdBy
+        - updatedAt
+        - updatedBy
+      properties:
+        id:
+          type: string
+          description: The unique identifier assigned to the repository.
+          format: uuid
+        organizationId:
+          type: string
+          description: The unique identifier assigned to the organization.
+          format: uuid
+        repositoryUrl:
+          type: string
+          description: The repository URL associated with the project available from SCM provider.
+          example: https://github.com/Org-A/repo-1
+        scmProvider:
+          $ref: '#/components/schemas/ScmProvider'
+        applicationId:
+          type: string
+          description: The applicationId corresponding to the repository that is associated with a project.
+          format: uuid
+        projectId:
+          type: string
+          description: The project ID which can be obtained from portfolio service.
+          format: uuid
+        createdAt:
+          type: string
+          description: Repository creation time.
+          format: date-time
+        updatedAt:
+          type: string
+          description: Repository update time.
+          format: date-time
+        createdBy:
+          type: string
+          description: The user who created the repository.
+          example: test@gmail.com
+        updatedBy:
+          type: string
+          description: The user who updated the repository.
+          example: test@gmail.com
+    CreateScmRepositoryResponseV1:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier assigned to the repository.
+          format: uuid
+        organizationId:
+          type: string
+          description: The unique identifier assigned to the organization.
+          format: uuid
+        repositoryUrl:
+          type: string
+          description: The repository URL associated with the project available from SCM provider.
+          example: https://github.com/Org-A/repo-1
+        scmProvider:
+          $ref: '#/components/schemas/ScmProvider'
+        applicationId:
+          type: string
+          description: The applicationId corresponding to the repository that is associated with a project.
+          format: uuid
+        projectId:
+          type: string
+          description: The project ID which can be obtained from portfolio service.
+          format: uuid
+        createdAt:
+          type: string
+          description: Repository creation time.
+          format: date-time
+        updatedAt:
+          type: string
+          description: Repository update time.
+          format: date-time
+        createdBy:
+          type: string
+          description: The user who created the repository.
+          example: test@gmail.com
+        updatedBy:
+          type: string
+          description: The user who updated the repository.
+          example: test@gmail.com
+        _links:
+          type: array
+          items:
+            type: object
+            properties:
+              href:
+                type: string
+                format: url
+              rel:
+                type: string
+                default: self
+              method:
+                type: string
+                default: POST
+          example:
+            - href: https://polaris.blackduck.com/api/scm/projects/3fa85f64-5717-4562-b3fc-2c963f66afa6/repository
+              rel: self
+              method: POST
+    ScmRepositoryPatchResponseV1:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier assigned to the repository.
+          format: uuid
+        organizationId:
+          type: string
+          description: The unique identifier assigned to the organization.
+          format: uuid
+        repositoryUrl:
+          type: string
+          description: The repository URL associated with the project available from SCM provider.
+          example: https://github.com/Org-A/repo-1
+        scmProvider:
+          $ref: '#/components/schemas/ScmProvider'
+        applicationId:
+          type: string
+          description: The applicationId corresponding to the repository that is associated with a project.
+          format: uuid
+        projectId:
+          type: string
+          description: The project ID which can be obtained from portfolio service.
+          format: uuid
+        createdAt:
+          type: string
+          description: Repository creation time.
+          format: date-time
+        updatedAt:
+          type: string
+          description: Repository update time.
+          format: date-time
+        createdBy:
+          type: string
+          description: The user who created the repository.
+          example: test@gmail.com
+        updatedBy:
+          type: string
+          description: The user who updated the repository.
+          example: test@gmail.com
+        _links:
+          type: array
+          items:
+            type: object
+            properties:
+              href:
+                type: string
+                format: url
+              rel:
+                type: string
+                default: self
+              method:
+                type: string
+                default: PATCH
+          example:
+            - href: https://polaris.blackduck.com/api/scm/projects/3fa85f64-5717-4562-b3fc-2c963f66afa6/repository/3fa85f64-5717-4562-b3fc-2c963f66afa6
+              rel: self
+              method: PATCH
+    ScmRepositoryTestConnectionResponseV1:
+      type: object
+      properties:
+        object:
+          type: boolean
+        _links:
+          type: array
+          items:
+            type: object
+            properties:
+              href:
+                type: string
+              rel:
+                type: string
+              method:
+                type: string
+          example:
+            - href: https://polaris.blackduck.com/api/scm/47880d3c-bdb4-438f-876d-0ac0af6f9b27/repository/test-connection
+              rel: self
+              method: POST
+    ErrorResponse:
+      type: object
+      properties:
+        type:
+          type: string
+          description: The type of Error.
+        title:
+          type: string
+          description: The title of the error.
+        status:
+          type: integer
+          description: The Status code related to the error.
+        detail:
+          type: string
+          description: The details of the error along with message.
+        hint:
+          type: string
+          description: Optional hint providing additional context or guidance about the error.
+    ScmRepositoryResponseWithBranchV1:
+      type: object
+      properties:
+        body:
+          oneOf:
+            - $ref: '#/components/schemas/ScmRepositoryWithBranch'
+    ScmRepositoryWithBranch:
+      type: object
+      properties:
+        id:
+          type: string
+          description: The unique identifier assigned to the repository.
+          format: uuid
+        organizationId:
+          type: string
+          description: The unique identifier assigned to the organization.
+          format: uuid
+        repositoryUrl:
+          type: string
+          description: The repository URL associated with the project available from SCM provider.
+          example: https://www.github.com/te-repo
+        scmProvider:
+          $ref: '#/components/schemas/ScmProvider'
+        applicationId:
+          type: string
+          description: The application ID or portfolioItemId corresponding to the repository that is associated with a project.
+          format: uuid
+        projectId:
+          type: string
+          description: The project ID which can be obtained from portfolio service.
+          format: uuid
+        createdAt:
+          type: string
+          description: Repository creation time.
+          format: date-time
+        updatedAt:
+          type: string
+          description: Repository update time.
+          format: date-time
+        createdBy:
+          type: string
+          description: The user who created the repository.
+          example: test@gmail.com
+        updatedBy:
+          type: string
+          description: The user who updated the repository.
+          example: test@gmail.com
+        defaultBranchName:
+          type: string
+          description: Name of the default branch name for the repository. This is an optional parameter.
+          example: main
+        _links:
+          type: array
+          items:
+            type: object
+            properties:
+              href:
+                type: string
+                format: url
+              rel:
+                type: string
+                default: self
+              method:
+                type: string
+                default: GET
+    RepoImportStatusPageInformation:
+      type: object
+      properties:
+        itemCount:
+          type: integer
+          format: int32
+          example: 2
+        currentPage:
+          type: integer
+          format: int32
+          example: 1
+        pageCount:
+          type: integer
+          format: int32
+          example: 2
+        _type:
+          type: string
+          example: repositoriesStatus
+    GroupsRepoImportStatusPageInformation:
+      type: object
+      properties:
+        itemCount:
+          type: integer
+          format: int32
+          example: 200
+        currentPage:
+          type: integer
+          format: int32
+          example: 1
+        pageCount:
+          type: integer
+          format: int32
+          example: 2
+        _type:
+          type: string
+          example: groupsRepositoriesStatus
+    CreateScmAuthRequestV1:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Custom SCM authentication name of the user's choice.
+          example: SCM auth 1
+        authenticationMode:
+          type: string
+          enum:
+            - PAT
+            - OAUTH_2
+          description: Type of authentication used.
+        authToken:
+          type: string
+          description: The access token value from the SCM provider.
+          example: ghp_Gjej2424j32rnWEmnrf234DFq
+        email:
+          type: string
+          format: email
+          description: Email Address. (Note - For scmProvider - Bitbucket Cloud, it is a mandatory field.)
+          example: user@email.com
+    UpdateScmRepositoryByAppIdRequestV1:
+      type: object
+      properties:
+        applicationId:
+          type: string
+          description: The applicationId of the project.
+          format: uuid
+        scmProvider:
+          $ref: '#/components/schemas/ScmProvider'
+        scmAuthentication:
+          $ref: '#/components/schemas/CreateScmAuthRequestV1'
+        groupUrl:
+          type: string
+          description: Url of the group
+          example: https://bitbucket.org/polarisnext
+    ImportRepositoriesRequestV1:
+      type: object
+      properties:
+        scmProvider:
+          $ref: '#/components/schemas/ScmProvider'
+        automaticMapping:
+          type: boolean
+          description: Indicator to automatically map all the accessible groups and repositories to applications and projects respectively.
+        policySettings:
+          type: object
+          properties:
+            issuePolicyIds:
+              type: array
+              description: List of issue policy IDs. Issue policies create guideline for your organization to follow, can be used to track onboarded projects and trigger actions for violations.
+              items:
+                type: string
+                format: uuid
+            scanPolicyIds:
+              type: array
+              description: List of scan policy IDs. Tests will be automatically scheduled for onboarded projects.
+              items:
+                type: string
+                format: uuid
+        roleAssignments:
+          type: object
+          properties:
+            appAdminIds:
+              type: array
+              description: List of application administrator user IDs.
+              items:
+                type: string
+                format: uuid
+            memberIds:
+              type: array
+              description: List of application member user IDs.
+              items:
+                type: string
+                format: uuid
+            contributorIds:
+              type: array
+              description: List of contributor user IDs.
+              items:
+                type: string
+                format: uuid
+            observerIds:
+              type: array
+              description: List of observer user IDs.
+              items:
+                type: string
+                format: uuid
+        repositorySelections:
+          type: array
+          description: List of repository selections for custom mapping. It is required if automaticMapping is false.
+          items:
+            type: object
+            properties:
+              applicationName:
+                type: string
+                description: The application name.
+              repositories:
+                type: array
+                description: >-
+                  List of selected repositories along with the groups. SCM group will be mapped to a polaris application and SCM repository to a polaris project. If a project with the same name
+                  already exists under the given application and a repo with the same name selected to be onboarded into an existing application then onboarding service doesn't validate/mark the
+                  import as failed.
+                items:
+                  type: object
+                  properties:
+                    groupName:
+                      type: string
+                      description: The SCM group name.
+                    allRepositoriesInGroup:
+                      type: boolean
+                      description: Indicator to import all repositories of a group.
+                    includeRepositories:
+                      type: array
+                      description: >-
+                        List of repositories to be included in the import. It is required if allRepositoriesInGroup is false. Note that if allRepositoriesInGroup is true, includeRepositories will be
+                        ignored.
+                      items:
+                        type: string
+                    excludeRepositories:
+                      type: array
+                      description: List of repositories to be excluded from the group specified by groupName when allRepositoriesInGroup is true.
+                      items:
+                        type: string
+      example:
+        scmProvider: GITHUB_STANDARD
+        automaticMapping: false
+        policySettings:
+          issuePolicyIds:
+            - 3fa85f64-5717-4562-b3fc-2c963f66afa6
+            - 4fa85f64-5717-4562-b3fc-2c963f66afa6
+          scanPolicyIds:
+            - 5fa85f64-5717-4562-b3fc-2c963f66afa6
+            - 6fa85f64-5717-4562-b3fc-2c963f66afa6
+        roleAssignments:
+          appAdminIds:
+            - 1fa85f64-5717-4562-b3fc-2c963f66afa6
+          memberIds:
+            - 4fa85f64-5717-4562-b3fc-2c963f66afa6
+          contributorIds:
+            - 2fa85f64-5717-4562-b3fc-2c963f66afa6
+          observerIds:
+            - 3fa85f64-5717-4562-b3fc-2c963f66afa6
+        repositorySelections:
+          - applicationName: App A
+            repositories:
+              - groupName: Org A
+                allRepositoriesInGroup: true
+                excludeRepositories:
+                  - Repo C
+    GroupsSettingsRequest:
+      type: object
+      properties:
+        applicationId:
+          type: string
+          format: uuid
+        settings:
+          type: object
+          properties:
+            repository:
+              type: object
+              properties:
+                importNewRepositories:
+                  type: boolean
+                syncReposAndBranches:
+                  type: boolean
+                automaticallyTestCodeChanges:
+                  type: boolean
+            branch:
+              type: object
+              properties:
+                importNewBranches:
+                  type: boolean
+                branchNameExpressions:
+                  type: array
+                  items:
+                    type: string
+      example:
+        applicationId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+        settings:
+          repository:
+            importNewRepositories: false
+            syncReposAndBranches: false
+            automaticallyTestCodeChanges: false
+          branch:
+            importNewBranches: false
+            branchNameExpressions:
+              - expression-1
+    GroupsSettingsResponse:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: Email Address. (Note - Only applicable for scmProvider - Bitbucket Cloud)
+      example:
+        applicationId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+        groupUrl: https://bitbucket.org/polarisnext
+        scmProvider: BITBUCKET_CLOUD
+        settings:
+          repository:
+            importNewRepositories: false
+            syncReposAndBranches: false
+            automaticallyTestCodeChanges: false
+        email: user@email.com
+    UpdatedImportRepositoriesRequestV1:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: emailID is required for Bitbucket Cloud bulk onboarding.
+    ImportRepositoriesForAGroupRequestV1:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          description: Email Address. (Note - Only applicable for scmProvider - Bitbucket Cloud)
+    UpdateRepositoriesImportRequestV1:
+      type: object
+      properties:
+        action:
+          type: string
+          enum:
+            - ABORT
+          description: |
+            Supported action
+            * ABORT - You can abort the repositories import job if its current state is not one of the following: `COMPLETED`, `FAILED`, `CANCELLED`.
+    UpdatedRepositoriesImportResponseV1:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Repositories import job Id.
+          example: 0a50c9ab-b068-498e-b068-0d695ca4ef03
+        progress:
+          type: integer
+          description: Overall progress of repositories import job.
+          example: 100
+        state:
+          type: string
+          description: Indicate the present state of repositories import job.
+          example: ABORTED
+        info:
+          type: array
+          items:
+            type: object
+            properties:
+              group:
+                type: string
+                description: Name of the repositories group.
+                example: Group1
+              state:
+                type: string
+                description: Indicate the present state of repositories group.
+                example: ABORTED
+              info:
+                type: string
+                description: Indicate the present state information of repositories group.
+                example: repositories group is aborted.
+        createdAt:
+          type: string
+          format: date-time
+          description: Created datetime of the repository import job. Uses the ISO 8601 standard for expressing datetime. More details are here `https://en.wikipedia.org/wiki/ISO_8601#Times`
+          example: '2023-07-29T14:30:33.067Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: Updated datetime of the repository import job. Uses the ISO 8601 standard for expressing datetime. More details are here `https://en.wikipedia.org/wiki/ISO_8601#Times`
+          example: '2023-07-29T14:30:33.067Z'
+        createdBy:
+          type: string
+          format: uuid
+          description: Unique id of user, who invoked the repositories import job.
+          example: 0a50c9ab-b068-498e-b068-0d695ca4ef03
+        updatedBy:
+          type: string
+          format: uuid
+          description: Unique id of user, who updated the repositories import job.
+          example: 0a50c9ab-b068-498e-b068-0d695ca4ef03
+        _links:
+          type: array
+          items:
+            type: object
+            properties:
+              href:
+                type: string
+              rel:
+                type: string
+              method:
+                type: string
+          example:
+            - href: https://polaris.synopsys.com/api/scm/groups-repositories-import/47880d3c-bdb4-438f-876d-0ac0af6f9b27
+              rel: self
+              method: GET
+    ScmProviderResponseV1Response:
+      type: object
+      properties:
+        _items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScmProviderResponseV1'
+        _links:
+          type: array
+          items:
+            type: object
+            properties:
+              href:
+                type: string
+              rel:
+                type: string
+              method:
+                type: string
+        _collection:
+          $ref: '#/components/schemas/PageInformation'
+    ScmProviderResponseV1:
+      type: object
+      properties:
+        scmProvider:
+          $ref: '#/components/schemas/ScmProvider'
+        scmHostingType:
+          type: string
+          enum:
+            - CLOUD_HOSTED
+            - SELF_HOSTED
+          format: string
+          description: >-
+            Type of hosting for the provider. Valid values are CLOUD_HOSTED for [GITHUB_STANDARD, GITHUB_ENTERPRISE_CLOUD, GITLAB_SAAS, BITBUCKET_CLOUD, AZURE_CLOUD] and SELF_HOSTED for
+            [GITHUB_ENTERPRISE_SERVER, GITLAB_SELF_MANAGED, BITBUCKET_DATA_CENTER].
+          example: CLOUD_HOSTED
+        minVersion:
+          type: string
+          pattern: ^[0-9]+\.[0-9]+(\.[0-9]+)?$
+          description: Minimum supported version. It will be empty in case of CLOUD_HOSTED.
+          example: '8.9'
+        maxVersion:
+          type: string
+          pattern: ^[0-9]+\.[0-9]+(\.[0-9]+)?$
+          description: Maximum supported version. It will be empty in case of CLOUD_HOSTED.
+          example: '8.19'
+    GetGroupsRepositoriesImportStatusResponseV1:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Repositories import job Id.
+          example: 0a50c9ab-b068-498e-b068-0d695ca4ef03
+        progressPercentage:
+          type: integer
+          description: Overall progress of repositories import job.
+          example: 100
+        state:
+          type: string
+          description: Indicate the present state of repositories import job.
+          example: Failed
+        stateInfo:
+          type: string
+          description: Indicate user friendly error message in case of error.
+          example: Repositories import job failed, Group import failed.
+        groupsImportStats:
+          type: object
+          properties:
+            notStarted:
+              type: integer
+              description: Indicates count of groups that are yet to begin the import.
+              example: 0
+            inProgress:
+              type: integer
+              description: Indicates count of groups whose import is in-progress.
+              example: 0
+            completed:
+              type: integer
+              description: Indicates the count of groups that are imported successfully.
+              example: 200
+            failed:
+              type: integer
+              description: Indicates the count of groups that have failed to import.
+              example: 100
+            total:
+              type: integer
+              description: Indicates the count of groups that were requested for on-boarding.
+              example: 300
+        _links:
+          type: array
+          items:
+            type: object
+            properties:
+              href:
+                type: string
+              rel:
+                type: string
+              method:
+                type: string
+          example:
+            - href: https://polaris.synopsys.com/api/scm/groups-repositories-import/47880d3c-bdb4-438f-876d-0ac0af6f9b27/status
+              rel: self
+              method: GET
+    GetRepoImportGroupsStatusResponseV1:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Repositories import group Id.
+          example: 0a50c9ab-b068-498e-b068-0d695ca4ef03
+        portfolioItemId:
+          type: string
+          format: uuid
+          description: Portfolio Item Id.
+          example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+        progressPercentage:
+          type: integer
+          description: Overall progress of group import.
+          example: 100
+        state:
+          type: string
+          description: Indicate the present state of group import.
+          example: Failed
+        stateInfo:
+          type: string
+          description: Indicate user friendly error message in case of error.
+          example: Group import failed, Repository import failed.
+        repositoriesImportStats:
+          type: object
+          properties:
+            notStarted:
+              type: integer
+              description: Indicates count of repositories that are yet to begin the import.
+              example: 0
+            inProgress:
+              type: integer
+              description: Indicates count of repositories whose import is in-progress.
+              example: 0
+            completed:
+              type: integer
+              description: Indicates the count of repositories that are imported successfully.
+              example: 200
+            failed:
+              type: integer
+              description: Indicates the count of repositories that have failed to import.
+              example: 100
+            total:
+              type: integer
+              description: Indicates the count of repositories that were requested for on-boarding.
+              example: 300
+        importJob:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+              description: Repositories import job Id.
+              example: 0b50c9ab-b068-498e-b068-0d695ca4ef03
+            createdAt:
+              type: string
+              format: date-time
+              description: Created datetime of the repository import job. Uses the ISO 8601 standard for expressing datetime. More details are here `https://en.wikipedia.org/wiki/ISO_8601#Times`
+              example: '2023-07-29T14:30:33.067Z'
+    group:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the group
+          format: integer
+        name:
+          type: string
+          description: name of the group
+      example:
+        id: '5432454'
+        name: Group One
+    groupCollection:
+      properties:
+        itemCount:
+          type: integer
+          format: int32
+        pageCount:
+          type: integer
+          format: int32
+        currentPage:
+          type: integer
+          format: int32
+      example:
+        itemCount: 1
+        pageCount: 10
+        currentPage: 3
+    repository:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier of the repository
+        organizationId:
+          type: string
+          format: uuid
+          description: Unique identifier of the organization
+        repositoryUrl:
+          type: string
+          format: url
+          description: Url of the repository
+        scmProvider:
+          $ref: '#/components/schemas/ScmProvider'
+        applicationId:
+          type: string
+          format: uuid
+          description: Unique identifier of the application
+        projectId:
+          type: string
+          format: uuid
+          description: Unique identifier of the project
+        createdAt:
+          type: string
+          format: date-time
+          description: Created datetime of the repository. Uses the ISO 8601 standard for expressing datetime. More details are here `https://en.wikipedia.org/wiki/ISO_8601#Times`
+        updatedAt:
+          type: string
+          format: date-time
+          description: Updated datetime of the repository. Uses the ISO 8601 standard for expressing datetime. More details are here `https://en.wikipedia.org/wiki/ISO_8601#Times`
+        createdBy:
+          type: string
+          format: email
+          description: Email of the user who created the repository
+        updatedBy:
+          type: string
+          format: email
+          description: Email of the user who updated the repository
+      example:
+        id: 3ea85f61-3317-4562-b3fc-3d683f66aeb9
+        organizationId: 3ea85f61-3317-4562-b3fc-3d683f66aeb9
+        repositoryUrl: https://example.com
+        scmProvider: GITHUB_STANDARD
+        applicationId: 3ea85f61-3317-4562-b3fc-3d683f66aeb9
+        projectId: 3ea85f61-3317-4562-b3fc-3d683f66aeb9
+        createdAt: '2023-07-29T14:30:33.067Z'
+        updatedAt: '2023-07-29T14:30:33.067Z'
+        createdBy: example@example.com
+        updatedBy: example@example.com
+    project:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the project
+        name:
+          type: string
+          format: string
+          description: Name of the project
+        url:
+          type: string
+          format: url
+          description: Url of the project
+        groupName:
+          type: string
+          format: string
+          description: Name of the group of the given project
+      example:
+        id: 3ea85f61-3317-4562-b3fc-3d683f66aeb9
+        name: testProj
+        url: https://testProj@dev.azure.com/testProj/test123/_git/test123-REPO
+        groupName: test123
+    repositoryCollection:
+      properties:
+        itemCount:
+          type: integer
+          format: int32
+        pageCount:
+          type: integer
+          format: int32
+        currentPage:
+          type: integer
+          format: int32
+      example:
+        itemCount: 1
+        pageCount: 10
+        currentPage: 3
+    ScmProvider:
+      type: string
+      enum:
+        - GITHUB_STANDARD
+        - GITHUB_ENTERPRISE_CLOUD
+        - GITLAB_SAAS
+        - BITBUCKET_CLOUD
+        - AZURE_CLOUD
+        - GITHUB_ENTERPRISE_SERVER
+        - GITHUB_SELF_MANAGED
+        - BITBUCKET_DATA_CENTER
+      description: >-
+        Value for the ScmProviderEnum. Valid values are GITHUB_STANDARD (CLOUD_HOSTED), GITHUB_ENTERPRISE_CLOUD (CLOUD_HOSTED), GITLAB_SAAS (CLOUD_HOSTED), BITBUCKET_CLOUD (CLOUD_HOSTED), AZURE_CLOUD
+        (CLOUD_HOSTED), GITHUB_ENTERPRISE_SERVER (SELF_HOSTED), GITLAB_SELF_MANAGED (SELF_HOSTED) and BITBUCKET_DATA_CENTER (SELF_HOSTED).

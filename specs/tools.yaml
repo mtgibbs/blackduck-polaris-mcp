@@ -1,0 +1,1111 @@
+openapi: 3.1.0
+info:
+  title: Tools
+  description: >
+    Handles retrieval of command line tools and tool-related information. You can download the CI Integration tool, and use it when you want to start a scan from the command line. The CI Integrations
+    tool will download other tools for scanning and uploading code when they are needed. <p>To download the CI Integrations tool follow this workflow:<ol><li>Get the tool ID for the latest version of
+    the tool, using <code>GET /tools</code>.</li><li>Use the tool ID to retrieve a signed link from `GET /download-descriptors/{id}`. You can use this link to download the CI Integrations
+    tool.</li></ol></p>
+
+
+    **Deprecation notice for media type and base path changes**
+
+    * Media type names used in Polaris APIs were renamed and no longer include “synopsys”. Although media types that include “synopsys” were removed from the API specifications, existing endpoints
+    will continue to support them until March 24, 2026. Please update your scripts to use the new media types.    
+
+    * Additionally, the base path for Tools is changing (from `/api/tool-service/tools` to `/api/tools`) resulting in several endpoints getting deprecated. Endpoints that are being deprecated include
+    additional properties in response headers as shown below
+       
+    * ```
+      "Deprecation":  "Sun, 15 Jun 2025 23:59:59 GMT",
+      "Link":         "New version of API link; rel=\"alternate\"",
+      "Sunset":       "Tue, 24 Mar 2026 05:00:00 GMT"
+      ```
+
+      * `Deprecation`: The date and time when a resource will be deprecated. After this date and time, the resource may be removed from future versions of the API.
+      * `Link`: A link to a supported endpoint that replicates the functionality of a deprecated one.
+      * `Sunset`: The date and time when a resource will be removed, and no longer be available.
+  x-logo:
+    icon: fa-toolbox
+    primary: null
+    secondary: null
+  contact:
+    name: Black Duck, Inc.
+    url: https://polaris.blackduck.com/
+  version: 1.0.0
+servers:
+  - url: https://polaris.blackduck.com
+tags:
+  - name: Tool
+    description: Retrieves tool information.
+  - name: Download Descriptor
+    description: Retrieves a signed URL for downloading a tool.
+  - name: Version Mapping
+    description: Retrieves version mapping information for tools.
+  - name: Version Matrix
+    description: Retrieves version matrix information for tools.
+  - name: Version Settings
+    description: Manages version settings for tools.
+security:
+  - ApiKeyAuth: []
+paths:
+  /api/tool-service/download-descriptors/{id}:
+    get:
+      operationId: getDownloadDescriptorById
+      tags:
+        - Download Descriptor
+      summary: Fetches the downloadable details of a specified tool
+      description: |
+        Fetches information, including the download URL, for the tool matching the specified `id` for the organization.
+
+        The format for `id` looks like this: `name:version:platform:extension`. Here's how the parts are defined:
+
+          * `name` - Tool name   -  Supported values `cov_thin_client`, `synopsys_detect`, `fastdast_engine`, `polaris_ci`, `scan_cli`, `bridge-cli-bundle`, `detect`, `coverity-analysis` and `polaris-snippet-generator`
+          * `version` - Tool version   - Supported versions from each tools
+          * `platform` - Operating system on which the tool can be downloaded and used.
+            *  Supported values :<br />
+                    `cov_thin_client` - `macosx`, `win64`, `linux64`<br />
+                    `synopsys_detect` - `macosx`, `win64`, `linux64`<br />
+                    `fastdast_engine` - `macosx`, `win64`, `linux64`<br />
+                    `polaris_ci` - `macosx`, `win64`, `linux64`<br />
+                    `scan_cli` - `macosx`, `win64`, `linux64`<br />
+                    `bridge-cli-bundle` - `macosx`, `win64`, `linux64`<br />
+                    `detect` - `macosx`, `win64`, `linux64`<br />
+                    `coverity-analysis` - `macosx`, `win64`, `linux64`, `macos_arm`<br />
+                    `polaris-snippet-generator` - `macosx`, `win64`, `linux64`, `macos_arm`<br />
+          * `extension` - File extension
+            *  Supported values: <br />
+                                `cov_thin_client` - `tar.gz`  <br />
+                                `synopsys_detect` - `jar`  <br />
+                                `fastdast_engine` - `zip` <br />
+                                `polaris_ci` - `zip` <br />
+                                `scan_cli` - `zip` <br />
+                                `detect` - `jar` <br />
+                                `bridge-cli-bundle` - `jar` <br />
+                                `coverity-analysis` - `sh` for macosx, linux64 and macos_arm, `exe` for win64 <br />
+                                `polaris-snippet-generator` - `zip` <br />
+        Tool name, version, platform, and extension can be obtained by calling `GET /tools` API
+        *Note: This endpoint is deprecated and will be removed in the future. Please use `/api/tools/download-descriptors/{id}` instead.*
+      parameters:
+        - $ref: '#/components/parameters/DownloadDescriptorId'
+      responses:
+        '200':
+          description: Download Descriptor Details
+          content:
+            application/vnd.ts.download-descriptor-1+json:
+              schema:
+                $ref: '#/components/schemas/DownloadDescriptorGetResponse'
+              example:
+                id: cov_thin_client:2022.3.0:win64:tar.gz
+                _type: download-descriptors
+                filename: cov_thin_client-win64-2022.3.0.tar.gz
+                extension: tar.gz
+                platform: win64
+                hash: 9556c126f6ec7555f38ad79fa5385b0f
+                signedUrl: https://tool-download.example.com/cov_thin_client-win64-2022.3.0.tar.gz?Expires=1701771426&KeyName=polarisng-tools-cdn-dev&Signature=G5h4MbzZTXtzLTOaDX-yKdjGWF8=
+                urlExpiresInMillis: 3600000
+                _links:
+                  - href: https://polaris.blackduck.com/tools/download-descriptors/cov_thin_client:2022.3.0:win64:tar.gz
+                    rel: self
+                    method: GET
+        '400':
+          $ref: '#/components/responses/BadRequestProblem'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      deprecated: true
+  /api/tools/download-descriptors/{id}:
+    get:
+      operationId: getDownloadDescriptorByIdForTools
+      tags:
+        - Download Descriptor
+      summary: Fetches the downloadable details of a specified tool
+      description: |
+        Fetches information, including the download URL, for the tool matching the specified `id` for the organization.
+
+        The format for `id` looks like this: `name:version:platform:extension`. Here's how the parts are defined:
+
+          * `name` - Tool name   -  Supported values `cov_thin_client`, `synopsys_detect`, `fastdast_engine`, `polaris_ci`, `scan_cli`, `bridge-cli-bundle`, `detect`, `coverity-analysis` and `polaris-snippet-generator`
+          * `version` - Tool version   - Supported versions from each tools
+          * `platform` - Operating system on which the tool can be downloaded and used.
+            *  Supported values :<br />
+                    `cov_thin_client` - `macosx`, `win64`, `linux64`<br />
+                    `synopsys_detect` - `macosx`, `win64`, `linux64`<br />
+                    `fastdast_engine` - `macosx`, `win64`, `linux64`<br />
+                    `polaris_ci` - `macosx`, `win64`, `linux64`<br />
+                    `scan_cli` - `macosx`, `win64`, `linux64`<br />
+                    `bridge-cli-bundle` - `macosx`, `win64`, `linux64`<br />
+                    `detect` - `macosx`, `win64`, `linux64`<br />
+                    `coverity-analysis` - `macosx`, `win64`, `linux64`, `macos_arm`<br />
+                    `polaris-snippet-generator` - `macosx`, `win64`, `linux64`, `macos_arm`<br />
+          * `extension` - File extension
+            *  Supported values: <br />
+                                `cov_thin_client` - `tar.gz`  <br />
+                                `synopsys_detect` - `jar`  <br />
+                                `fastdast_engine` - `zip` <br />
+                                `polaris_ci` - `zip` <br />
+                                `scan_cli` - `zip` <br />
+                                `detect` - `jar` <br />
+                                `bridge-cli-bundle` - `jar` <br />
+                                `coverity-analysis` - `sh` for macosx, linux64 and macos_arm, `exe` for win64 <br />
+                                `polaris-snippet-generator` - `zip` <br />
+        Tool name, version, platform, and extension can be obtained by calling `GET /tools` API
+      parameters:
+        - $ref: '#/components/parameters/DownloadDescriptorId'
+      responses:
+        '200':
+          description: Download Descriptor Details
+          content:
+            application/vnd.polaris.tools.download-descriptor-1+json:
+              schema:
+                $ref: '#/components/schemas/DownloadDescriptorGetResponse'
+              example:
+                id: cov_thin_client:2022.3.0:win64:tar.gz
+                _type: download-descriptors
+                filename: cov_thin_client-win64-2022.3.0.tar.gz
+                extension: tar.gz
+                platform: win64
+                hash: 9556c126f6ec7555f38ad79fa5385b0f
+                signedUrl: https://tool-download.example.com/cov_thin_client-win64-2022.3.0.tar.gz?Expires=1701771426&KeyName=polarisng-tools-cdn-dev&Signature=G5h4MbzZTXtzLTOaDX-yKdjGWF8=
+                urlExpiresInMillis: 3600000
+                _links:
+                  - href: https://polaris.blackduck.com/tools/download-descriptors/cov_thin_client:2022.3.0:win64:tar.gz
+                    rel: self
+                    method: GET
+        '400':
+          $ref: '#/components/responses/BadRequestProblem'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/tool-service/tools:
+    get:
+      operationId: getToolsDeprecated
+      tags:
+        - Tool
+      summary: Returns all available tool information.
+      description: |
+        Returns tools information for the organization using filter criteria.
+          
+        *Note: This endpoint is deprecated and will be removed in the future. Please use `/api/tools` instead.*
+      parameters:
+        - $ref: '#/components/parameters/ToolsFilter'
+        - $ref: '#/components/parameters/ToolsOffset'
+        - $ref: '#/components/parameters/ToolsLimit'
+      responses:
+        '200':
+          description: Paged list of tools under an organization
+          content:
+            application/vnd.polaris.tools.tool-list-1+json:
+              schema:
+                $ref: '#/components/schemas/ToolCollectionResponse'
+              example:
+                _items:
+                  - id: cov_thin_client:2022.3.0
+                    _type: tools
+                    name: cov_thin_client
+                    type: Coverity
+                    version: 2022.3.0
+                    status: supported
+                    beta: false
+                    _links:
+                      - href: https://polaris.blackduck.com/tools/cov_thin_client:2022.3.0
+                        rel: self
+                        method: GET
+                      - href: https://polaris.blackduck.com/tools/download-descriptors/cov_thin_client:2022.3.0:macosx:tar.gz
+                        rel: download-descriptor-macosx-tar.gz
+                        method: GET
+                _links:
+                  - href: https://polaris.blackduck.com/tools?_offset=10&_limit=10
+                    rel: self
+                    method: GET
+                  - href: https://polaris.blackduck.com/tools?_offset=0&_limit=10
+                    rel: first
+                    method: GET
+                  - href: https://polaris.blackduck.com/tools?_offset=20&_limit=10
+                    rel: next
+                    method: GET
+                  - href: https://polaris.blackduck.com/tools?_offset=0&_limit=10
+                    rel: prev
+                    method: GET
+                  - href: https://polaris.blackduck.com/tools?_offset=90&_limit=10
+                    rel: last
+                    method: GET
+                _collection:
+                  itemCount: 100
+                  currentPage: 2
+                  pageCount: 10
+                  _type: tools
+        '400':
+          $ref: '#/components/responses/BadRequestProblem'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      deprecated: true
+  /api/tools:
+    get:
+      operationId: getTools
+      tags:
+        - Tool
+      summary: Returns all available tool information.
+      description: |
+        Returns tools information for the organization using filter criteria.
+      parameters:
+        - $ref: '#/components/parameters/ToolsFilter'
+        - $ref: '#/components/parameters/ToolsOffset'
+        - $ref: '#/components/parameters/ToolsLimit'
+      responses:
+        '200':
+          description: Paged list of tools under an organization
+          content:
+            application/vnd.polaris.tools.tool-list-1+json:
+              schema:
+                $ref: '#/components/schemas/ToolCollectionResponse'
+              example:
+                _items:
+                  - id: cov_thin_client:2022.3.0
+                    _type: tools
+                    name: cov_thin_client
+                    type: Coverity
+                    version: 2022.3.0
+                    status: supported
+                    beta: false
+                    _links:
+                      - href: https://polaris.blackduck.com/tools/cov_thin_client:2022.3.0
+                        rel: self
+                        method: GET
+                      - href: https://polaris.blackduck.com/tools/download-descriptors/cov_thin_client:2022.3.0:macosx:tar.gz
+                        rel: download-descriptor-macosx-tar.gz
+                        method: GET
+                _links:
+                  - href: https://polaris.blackduck.com/tools?_offset=10&_limit=10
+                    rel: self
+                    method: GET
+                  - href: https://polaris.blackduck.com/tools?_offset=0&_limit=10
+                    rel: first
+                    method: GET
+                  - href: https://polaris.blackduck.com/tools?_offset=20&_limit=10
+                    rel: next
+                    method: GET
+                  - href: https://polaris.blackduck.com/tools?_offset=0&_limit=10
+                    rel: prev
+                    method: GET
+                  - href: https://polaris.blackduck.com/tools?_offset=90&_limit=10
+                    rel: last
+                    method: GET
+                _collection:
+                  itemCount: 100
+                  currentPage: 2
+                  pageCount: 10
+                  _type: tools
+        '400':
+          $ref: '#/components/responses/BadRequestProblem'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/tools/version-mapping:
+    get:
+      operationId: getVersionMapping
+      tags:
+        - Version Mapping
+      summary: Returns mapped tool versions.
+      description: |
+        Returns tools information for the organization using filter criteria.
+      parameters:
+        - $ref: '#/components/parameters/VersionMappingFilter'
+        - $ref: '#/components/parameters/ToolsOffset'
+      responses:
+        '200':
+          description: Paged list of tools under an organization
+          content:
+            application/vnd.polaris.tools.version-mapping-list-1+json:
+              schema:
+                $ref: '#/components/schemas/ToolVersionMappingCollectionResponse'
+              example:
+                _items:
+                  - type: coverity
+                    version: 2025.6.0
+                    id: cov_thin_client:2024.12.0
+                    mappedTools:
+                      - id: sigma:2025.7.1
+                        type: sigma
+                        version: 2025.8.0
+                _links:
+                  - href: https://polaris.blackduck.com/tools/version-mapping?_offset=10
+                    rel: self
+                    method: GET
+                  - href: https://polaris.blackduck.com/tools/version-mapping?_offset=0
+                    rel: first
+                    method: GET
+                  - href: https://polaris.blackduck.com/tools/version-mapping?_offset=20
+                    rel: next
+                    method: GET
+                  - href: https://polaris.blackduck.com/tools/version-mapping?_offset=0
+                    rel: prev
+                    method: GET
+                  - href: https://polaris.blackduck.com/tools/version-mapping?_offset=50
+                    rel: last
+                    method: GET
+                _collection:
+                  itemCount: 60
+                  currentPage: 2
+                  pageCount: 6
+                  _type: version-mapping
+        '400':
+          $ref: '#/components/responses/BadRequestProblem'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/tools/{id}/version-matrix:
+    get:
+      operationId: getVersionMatrixForToolId
+      tags:
+        - Version Matrix
+      summary: Returns version matrix for tool Id.
+      description: |
+        Returns version matrix for particular tool Id.
+      parameters:
+        - $ref: '#/components/parameters/ToolId'
+      responses:
+        '200':
+          description: Details of version matrix for the tool.
+          content:
+            application/vnd.polaris.tools.version-matrix-1+json:
+              schema:
+                $ref: '#/components/schemas/ToolVersionMatrixResponse'
+              example:
+                type: coverity
+                version: 2025.6.0
+                compatibleTools:
+                  - tool: sigma
+                    version:
+                      - 2025.3.0
+                      - 2025.6.0
+        '400':
+          $ref: '#/components/responses/BadRequestProblem'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/tools/version-settings:
+    post:
+      operationId: createVersionSettings
+      tags:
+        - Version Settings
+      summary: |
+        Configure tool version at different levels.
+      description: This API is to save the tool version settings.
+      requestBody:
+        required: true
+        content:
+          application/vnd.polaris.tools.version-settings-request-1+json:
+            schema:
+              $ref: '#/components/schemas/CreateToolVersionSettingsRequest'
+            example:
+              toolType: Coverity
+              version: 2024.12.0
+              context: tenant
+              entityId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              settingType: Custom
+      responses:
+        '200':
+          description: Tool Version created successfully
+          content:
+            application/vnd.polaris.tools.version-settings-1+json:
+              schema:
+                $ref: '#/components/schemas/ToolVersionSettingsResponse'
+              example:
+                id: 48a85f64-5717-4562-b3fc-2c963f66afa6
+                toolType: Coverity
+                version: 2024.12.0
+                context: tenant
+                entityId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                settingType: Custom
+                _type: version-settings
+        '400':
+          $ref: '#/components/responses/BadRequestProblem'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    get:
+      operationId: getVersionSettings
+      tags:
+        - Version Settings
+      summary: |
+        Returns tool version settings information using filter criteria.
+      description: This API retrieves the tool version settings for the specified ORGANIZATION/APPLICATION/PROJECT/BRANCH.
+      parameters:
+        - $ref: '#/components/parameters/VersionSettingsFilter'
+      responses:
+        '200':
+          description: Tool Configs fetched successfully
+          content:
+            application/vnd.polaris.tools.tool-config-list-1+json:
+              schema:
+                $ref: '#/components/schemas/ToolVersionSettingsCollectionResponse'
+              example:
+                _items:
+                  - id: 48a85f64-5717-4562-b3fc-2c963f66afa6
+                    toolType: Coverity
+                    version: 2024.12.0
+                    context: tenant
+                    entityId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    settingType: Custom
+                    _type: version-settings
+                _links:
+                  - href: https://polaris.blackduck.com/tools/version-settings?_offset=10
+                    rel: self
+                    method: GET
+                  - href: https://polaris.blackduck.com/tools/version-settings?_offset=0
+                    rel: first
+                    method: GET
+                  - href: https://polaris.blackduck.com/tools/version-settings?_offset=20
+                    rel: next
+                    method: GET
+                  - href: https://polaris.blackduck.com/tools/version-settings?_offset=0
+                    rel: prev
+                    method: GET
+                  - href: https://polaris.blackduck.com/tools/version-settings?_offset=40
+                    rel: last
+                    method: GET
+                _collection:
+                  itemCount: 50
+                  currentPage: 2
+                  pageCount: 5
+                  _type: version-settings
+        '400':
+          $ref: '#/components/responses/BadRequestProblem'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/tools/version-settings/context/{context}:
+    get:
+      operationId: getVersionSettingsForContext
+      tags:
+        - Version Settings
+      summary: |
+        Get Tool Configs for the given context.
+      description: This API is to get Tool Configs for the given context.
+      parameters:
+        - $ref: '#/components/parameters/Context'
+        - $ref: '#/components/parameters/EntityIdParam'
+      responses:
+        '200':
+          description: Tool Configs fetched successfully
+          content:
+            application/vnd.polaris.tools.tool-config-list-1+json:
+              schema:
+                $ref: '#/components/schemas/ToolVersionSettingsCollectionResponse'
+              example:
+                _items:
+                  - id: 48a85f64-5717-4562-b3fc-2c963f66afa6
+                    toolType: Coverity
+                    version: 2024.12.0
+                    context: tenant
+                    entityId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                    settingType: Custom
+                    _type: version-settings
+                _links:
+                  - href: https://polaris.blackduck.com/tools/version-settings?_offset=10
+                    rel: self
+                    method: GET
+                  - href: https://polaris.blackduck.com/tools/version-settings?_offset=0
+                    rel: first
+                    method: GET
+                  - href: https://polaris.blackduck.com/tools/version-settings?_offset=20
+                    rel: next
+                    method: GET
+                  - href: https://polaris.blackduck.com/tools/version-settings?_offset=0
+                    rel: prev
+                    method: GET
+                  - href: https://polaris.blackduck.com/tools/version-settings?_offset=40
+                    rel: last
+                    method: GET
+                _collection:
+                  itemCount: 50
+                  currentPage: 2
+                  pageCount: 5
+                  _type: version-settings
+        '400':
+          $ref: '#/components/responses/BadRequestProblem'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/tools/version-settings/{id}:
+    put:
+      operationId: updateVersionSettings
+      tags:
+        - Version Settings
+      summary: |
+        Update version of an existing version-setting.
+      description: This API is to update the tool version in version settings.
+      parameters:
+        - $ref: '#/components/parameters/VersionSettingsId'
+      requestBody:
+        required: true
+        content:
+          application/vnd.polaris.tools.version-settings-request-1+json:
+            schema:
+              $ref: '#/components/schemas/CreateToolVersionSettingsRequest'
+            example:
+              toolType: Coverity
+              version: 2024.12.0
+              context: tenant
+              entityId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+              settingType: Custom
+      responses:
+        '200':
+          description: Tool Version updated successfully
+          content:
+            application/vnd.polaris.tools.version-settings-1+json:
+              schema:
+                $ref: '#/components/schemas/ToolVersionSettingsResponse'
+              example:
+                id: 48a85f64-5717-4562-b3fc-2c963f66afa6
+                toolType: Coverity
+                version: 2024.12.0
+                context: tenant
+                entityId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+                settingType: Custom
+                _type: version-settings
+        '400':
+          $ref: '#/components/responses/BadRequestProblem'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      operationId: deleteVersionSettings
+      tags:
+        - Version Settings
+      summary: |
+        Delete version of an existing version-setting.
+      description: This API is to delete the tool version in version settings.
+      parameters:
+        - $ref: '#/components/parameters/VersionSettingsId'
+      responses:
+        '200':
+          description: Successful response
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/tool-service/tools/{id}:
+    get:
+      operationId: getToolByIdDeprecated
+      tags:
+        - Tool
+      summary: Fetches detail of a specified tool.
+      description: |
+        Fetches the detail of a tool that matches the specified `id` for the organization.
+
+        `id` will be in `name:version` format. where,
+         * name - tool name
+         * version - tool version.
+
+        Tool name and Tool version can be obtained by calling `GET /tools` API
+          
+        *Note: This endpoint is deprecated and will be removed in the future. Please use `/api/tools/{id}` instead.*
+      parameters:
+        - $ref: '#/components/parameters/ToolId'
+      responses:
+        '200':
+          description: Tool by ID.
+          content:
+            application/vnd.ts.tool-1+json:
+              schema:
+                $ref: '#/components/schemas/ToolGetResponse'
+              example:
+                id: cov_thin_client:2022.3.0
+                _type: tools
+                name: cov_thin_client
+                type: Coverity
+                version: 2022.3.0
+                status: supported
+                beta: false
+                _links:
+                  - href: https://polaris.blackduck.com/tools/cov_thin_client:2022.3.0
+                    rel: self
+                    method: GET
+                  - href: https://polaris.blackduck.com/tools/download-descriptors/cov_thin_client:2022.3.0:macosx:tar.gz
+                    rel: download-descriptor-macosx-tar.gz
+                    method: GET
+        '400':
+          $ref: '#/components/responses/BadRequestProblem'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      deprecated: true
+  /api/tools/{id}:
+    get:
+      operationId: getToolById
+      tags:
+        - Tool
+      summary: Fetches detail of a specified tool.
+      description: |
+        Fetches the detail of a tool that matches the specified `id` for the organization.
+
+        `id` will be in `name:version` format. where,
+          * name - tool name
+          * version - tool version.
+
+        Tool name and Tool version can be obtained by calling `GET /tools` API
+      parameters:
+        - $ref: '#/components/parameters/ToolId'
+      responses:
+        '200':
+          description: Tool by ID.
+          content:
+            application/vnd.polaris.tools.tool-1+json:
+              schema:
+                $ref: '#/components/schemas/ToolGetResponse'
+              example:
+                id: cov_thin_client:2022.3.0
+                _type: tools
+                name: cov_thin_client
+                type: Coverity
+                version: 2022.3.0
+                status: supported
+                beta: false
+                _links:
+                  - href: https://polaris.blackduck.com/tools/cov_thin_client:2022.3.0
+                    rel: self
+                    method: GET
+                  - href: https://polaris.blackduck.com/tools/download-descriptors/cov_thin_client:2022.3.0:macosx:tar.gz
+                    rel: download-descriptor-macosx-tar.gz
+                    method: GET
+                  - href: https://polaris.blackduck.com/tools/download-descriptors/cov_thin_client:2022.3.0:win64:tar.gz
+                    rel: download-descriptor-win64-tar.gz
+                    method: GET
+                  - href: https://polaris.blackduck.com/tools/download-descriptors/cov_thin_client:2022.3.0:linux64:tar.gz
+                    rel: download-descriptor-linux64-tar.gz
+                    method: GET
+                  - href: https://polaris.blackduck.com/tools/download-descriptors/cov_thin_client:2022.3.0:macos_arm:tar.gz
+                    rel: download-descriptor-macos_arm-tar.gz
+                    method: GET
+        '400':
+          $ref: '#/components/responses/BadRequestProblem'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/tools/{toolName}/license:
+    get:
+      operationId: downloadToolLicense
+      tags:
+        - Tool
+      summary: |
+        Download the license for a specified tool-name.
+      description: |
+        This API enables the license file to be downloaded for the specified tool-name. 
+
+        **Note:** Only coverity-analysis tool-name license is supported to be downloaded.
+      parameters:
+        - name: toolName
+          in: path
+          description: The tool name.
+          required: true
+          schema:
+            type: string
+          example: coverity-analysis
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+              example: |
+                -----BEGIN LICENSE-----
+                [License file content]
+                -----END LICENSE-----
+        '400':
+          $ref: '#/components/responses/BadRequestProblem'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Api-Token
+  parameters:
+    DownloadDescriptorId:
+      name: id
+      in: path
+      description: Download Descriptor identifier, in the format `name:version:platform:extension`.
+      required: true
+      schema:
+        type: string
+      example: cov_thin_client:2022.3.0:win64:tar.gz
+    ToolsFilter:
+      name: _filter
+      in: query
+      description: |
+        Filters the collection of tool under an organization based on `id`, `name`, `type`,`version` and `status`.
+
+          * `type` supports `Equal to (==)` and `Ignore case (=ic=)` operation.
+          * `id`, `name` and `version` supports only `Equal to (==)` operation.
+          * `status` supports `Equal to (==)` and `In (=in=)` operation.
+
+        The filter follows the [RSQL syntax](https://github.com/jirutka/rsql-parser). For ex. `name=='cov_thin_client'` OR `type=='Coverity'`.
+      schema:
+        type: string
+      example: name=='cov_thin_client'
+    VersionMappingFilter:
+      name: _filter
+      in: query
+      description: |
+        Filters the collection of version mapping on `type` and `version`.
+
+          * `type` supports `Equal to (==)` and `Ignore case (=ic=)` operation.
+          * `version` supports only `Equal to (==)` operation.
+
+        The filter follows the [RSQL syntax](https://github.com/jirutka/rsql-parser). For ex. `type=='Coverity'`.
+      schema:
+        type: string
+      example: type=='Coverity'
+    EntityIdParam:
+      name: entityId
+      in: query
+      description: Id of the given context. For eg, tenant id, organization id etc.
+      schema:
+        type: string
+        format: uuid
+      example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+    VersionSettingsFilter:
+      name: _filter
+      in: query
+      description: |
+        Filters the collection of version settings on `context`, `entityId` and `settingType`.
+          * supports only `Equal to (==)` operation.
+        The filter follows the [RSQL syntax](https://github.com/jirutka/rsql-parser). For ex. `context=='Project'`.
+      schema:
+        type: string
+      example: context=='Project'
+    ToolsOffset:
+      name: _offset
+      in: query
+      description: >-
+        Returns results, starting from a given position within the response. For example, if the offset is set to 5, the first four records are not returned. A default value of 0 is used if no value
+        is provided. If the offset is beyond the range of the collection, no results are returned.
+      schema:
+        type: integer
+        default: 0
+      example: 0
+    ToolsLimit:
+      name: _limit
+      in: query
+      description: Restricts the number of results to the given limit. The default of 100 is used if no value is provided. If a limit greater than 100 is provided, the response will be "HTTP 400 Bad Request."
+      schema:
+        type: integer
+        default: 100
+      example: 10
+    ToolId:
+      name: id
+      in: path
+      description: Tool identifier, in format - `name:version`
+      required: true
+      schema:
+        type: string
+      example: cov_thin_client:2022.3.0
+    VersionSettingsId:
+      name: id
+      in: path
+      description: Identifier of version settings
+      required: true
+      schema:
+        type: string
+        format: uuid
+      example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+    Context:
+      name: context
+      in: path
+      description: Identifier of context. Valid values - organization/application/project/branch
+      required: true
+      schema:
+        type: string
+      example: BRANCH
+  responses:
+    BadRequestProblem:
+      description: Bad request.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/PolarisErrorResponse'
+          example:
+            type: urn:x-tool-service:bad-request
+            title: Bad Request
+            status: 400
+            details: Request cannot be processed, as the passed request payload is not recognised.
+    NotFoundError:
+      description: Not found.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/PolarisErrorResponse'
+          example:
+            type: urn:x-tool-service:not-found
+            title: requested resource does not exist
+            status: 404
+            detail: Requested resource not found
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/PolarisErrorResponse'
+          example:
+            type: urn:x-tool-service:internal-server-error
+            title: Internal Server Error
+            status: 500
+            details: Unexpected error occurred in processing the request
+  schemas:
+    CreateToolVersionSettingsRequest:
+      type: object
+      properties:
+        toolType:
+          type: string
+          description: Type of tool.
+        version:
+          type: string
+          description: Version of tool.
+        context:
+          type: string
+          description: Context of the id of the request. Valid values are ORGANIZATION/APPLICATION/PROJECT/BRANCH.
+        entityId:
+          type: string
+          format: uuid
+          description: UUID key of the context. Eg. Project ID of context PROJECT.
+        settingType:
+          type: string
+          description: |
+            Allowed values are Custom or System_Default. 
+            Custom - Allows user to set specific version
+            System_Default - Always use recommended tool version.
+            API returns 400 if version provided when settingType=System_Default
+    ToolVersionSettingsResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Id of version settings created.
+        toolType:
+          type: string
+          description: Type of tool.
+        version:
+          type: string
+          description: Version of tool.
+        context:
+          type: string
+          description: Context of the id of the request. Valid values are ORGANIZATION/APPLICATION/PROJECT/BRANCH.
+        entityId:
+          type: string
+          format: uuid
+          description: UUID key of the context. Eg. Project ID of context PROJECT.
+        settingType:
+          type: string
+          description: |
+            Allowed values are Custom or System_Default.
+            Custom - Allows user to set specific version
+            System_Default - Always use recommended tool version.
+            API returns 400 if version provided when settingType=System_Default
+        _type:
+          type: string
+          description: Type of settings, in this case, version-settings
+    ToolVersionSettingsCollectionResponse:
+      type: object
+      properties:
+        _items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ToolVersionSettingsResponse'
+        _links:
+          type: array
+          items:
+            $ref: '#/components/schemas/link'
+        _collection:
+          $ref: '#/components/schemas/collections'
+    ToolCollectionResponse:
+      type: object
+      properties:
+        _items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ToolGetResponse'
+        _links:
+          type: array
+          items:
+            $ref: '#/components/schemas/link'
+        _collection:
+          $ref: '#/components/schemas/collections'
+    ToolVersionMappingCollectionResponse:
+      type: object
+      properties:
+        _items:
+          type: array
+          items:
+            $ref: '#/components/schemas/ToolVersionMappingGetResponse'
+        _links:
+          type: array
+          items:
+            $ref: '#/components/schemas/link'
+        _collection:
+          $ref: '#/components/schemas/collections'
+    DownloadDescriptorGetResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Tool identifier.
+        _type:
+          type: string
+          description: API resource type.
+        filename:
+          type: string
+          description: Filename of the downloadable tool.
+        extension:
+          type: string
+          description: File extension of the downloadable tool.
+        platform:
+          type: string
+          description: Operating system on which tool should be download and used.
+        hash:
+          type: string
+          description: File hash of the downloadable tool.
+        signedUrl:
+          type: string
+          format: url
+          description: Signed URL to download a tool.
+        urlExpiresInMillis:
+          type: integer
+          description: Signed URL expiration time in milliseconds.
+        _links:
+          type: array
+          items:
+            $ref: '#/components/schemas/link'
+    ToolGetResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Tool Identifier.
+        _type:
+          type: string
+          description: API resource type.
+        name:
+          type: string
+          description: Tool name.
+        type:
+          type: string
+          description: Tool type like Coverity, Blackduck, Polaris_CI
+        version:
+          type: string
+          description: Tool version.
+        status:
+          type: string
+          enum:
+            - supported
+            - recommended
+            - deprecated
+          description: Tool status.
+        beta:
+          type: boolean
+          description: Indicates whether the tool version is beta.
+        _links:
+          type: array
+          items:
+            $ref: '#/components/schemas/link'
+    ToolVersionMappingGetResponse:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Tool Identifier.
+        id:
+          type: string
+          description: Tool name.
+        mappedTools:
+          type: array
+          description: Specifies the details of mapped tools.
+          items:
+            $ref: '#/components/schemas/MappedTools'
+        version:
+          type: string
+          description: Tool version.
+    MappedTools:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Tool Identifier.
+        id:
+          type: string
+          description: Tool name.
+        version:
+          type: string
+          description: Tool version.
+    ToolVersionMatrixResponse:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Tool Identifier.
+        compatibleTools:
+          type: array
+          description: Specifies the details of compatible tools.
+          items:
+            $ref: '#/components/schemas/CompatibleTools'
+        version:
+          type: string
+          description: Tool version.
+    CompatibleTools:
+      type: object
+      properties:
+        tool:
+          type: string
+          description: Tool Identifier.
+        version:
+          type: array
+          description: Compatible versions.
+          items:
+            type: string
+    PolarisErrorResponse:
+      properties:
+        type:
+          type: string
+          description: The type of the error produced, usually a URN (For example, "urn:x-tool-service:Type").
+        status:
+          type: integer
+          format: int64
+          description: The status code for the error (For example, 404).
+        title:
+          type: string
+          description: The title for the error (For example, "NotFound").
+        details:
+          type: string
+          description: The detailed description for the cause of the error.
+    link:
+      type: object
+      properties:
+        href:
+          type: string
+          format: url
+          description: The URL of the link
+        rel:
+          type: string
+          pattern: ^(self|first|next|prev|last|download-descriptor-(macosx|win64|linux64|linux_arm|macos_arm)(-(tar\.gz|zip|jar|exe|sh))?)$
+          default: self
+          description: |
+            The relationship of the link to the current resource.
+
+            Supported values:
+            - Standard HATEOAS relations: `self`, `first`, `next`, `prev`, `last`
+            - Download descriptors: `download-descriptor-{platform}` or `download-descriptor-{platform}-{extension}`
+              - Platforms: `macosx`, `win64`, `linux64`, `linux_arm`, `macos_arm`
+              - Extensions: `tar.gz`, `zip`, `jar`, `exe`, `sh`
+        method:
+          type: string
+          enum:
+            - GET
+          default: GET
+          description: The HTTP method to use for the link
+    collections:
+      type: object
+      properties:
+        itemCount:
+          type: integer
+          format: int32
+        currentPage:
+          type: integer
+          format: int32
+        pageCount:
+          type: integer
+          format: int32
+        _type:
+          type: string
