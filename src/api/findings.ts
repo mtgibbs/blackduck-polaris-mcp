@@ -3,6 +3,8 @@ import type {
   AssistFeedbackPatch,
   AssistResponse,
   CodeSnippet,
+  ComponentVersion,
+  ComponentVersionCountItem,
   Issue,
   IssueCountItem,
   IssueCountOverTimeResponse,
@@ -596,5 +598,103 @@ export function getTaxonIssueTypes(params: GetTaxonIssueTypesParams): Promise<Ta
     `/api/findings/taxa/${params.taxonId}/issue-types`,
     Object.keys(queryParams).length > 0 ? queryParams : undefined,
     ACCEPT_TAXA,
+  );
+}
+
+// --- Component Versions ---
+
+const ACCEPT_COMPONENT_VERSIONS = "application/vnd.polaris.findings.component-versions-1+json";
+
+export interface GetComponentVersionsParams {
+  projectId?: string;
+  applicationId?: string;
+  branchId?: string;
+  testId?: string;
+  filter?: string;
+  includeComponent?: boolean;
+  includeLicense?: boolean;
+  first?: number;
+}
+
+export function getComponentVersions(
+  params: GetComponentVersionsParams,
+): Promise<ComponentVersion[]> {
+  const client = getClient();
+  validateScope(params.applicationId, params.projectId);
+
+  const queryParams: Record<string, string | number | boolean | undefined> = {};
+  if (params.projectId) queryParams.projectId = params.projectId;
+  if (params.applicationId) queryParams.applicationId = params.applicationId;
+  if (params.branchId) queryParams.branchId = params.branchId;
+  if (params.testId) queryParams.testId = params.testId;
+  if (params.filter) queryParams._filter = params.filter;
+  if (params.includeComponent !== undefined) {
+    queryParams._includeComponent = params.includeComponent;
+  }
+  if (params.includeLicense !== undefined) queryParams._includeLicense = params.includeLicense;
+  if (params.first !== undefined) queryParams._first = params.first;
+
+  return client.getAllCursor<ComponentVersion>(
+    "/api/findings/component-versions",
+    queryParams,
+    ACCEPT_COMPONENT_VERSIONS,
+  );
+}
+
+export interface GetComponentVersionParams {
+  id: string;
+  projectId?: string;
+  applicationId?: string;
+  includeComponent?: boolean;
+  includeLicense?: boolean;
+}
+
+export function getComponentVersion(params: GetComponentVersionParams): Promise<ComponentVersion> {
+  const client = getClient();
+
+  const queryParams: Record<string, string | boolean | undefined> = {};
+  if (params.projectId) queryParams.projectId = params.projectId;
+  if (params.applicationId) queryParams.applicationId = params.applicationId;
+  if (params.includeComponent !== undefined) {
+    queryParams._includeComponent = params.includeComponent;
+  }
+  if (params.includeLicense !== undefined) queryParams._includeLicense = params.includeLicense;
+
+  return client.get<ComponentVersion>(
+    `/api/findings/component-versions/${params.id}`,
+    queryParams,
+    ACCEPT_COMPONENT_VERSIONS,
+  );
+}
+
+export interface GetComponentVersionCountParams {
+  projectId?: string;
+  applicationId?: string;
+  branchId?: string;
+  testId?: string;
+  filter?: string;
+  group?: string[];
+  first?: number;
+}
+
+export function getComponentVersionCount(
+  params: GetComponentVersionCountParams,
+): Promise<ComponentVersionCountItem[]> {
+  const client = getClient();
+  validateScope(params.applicationId, params.projectId);
+
+  const queryParams: Record<string, string | number | undefined> = {};
+  if (params.projectId) queryParams.projectId = params.projectId;
+  if (params.applicationId) queryParams.applicationId = params.applicationId;
+  if (params.branchId) queryParams.branchId = params.branchId;
+  if (params.testId) queryParams.testId = params.testId;
+  if (params.filter) queryParams._filter = params.filter;
+  if (params.group && params.group.length > 0) queryParams._group = params.group.join(",");
+  if (params.first !== undefined) queryParams._first = params.first;
+
+  return client.getAllCursor<ComponentVersionCountItem>(
+    "/api/findings/component-versions/_actions/count",
+    queryParams,
+    ACCEPT_COMPONENT_VERSIONS,
   );
 }

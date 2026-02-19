@@ -24,6 +24,9 @@ import { getTaxonomiesTool } from "./get-taxonomies.ts";
 import { getTaxonTool } from "./get-taxon.ts";
 import { getTaxonSubtaxaTool } from "./get-taxon-subtaxa.ts";
 import { getTaxonIssueTypesTool } from "./get-taxon-issue-types.ts";
+import { getComponentVersionsTool } from "./get-component-versions.ts";
+import { getComponentVersionTool } from "./get-component-version.ts";
+import { getComponentVersionCountTool } from "./get-component-version-count.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -51,4 +54,7 @@ export const tools: AnyToolDefinition[] = [
   getTaxonTool,
   getTaxonSubtaxaTool,
   getTaxonIssueTypesTool,
+  getComponentVersionsTool,
+  getComponentVersionTool,
+  getComponentVersionCountTool,
 ];

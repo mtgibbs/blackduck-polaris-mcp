@@ -480,6 +480,70 @@ export interface TaxonIssueType {
   _localized: TaxonIssueTypeLocalized;
 }
 
+// --- Component Versions ---
+
+export type SecurityRisk = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+
+export type MatchType =
+  | "FILE_DEPENDENCY_DIRECT"
+  | "FILE_DEPENDENCY_TRANSITIVE"
+  | "FILE_EXACT"
+  | "FILE_EXACT_FILE_MATCH"
+  | "FILE_FILES_ADDED_DELETED_AND_MODIFIED"
+  | "FILE_SOME_FILES_MODIFIED";
+
+export interface ComponentInfo {
+  id: string;
+  name: string;
+  description?: string;
+  homePage?: string;
+  openHubPage?: string;
+}
+
+export interface LicenseEntry {
+  id?: string;
+  _links?: LinkEntry[];
+}
+
+export interface LicenseDefinition {
+  type?: "CONJUNCTIVE" | "DISJUNCTIVE";
+  licenses?: LicenseEntry[];
+  license?: LicenseEntry[];
+}
+
+export interface ComponentVersionTriageProperty {
+  key: string;
+  value: string | boolean;
+}
+
+export interface ComponentVersion {
+  id: string;
+  version: string;
+  releaseDate?: string;
+  securityRisk?: SecurityRisk;
+  matchTypes: MatchType[];
+  matchScore: number;
+  usages: string[];
+  component?: ComponentInfo;
+  licenseDefinition?: LicenseDefinition;
+  originalLicenseDefinition?: LicenseDefinition;
+  triageProperties?: ComponentVersionTriageProperty[];
+  _links?: LinkEntry[];
+  _type?: string;
+}
+
+export interface ComponentVersionCountGroup {
+  key: string;
+  value: string;
+}
+
+export interface ComponentVersionCountItem {
+  group: ComponentVersionCountGroup[];
+  count: number;
+  _cursor?: string;
+  _type?: string;
+}
+
 // --- Common ---
 
 export interface LinkEntry {

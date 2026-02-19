@@ -2,6 +2,8 @@ import * as findingsApi from "../api/findings.ts";
 import type {
   AssistResponse,
   CodeSnippet,
+  ComponentVersion,
+  ComponentVersionCountItem,
   Issue,
   IssueCountItem,
   IssueCountOverTimeResponse,
@@ -309,4 +311,53 @@ export interface GetTaxonIssueTypesOptions {
 
 export function getTaxonIssueTypes(options: GetTaxonIssueTypesOptions): Promise<TaxonIssueType[]> {
   return findingsApi.getTaxonIssueTypes(options);
+}
+
+// --- Component Versions ---
+
+export interface GetComponentVersionsOptions {
+  projectId?: string;
+  applicationId?: string;
+  branchId?: string;
+  testId?: string;
+  filter?: string;
+  includeComponent?: boolean;
+  includeLicense?: boolean;
+  first?: number;
+}
+
+export function getComponentVersions(
+  options: GetComponentVersionsOptions,
+): Promise<ComponentVersion[]> {
+  return findingsApi.getComponentVersions(options);
+}
+
+export interface GetComponentVersionOptions {
+  id: string;
+  projectId?: string;
+  applicationId?: string;
+  includeComponent?: boolean;
+  includeLicense?: boolean;
+}
+
+export function getComponentVersion(
+  options: GetComponentVersionOptions,
+): Promise<ComponentVersion> {
+  return findingsApi.getComponentVersion(options);
+}
+
+export interface GetComponentVersionCountOptions {
+  projectId?: string;
+  applicationId?: string;
+  branchId?: string;
+  testId?: string;
+  filter?: string;
+  group?: string[];
+  first?: number;
+}
+
+export function getComponentVersionCount(
+  options: GetComponentVersionCountOptions,
+): Promise<ComponentVersionCountItem[]> {
+  return findingsApi.getComponentVersionCount(options);
 }
