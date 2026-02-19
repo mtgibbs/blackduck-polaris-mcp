@@ -103,7 +103,7 @@
         "AC-11: All files pass `deno task check`, `deno task lint`, and `deno fmt --check` with zero errors."
       ],
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "notes": "Depends on PRD-R1. The PATCH endpoint for aborting a job only supports action=ABORT (spec line 3411-3417). The abort service function should hardcode this value. Both POST endpoints return 202 with Location header, no JSON body. Complex nested body structures (repositorySelections, roleUsersMappings) are passed as JSON strings in MCP tool schemas and parsed in the tool handler. The email field for the import request is in the request body for UpdatedImportRepositoriesRequestV1 (spec line 3394-3400), while headers carry X-Polaris-SCM-PAT and X-Polaris-SCM-Email.",
       "claimed_by": "agent-2",
       "claimed_at": "2026-02-19T21:48:33Z"

@@ -1,5 +1,7 @@
 import { getClient } from "./client.ts";
 import type {
+  BulkGroupImportJobStatus,
+  BulkGroupImportUpdateResponse,
   BulkRepoImportGroupStatus,
   RepositoryBranch,
   ScmGroup,
@@ -416,5 +418,100 @@ export function getRepoImportGroupsStatus(
     "/api/integrations/repos/bulk-repo-import/groups/status",
     queryParams,
     ACCEPT_BULK_REPO_IMPORT_GROUPS_STATUS,
+  );
+}
+
+// --- Bulk Group Import ---
+
+export interface RoleUserMapping {
+  roleId: string;
+  userId: string;
+}
+
+export interface GroupRepositorySelection {
+  applicationName?: string;
+  applicationNameTemplate?: string;
+  repositories?: RepositorySelection[];
+  nestedRepositories?: RepositorySelection[];
+}
+
+export interface ImportGroupsReposParams {
+  scmProvider: string;
+  scmPat: string;
+  scmEmail?: string;
+  automaticMapping?: boolean;
+  policySettings?: PolicySettings;
+  roleUsersMappings?: RoleUserMapping[];
+  repositorySelections?: GroupRepositorySelection[];
+}
+
+export async function importGroupsRepos(
+  params: ImportGroupsReposParams,
+): Promise<{ location: string }> {
+  const client = getClient();
+  const headers: Record<string, string> = {
+    "X-Polaris-SCM-PAT": params.scmPat,
+  };
+  if (params.scmEmail) headers["X-Polaris-SCM-Email"] = params.scmEmail;
+  const body: Record<string, unknown> = {
+    scmProvider: params.scmProvider,
+  };
+  if (params.automaticMapping !== undefined) body.automaticMapping = params.automaticMapping;
+  if (params.policySettings) body.policySettings = params.policySettings;
+  if (params.roleUsersMappings) body.roleUsersMappings = params.roleUsersMappings;
+  if (params.repositorySelections) body.repositorySelections = params.repositorySelections;
+  const location = await client.fetchLocation("/api/integrations/repos/bulk-group-import", {
+    method: "POST",
+    body,
+    accept: ACCEPT_BULK_GROUP_IMPORT,
+    contentType: ACCEPT_BULK_GROUP_IMPORT,
+    headers,
+  });
+  return { location };
+}
+
+export interface UpdateGroupImportJobParams {
+  jobId: string;
+  action: string;
+}
+
+export function updateGroupImportJob(
+  params: UpdateGroupImportJobParams,
+): Promise<BulkGroupImportUpdateResponse> {
+  const client = getClient();
+  return client.fetch<BulkGroupImportUpdateResponse>(
+    `/api/integrations/repos/bulk-group-import/${params.jobId}`,
+    {
+      method: "PATCH",
+      body: { action: params.action },
+      accept: ACCEPT_BULK_GROUP_IMPORT,
+      contentType: ACCEPT_BULK_GROUP_IMPORT,
+    },
+  );
+}
+
+export function getGroupImportJobStatus(jobId: string): Promise<BulkGroupImportJobStatus> {
+  const client = getClient();
+  return client.get<BulkGroupImportJobStatus>(
+    `/api/integrations/repos/bulk-group-import/${jobId}/status`,
+    undefined,
+    ACCEPT_BULK_GROUP_IMPORT_STATUS,
+  );
+}
+
+export interface GetAllGroupImportStatusesParams {
+  filter?: string;
+}
+
+export function getAllGroupImportStatuses(
+  params?: GetAllGroupImportStatusesParams,
+): Promise<BulkGroupImportJobStatus[]> {
+  const client = getClient();
+  const queryParams: Record<string, string | undefined> = {};
+  if (params?.filter) queryParams._filter = params.filter;
+  return client.getAllOffset<BulkGroupImportJobStatus>(
+    "/api/integrations/repos/bulk-group-import/status",
+    queryParams,
+    ACCEPT_BULK_GROUP_IMPORT_STATUS,
   );
 }

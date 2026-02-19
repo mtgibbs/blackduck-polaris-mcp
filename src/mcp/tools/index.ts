@@ -55,6 +55,10 @@ import { testScmProviderConnectionTool } from "./test-scm-provider-connection.ts
 import { createScmGroupAuthTool } from "./create-scm-group-auth.ts";
 import { bulkImportReposTool } from "./bulk-import-repos.ts";
 import { getBulkRepoImportGroupsStatusTool } from "./get-bulk-repo-import-groups-status.ts";
+import { bulkImportGroupsTool } from "./bulk-import-groups.ts";
+import { abortGroupImportJobTool } from "./abort-group-import-job.ts";
+import { getGroupImportJobStatusTool } from "./get-group-import-job-status.ts";
+import { getAllGroupImportStatusesTool } from "./get-all-group-import-statuses.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -113,4 +117,8 @@ export const tools: AnyToolDefinition[] = [
   createScmGroupAuthTool,
   bulkImportReposTool,
   getBulkRepoImportGroupsStatusTool,
+  bulkImportGroupsTool,
+  abortGroupImportJobTool,
+  getGroupImportJobStatusTool,
+  getAllGroupImportStatusesTool,
 ];

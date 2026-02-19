@@ -1,5 +1,7 @@
 import * as reposApi from "../api/repos.ts";
 import type {
+  BulkGroupImportJobStatus,
+  BulkGroupImportUpdateResponse,
   BulkRepoImportGroupStatus,
   RepositoryBranch,
   ScmGroup,
@@ -224,4 +226,52 @@ export function getBulkRepoImportGroupsStatus(
   options?: GetBulkRepoImportGroupsStatusOptions,
 ): Promise<BulkRepoImportGroupStatus[]> {
   return reposApi.getRepoImportGroupsStatus(options);
+}
+
+// --- Bulk Group Import ---
+
+export interface BulkImportGroupsOptions {
+  scmProvider: string;
+  scmPat: string;
+  scmEmail?: string;
+  automaticMapping?: boolean;
+  policySettings?: reposApi.PolicySettings;
+  repositorySelections?: reposApi.GroupRepositorySelection[];
+}
+
+export function bulkImportGroups(
+  options: BulkImportGroupsOptions,
+): Promise<{ location: string }> {
+  return reposApi.importGroupsRepos({
+    scmProvider: options.scmProvider,
+    scmPat: options.scmPat,
+    scmEmail: options.scmEmail,
+    automaticMapping: options.automaticMapping,
+    policySettings: options.policySettings,
+    repositorySelections: options.repositorySelections,
+  });
+}
+
+export interface AbortGroupImportJobOptions {
+  jobId: string;
+}
+
+export function abortGroupImportJob(
+  options: AbortGroupImportJobOptions,
+): Promise<BulkGroupImportUpdateResponse> {
+  return reposApi.updateGroupImportJob({ jobId: options.jobId, action: "ABORT" });
+}
+
+export function getGroupImportJobStatus(jobId: string): Promise<BulkGroupImportJobStatus> {
+  return reposApi.getGroupImportJobStatus(jobId);
+}
+
+export interface GetAllGroupImportStatusesOptions {
+  filter?: string;
+}
+
+export function getAllGroupImportStatuses(
+  options?: GetAllGroupImportStatusesOptions,
+): Promise<BulkGroupImportJobStatus[]> {
+  return reposApi.getAllGroupImportStatuses(options);
 }
