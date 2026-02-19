@@ -4,7 +4,11 @@ import type {
   AssistResponse,
   CodeSnippet,
   Issue,
+  IssueCountItem,
   Occurrence,
+  TriagePropertyInput,
+  TriageRequest,
+  TriageResult,
 } from "../types/polaris.ts";
 
 /**
@@ -113,6 +117,76 @@ export function getIssue(params: GetIssueParams): Promise<Issue> {
   return client.get<Issue>(
     `/api/findings/issues/${params.issueId}`,
     Object.keys(queryParams).length > 0 ? queryParams : undefined,
+    ACCEPT_ISSUES,
+  );
+}
+
+// --- Triage Issues ---
+
+export interface TriageIssuesParams {
+  applicationId?: string;
+  projectId?: string;
+  branchId?: string;
+  testId?: string;
+  filter?: string;
+  triageProperties: TriagePropertyInput[];
+}
+
+export function triageIssues(params: TriageIssuesParams): Promise<TriageResult> {
+  validateScope(params.applicationId, params.projectId);
+
+  const client = getClient();
+  const queryParams: Record<string, string | undefined> = {};
+
+  if (params.applicationId) queryParams.applicationId = params.applicationId;
+  if (params.projectId) queryParams.projectId = params.projectId;
+  if (params.branchId) queryParams.branchId = params.branchId;
+  if (params.testId) queryParams.testId = params.testId;
+
+  const body: TriageRequest = {
+    triageProperties: params.triageProperties,
+  };
+  if (params.filter) body.filter = params.filter;
+
+  return client.fetch<TriageResult>("/api/findings/issues/_actions/triage", {
+    method: "POST",
+    params: Object.keys(queryParams).length > 0 ? queryParams : undefined,
+    body,
+    accept: ACCEPT_ISSUES,
+    contentType: ACCEPT_ISSUES,
+  });
+}
+
+// --- Issue Count ---
+
+export interface GetIssueCountParams {
+  applicationId?: string;
+  projectId?: string;
+  branchId?: string;
+  testId?: string;
+  filter?: string;
+  group?: string[];
+  includeAverageAge?: boolean;
+  first?: number;
+}
+
+export function getIssueCount(params: GetIssueCountParams): Promise<IssueCountItem[]> {
+  const client = getClient();
+  const queryParams: Record<string, string | number | boolean | undefined> = {
+    _first: params.first ?? 100,
+  };
+
+  if (params.applicationId) queryParams.applicationId = params.applicationId;
+  if (params.projectId) queryParams.projectId = params.projectId;
+  if (params.branchId) queryParams.branchId = params.branchId;
+  if (params.testId) queryParams.testId = params.testId;
+  if (params.filter) queryParams._filter = params.filter;
+  if (params.group?.length) queryParams._group = params.group.join(",");
+  if (params.includeAverageAge) queryParams._includeAverageAge = true;
+
+  return client.getAllCursor<IssueCountItem>(
+    "/api/findings/issues/_actions/count",
+    queryParams,
     ACCEPT_ISSUES,
   );
 }

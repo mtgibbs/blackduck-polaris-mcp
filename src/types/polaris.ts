@@ -287,6 +287,47 @@ export interface AssistFeedbackPatch {
   value: AssistFeedback;
 }
 
+// --- Triage ---
+
+export type TriageKey =
+  | "comment"
+  | "status"
+  | "dismissal-reason"
+  | "is-dismissed"
+  | "owner"
+  | "fix-by";
+
+export interface TriagePropertyInput {
+  key: TriageKey;
+  value: string | boolean | null;
+}
+
+export interface TriageRequest {
+  filter?: string;
+  triageProperties: TriagePropertyInput[];
+}
+
+export interface TriageResult {
+  count: number;
+  _type?: string;
+}
+
+// --- Issue Count ---
+
+export interface IssueCountGroup {
+  key: string;
+  value?: string;
+  childTaxaGroup?: string;
+  valueId?: string;
+}
+
+export interface IssueCountItem {
+  group: IssueCountGroup[];
+  count: number;
+  averageAgeInDays?: number | null;
+  _type?: string;
+}
+
 // --- Tests ---
 
 export interface Test {

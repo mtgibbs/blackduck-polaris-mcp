@@ -3,6 +3,8 @@
 - API layer uses client.fetch<T>() for non-GET requests with {method, params, body, accept, contentType}
 - Format check includes YAML files in specs/ — run `deno fmt` on that directory if needed
 - `deno task lint` lints only .ts files (33 files); `deno fmt --check` checks all 50 files including YAMLs
+- PolarisClient queryParams must be Record<string, string | number | boolean | undefined> — no string[] allowed; join arrays with .join(",") before passing
+- getAllCursor<T>() for cursor-paginated GET endpoints; client.fetch<T>() for POST/PATCH/DELETE; client.get<T>() for single-item GETs
 
 ---
 
@@ -17,4 +19,19 @@
   - The `deno fmt --check` covers YAML files in specs/ too — 6 YAML files had single-quote vs double-quote issues; run `deno fmt specs/` to fix
   - client.fetch<T>() is the low-level method for non-GET; GET uses client.get<T>()
   - prd.json already has passes: false; update it to passes: true (don't duplicate the field)
+---
+
+## 2026-02-19 - PRD-F3
+- Implemented issue triage action and issue count endpoints across all layers:
+  1. src/types/polaris.ts: Added TriageKey, TriagePropertyInput, TriageRequest, TriageResult, IssueCountGroup, IssueCountItem interfaces
+  2. src/api/findings.ts: Added triageIssues() (POST to _actions/triage) and getIssueCount() (cursor-paginated GET to _actions/count)
+  3. src/services/findings.ts: Added triageIssues() and getIssueCount() service functions
+  4. src/mcp/tools/triage-issues.ts: Created triage_issues tool (readOnlyHint: false) with Zod schema including scoping params, filter, and triage_properties array
+  5. src/mcp/tools/get-issue-count.ts: Created get_issue_count tool (readOnlyHint: true) with group, include_average_age, filter params
+  6. src/mcp/tools/index.ts: Registered both new tools
+- Files changed: src/types/polaris.ts, src/api/findings.ts, src/services/findings.ts, src/mcp/tools/triage-issues.ts (new), src/mcp/tools/get-issue-count.ts (new), src/mcp/tools/index.ts, prd.json
+- **Learnings for future iterations:**
+  - PolarisClient.buildUrl() uses url.searchParams.set() which calls String() on values — no string[] supported; join with comma before passing
+  - TriageKey type needed multi-line union format for deno fmt compliance (single-line >100 chars fails fmt)
+  - The _group param in the count endpoint spec uses explode:false (comma-separated), consistent with joining the array
 ---

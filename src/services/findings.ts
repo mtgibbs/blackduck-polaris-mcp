@@ -1,5 +1,13 @@
 import * as findingsApi from "../api/findings.ts";
-import type { AssistResponse, CodeSnippet, Issue, Occurrence } from "../types/polaris.ts";
+import type {
+  AssistResponse,
+  CodeSnippet,
+  Issue,
+  IssueCountItem,
+  Occurrence,
+  TriagePropertyInput,
+  TriageResult,
+} from "../types/polaris.ts";
 
 // --- Issues ---
 
@@ -169,4 +177,36 @@ export function provideAssistFeedback(
   options: ProvideAssistFeedbackOptions,
 ): Promise<AssistResponse> {
   return findingsApi.provideAssistFeedback(options);
+}
+
+// --- Triage Issues ---
+
+export interface TriageIssuesOptions {
+  applicationId?: string;
+  projectId?: string;
+  branchId?: string;
+  testId?: string;
+  filter?: string;
+  triageProperties: TriagePropertyInput[];
+}
+
+export function triageIssues(options: TriageIssuesOptions): Promise<TriageResult> {
+  return findingsApi.triageIssues(options);
+}
+
+// --- Issue Count ---
+
+export interface GetIssueCountOptions {
+  applicationId?: string;
+  projectId?: string;
+  branchId?: string;
+  testId?: string;
+  filter?: string;
+  group?: string[];
+  includeAverageAge?: boolean;
+  first?: number;
+}
+
+export function getIssueCount(options: GetIssueCountOptions): Promise<IssueCountItem[]> {
+  return findingsApi.getIssueCount(options);
 }

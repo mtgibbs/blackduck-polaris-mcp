@@ -9,6 +9,8 @@ import { getOccurrencesTool } from "./get-occurrences.ts";
 import { getCodeSnippetTool } from "./get-code-snippet.ts";
 import { getRemediationAssistTool } from "./get-remediation-assist.ts";
 import { provideAssistFeedbackTool } from "./provide-assist-feedback.ts";
+import { triageIssuesTool } from "./triage-issues.ts";
+import { getIssueCountTool } from "./get-issue-count.ts";
 import { getTestsTool } from "./get-tests.ts";
 import { getTestMetricsTool } from "./get-test-metrics.ts";
 import { getBugTrackingConfigsTool } from "./get-bug-tracking-configs.ts";
@@ -26,6 +28,8 @@ export const tools: AnyToolDefinition[] = [
   getCodeSnippetTool,
   getRemediationAssistTool,
   provideAssistFeedbackTool,
+  triageIssuesTool,
+  getIssueCountTool,
   getTestsTool,
   getTestMetricsTool,
   getBugTrackingConfigsTool,
