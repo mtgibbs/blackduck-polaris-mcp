@@ -22,7 +22,9 @@
       ],
       "priority": 1,
       "passes": false,
-      "notes": "Foundation story — must complete before all others. Changes affect Issue, AssistResponse, TriageAuthor used across many endpoints."
+      "notes": "Foundation story — must complete before all others. Changes affect Issue, AssistResponse, TriageAuthor used across many endpoints.",
+      "claimed_by": "agent-1",
+      "claimed_at": "2026-02-19T17:18:37Z"
     },
     {
       "id": "PRD-F2",
