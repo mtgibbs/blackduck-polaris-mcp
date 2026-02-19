@@ -36,6 +36,21 @@
   - The _group param in the count endpoint spec uses explode:false (comma-separated), consistent with joining the array
 ---
 
+## 2026-02-19 - PRD-F5
+- Implemented issue pending approval endpoints across all layers:
+  1. src/types/polaris.ts: Added PendingApprovalAction type alias and PendingApprovalRequest interface
+  2. src/api/findings.ts: Added CONTENT_TYPE_CHANGE_PENDING_FIX_BY and CONTENT_TYPE_CHANGE_PENDING_STATUS constants; added changePendingFixBy() and changePendingStatus() (both POST, return Promise<void> for 204)
+  3. src/services/findings.ts: Added changePendingFixBy() and changePendingStatus() service functions
+  4. src/mcp/tools/change-pending-fix-by.ts: Created change_pending_fix_by tool (readOnlyHint: false), requires project_id and ids array
+  5. src/mcp/tools/change-pending-status.ts: Created change_pending_status tool (readOnlyHint: false), requires project_id and ids array
+  6. src/mcp/tools/index.ts: Registered both new tools
+- Files changed: src/types/polaris.ts, src/api/findings.ts, src/services/findings.ts, src/mcp/tools/change-pending-fix-by.ts (new), src/mcp/tools/change-pending-status.ts (new), src/mcp/tools/index.ts, prd.json
+- **Learnings for future iterations:**
+  - Both pending approval endpoints use unique Content-Type vendor media types (not the generic ACCEPT_ISSUES)
+  - For 204 endpoints (no response body), return Promise<void> from API layer; tool handler returns jsonResponse({success:true, action, count})
+  - Don't import errorResponse in tool handlers unless you actually use it (lint will catch it)
+---
+
 ## 2026-02-19 - PRD-F4
 - Implemented issue export and count-over-time endpoints across all layers:
   1. src/types/polaris.ts: Added IssueExportItem, IssueCountOverTimeEntry, IssueCountOverTimeResponse interfaces
