@@ -5,6 +5,8 @@ import type {
   CodeSnippet,
   Issue,
   IssueCountItem,
+  IssueCountOverTimeResponse,
+  IssueExportItem,
   Occurrence,
   TriagePropertyInput,
   TriageRequest,
@@ -187,6 +189,72 @@ export function getIssueCount(params: GetIssueCountParams): Promise<IssueCountIt
   return client.getAllCursor<IssueCountItem>(
     "/api/findings/issues/_actions/count",
     queryParams,
+    ACCEPT_ISSUES,
+  );
+}
+
+// --- Export Issues ---
+
+export interface ExportIssuesParams {
+  applicationId?: string;
+  projectId?: string;
+  branchId?: string;
+  testId?: string;
+  filter?: string;
+  sort?: string;
+  fileName?: string;
+}
+
+export function exportIssues(params: ExportIssuesParams): Promise<IssueExportItem[]> {
+  validateScope(params.applicationId, params.projectId);
+
+  const client = getClient();
+  const queryParams: Record<string, string | undefined> = {};
+
+  if (params.applicationId) queryParams.applicationId = params.applicationId;
+  if (params.projectId) queryParams.projectId = params.projectId;
+  if (params.branchId) queryParams.branchId = params.branchId;
+  if (params.testId) queryParams.testId = params.testId;
+  if (params.filter) queryParams._filter = params.filter;
+  if (params.sort) queryParams._sort = params.sort;
+  if (params.fileName) queryParams.fileName = params.fileName;
+
+  return client.get<IssueExportItem[]>(
+    "/api/findings/issues/_actions/export",
+    Object.keys(queryParams).length > 0 ? queryParams : undefined,
+    ACCEPT_ISSUES,
+  );
+}
+
+// --- Issue Count Over Time ---
+
+export interface GetIssueCountOverTimeParams {
+  applicationId?: string;
+  projectId?: string;
+  branchId?: string;
+  lastXDays?: number;
+  fromDate?: string;
+  toDate?: string;
+}
+
+export function getIssueCountOverTime(
+  params: GetIssueCountOverTimeParams,
+): Promise<IssueCountOverTimeResponse> {
+  validateScope(params.applicationId, params.projectId);
+
+  const client = getClient();
+  const queryParams: Record<string, string | number | undefined> = {};
+
+  if (params.applicationId) queryParams.applicationId = params.applicationId;
+  if (params.projectId) queryParams.projectId = params.projectId;
+  if (params.branchId) queryParams.branchId = params.branchId;
+  if (params.lastXDays !== undefined) queryParams._lastXDays = params.lastXDays;
+  if (params.fromDate) queryParams._fromDate = params.fromDate;
+  if (params.toDate) queryParams._toDate = params.toDate;
+
+  return client.get<IssueCountOverTimeResponse>(
+    "/api/findings/issues/_actions/count-over-time",
+    Object.keys(queryParams).length > 0 ? queryParams : undefined,
     ACCEPT_ISSUES,
   );
 }

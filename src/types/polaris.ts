@@ -328,6 +328,41 @@ export interface IssueCountItem {
   _type?: string;
 }
 
+// --- Issue Export ---
+
+export interface IssueExportItem {
+  type: string;
+  severity: string;
+  location: string;
+  fileName?: string;
+  toolType: string;
+  triageStatus?: string;
+  fixByDate?: string;
+  cwe?: string;
+  cve?: string;
+  bdsa?: string;
+  application?: string;
+  project?: string;
+  branch?: string;
+  link: string;
+}
+
+// --- Issue Count Over Time ---
+
+export interface IssueCountOverTimeEntry {
+  detectedCount?: number;
+  absentCount?: number;
+  date?: string;
+  toolType?: string;
+  toolId?: string;
+}
+
+export interface IssueCountOverTimeResponse {
+  issuesOverTime: IssueCountOverTimeEntry[];
+  _links?: LinkEntry[];
+  _type?: string;
+}
+
 // --- Tests ---
 
 export interface Test {

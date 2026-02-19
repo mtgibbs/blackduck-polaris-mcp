@@ -4,6 +4,8 @@ import type {
   CodeSnippet,
   Issue,
   IssueCountItem,
+  IssueCountOverTimeResponse,
+  IssueExportItem,
   Occurrence,
   TriagePropertyInput,
   TriageResult,
@@ -209,4 +211,39 @@ export interface GetIssueCountOptions {
 
 export function getIssueCount(options: GetIssueCountOptions): Promise<IssueCountItem[]> {
   return findingsApi.getIssueCount(options);
+}
+
+// --- Export Findings Issues ---
+
+export interface ExportFindingsIssuesOptions {
+  applicationId?: string;
+  projectId?: string;
+  branchId?: string;
+  testId?: string;
+  filter?: string;
+  sort?: string;
+  fileName?: string;
+}
+
+export function exportFindingsIssues(
+  options: ExportFindingsIssuesOptions,
+): Promise<IssueExportItem[]> {
+  return findingsApi.exportIssues(options);
+}
+
+// --- Issue Count Over Time ---
+
+export interface GetIssueCountOverTimeOptions {
+  applicationId?: string;
+  projectId?: string;
+  branchId?: string;
+  lastXDays?: number;
+  fromDate?: string;
+  toDate?: string;
+}
+
+export function getIssueCountOverTime(
+  options: GetIssueCountOverTimeOptions,
+): Promise<IssueCountOverTimeResponse> {
+  return findingsApi.getIssueCountOverTime(options);
 }
