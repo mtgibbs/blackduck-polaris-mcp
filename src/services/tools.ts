@@ -8,6 +8,8 @@ import type {
   ToolVersionSetting,
 } from "../types/polaris.ts";
 
+export type { DownloadDescriptor, PolarisTool, ToolVersionMapping, ToolVersionMatrix };
+
 export function getTools(options?: { filter?: string }): Promise<PolarisTool[]> {
   return toolsApi.getTools({ filter: options?.filter });
 }

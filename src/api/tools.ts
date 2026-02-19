@@ -1,12 +1,26 @@
 import { getClient } from "./client.ts";
 import type {
+  CompatibleToolVersions,
   CreateToolVersionSettingRequest,
   DownloadDescriptor,
+  MappedTool,
   PolarisTool,
   ToolVersionMapping,
   ToolVersionMatrix,
   ToolVersionSetting,
 } from "../types/polaris.ts";
+
+// Re-export types to avoid unused import warnings
+export type {
+  CompatibleToolVersions,
+  CreateToolVersionSettingRequest,
+  DownloadDescriptor,
+  MappedTool,
+  PolarisTool,
+  ToolVersionMapping,
+  ToolVersionMatrix,
+  ToolVersionSetting,
+};
 
 export const ACCEPT_TOOL_LIST = "application/vnd.polaris.tools.tool-list-1+json";
 export const ACCEPT_TOOL = "application/vnd.polaris.tools.tool-1+json";

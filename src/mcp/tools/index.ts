@@ -41,6 +41,8 @@ import { assignComponentVersionLicenseTool } from "./assign-component-version-li
 import { getComponentOriginsTool } from "./get-component-origins.ts";
 import { getComponentOriginTool } from "./get-component-origin.ts";
 import { getComponentOriginMatchesTool } from "./get-component-origin-matches.ts";
+import { getVersionMappingTool } from "./get-version-mapping.ts";
+import { getVersionMatrixTool } from "./get-version-matrix.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -85,4 +87,6 @@ export const tools: AnyToolDefinition[] = [
   getComponentOriginsTool,
   getComponentOriginTool,
   getComponentOriginMatchesTool,
+  getVersionMappingTool,
+  getVersionMatrixTool,
 ];

@@ -159,3 +159,22 @@
   - LicenseDefinition.license is LicenseEntry[] (array), not LicenseEntry (single object) per existing type definition
   - assignComponentVersionLicense uses same ACCEPT_COMPONENT_VERSIONS media type for both accept and contentType
 ---
+
+## 2026-02-19 - PRD-TL3
+- Implemented version mapping and version matrix endpoints across all layers:
+  1. src/types/polaris.ts: Added PolarisTool, DownloadDescriptor, MappedTool, ToolVersionMapping, CompatibleToolVersions, ToolVersionMatrix, ToolVersionSetting, CreateToolVersionSettingRequest interfaces (full Tools API type foundation for PRD-TL1)
+  2. src/api/tools.ts: Created new file with all media type constants (ACCEPT_TOOL_LIST, ACCEPT_TOOL, ACCEPT_DOWNLOAD_DESCRIPTOR, ACCEPT_VERSION_MAPPING, ACCEPT_VERSION_MATRIX, ACCEPT_VERSION_SETTINGS, ACCEPT_TOOL_CONFIG_LIST, CONTENT_TYPE_VERSION_SETTINGS_REQUEST) and all PRD-TL1 through PRD-TL4 API functions including getVersionMapping() and getVersionMatrix()
+  3. src/services/tools.ts: Created new file with service wrappers for all tools API functions including getVersionMapping() and getVersionMatrix()
+  4. src/services/index.ts: Added `export * from './tools.ts'`
+  5. src/mcp/tools/get-version-mapping.ts: Created get_version_mapping tool with optional RSQL filter
+  6. src/mcp/tools/get-version-matrix.ts: Created get_version_matrix tool with required id (name:version format)
+  7. src/mcp/tools/index.ts: Registered getVersionMappingTool and getVersionMatrixTool
+  8. prd.json: Set PRD-TL3 passes: true
+- Files changed: src/types/polaris.ts, src/api/tools.ts (new), src/services/tools.ts (new), src/services/index.ts, src/mcp/tools/get-version-mapping.ts (new), src/mcp/tools/get-version-matrix.ts (new), src/mcp/tools/index.ts, prd.json
+- **Learnings for future iterations:**
+  - PRD-TL1 foundation was not implemented by agent-1, so implemented it here as part of PRD-TL3 work
+  - getVersionMapping uses getAllOffset (offset pagination), getVersionMatrix uses client.get (single object — not paginated)
+  - Media type constants for tools API: use "application/vnd.polaris.tools.{resource}-{version}+json" pattern
+  - deno fmt will auto-collapse multiline const declarations to single line when under 100 chars; let it auto-format
+  - Re-exporting types from service layer via `export type {}` ensures other layers can import from services/index.ts
+---
