@@ -167,6 +167,6 @@ export interface ProvideAssistFeedbackOptions {
 
 export function provideAssistFeedback(
   options: ProvideAssistFeedbackOptions,
-): Promise<void> {
+): Promise<AssistResponse> {
   return findingsApi.provideAssistFeedback(options);
 }

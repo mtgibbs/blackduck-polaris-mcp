@@ -253,9 +253,9 @@ export interface ProvideAssistFeedbackParams {
   comment?: string;
 }
 
-export async function provideAssistFeedback(
+export function provideAssistFeedback(
   params: ProvideAssistFeedbackParams,
-): Promise<void> {
+): Promise<AssistResponse> {
   const client = getClient();
   const queryParams: Record<string, string | undefined> = {};
 
@@ -275,14 +275,14 @@ export async function provideAssistFeedback(
     },
   ];
 
-  await client.fetch<void>(
+  return client.fetch<AssistResponse>(
     `/api/findings/occurrences/${params.occurrenceId}/assist/${params.assistId}`,
     {
       method: "PATCH",
       params: Object.keys(queryParams).length > 0 ? queryParams : undefined,
       body,
       accept: ACCEPT_OCCURRENCES,
-      contentType: ACCEPT_OCCURRENCES,
+      contentType: "application/json-patch+json",
     },
   );
 }

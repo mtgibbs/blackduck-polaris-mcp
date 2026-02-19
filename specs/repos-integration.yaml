@@ -44,7 +44,7 @@ paths:
           schema:
             type: string
             example: |
-              [ 
+              [
                   repositoryId=in=(1d44c6d4-dde4-4c37-b068-9e7eb21c4a19, 1d44c6d4-dde4-4c37-b068-9e7eb21c4a19),
                   projectId=in=(0a50c9ab-7c75-498e-8b18-0d695ca4ef03);repositoryId=in=(1d44c6d4-dde4-4c37-b068-9e7eb21c4a19, 1d44c6d4-dde4-4c37-b068-9e7eb21c4a19), projectId=in=(0a50c9ab-7c75-498e-8b18-0d695ca4ef03, 0a50c9ab-7c75-498e-8b18-0d695ca4ef02)
               ]
@@ -65,51 +65,51 @@ paths:
             type: integer
             default: 0
       responses:
-        '200':
+        "200":
           description: Success.
           content:
             application/vnd.polaris.integrations.repos.repo-list-1+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ScmRepositoryV1CollectionResponse'
-        '400':
+                $ref: "#/components/schemas/ScmRepositoryV1CollectionResponse"
+        "400":
           description: Bad request.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:bad-request
                 title: Bad Request
                 status: 400
                 detail: Limit value must not be less than 0 and cannot be more than 100
-        '401':
+        "401":
           description: Unauthorized.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Could not extract Organization-ID from request, Please retry the request.
-        '403':
+        "403":
           description: Forbidden.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:forbidden
                 title: Forbidden
                 status: 403
                 detail: You are not authorized to access this repository.
-        '500':
+        "500":
           description: Internal server error.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:internal-error
                 title: Internal Server Error
@@ -125,65 +125,65 @@ paths:
         content:
           application/vnd.polaris.integrations.repos.repo-create-1+json;charset=UTF-8:
             schema:
-              $ref: '#/components/schemas/ScmRepositoryRequestV1'
+              $ref: "#/components/schemas/ScmRepositoryRequestV1"
         required: true
       responses:
-        '200':
+        "200":
           description: Success.
           content:
             application/vnd.polaris.integrations.repos.repo-1+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/CreateScmRepositoryResponseV1'
-        '400':
+                $ref: "#/components/schemas/CreateScmRepositoryResponseV1"
+        "400":
           description: Bad request.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:bad-request
                 title: Bad Request
                 status: 400
                 detail: SCM provider is required
-        '401':
+        "401":
           description: Unauthorized.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Could not extract Organization-ID from request, Please retry the request.
-        '403':
+        "403":
           description: Forbidden.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:forbidden
                 title: Forbidden
                 status: 403
                 detail: You are not authorized to create the repository settings.
-        '409':
+        "409":
           description: Conflict.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:conflict
                 title: Conflict
                 status: 409
                 detail: A repository record already exist for the project
-        '500':
+        "500":
           description: Internal server error.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:internal-error
                 title: Internal Server Error
@@ -209,54 +209,54 @@ paths:
         content:
           application/vnd.polaris.integrations.repos.repo-update-1+json;charset=UTF-8:
             schema:
-              $ref: '#/components/schemas/ScmRepositoryRequestV1'
+              $ref: "#/components/schemas/ScmRepositoryRequestV1"
         required: true
       responses:
-        '200':
+        "200":
           description: Success.
           content:
             application/vnd.polaris.integrations.repos.repo-1+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ScmRepositoryPatchResponseV1'
-        '400':
+                $ref: "#/components/schemas/ScmRepositoryPatchResponseV1"
+        "400":
           description: Bad request.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:bad-request
                 title: Bad Request
                 status: 400
                 detail: SCM provider is required
-        '401':
+        "401":
           description: Unauthorized.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Could not extract Organization-ID from request, Please retry the request.
-        '403':
+        "403":
           description: Forbidden.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:forbidden
                 title: Forbidden
                 status: 403
                 detail: You are not authorized to update the repository settings.
-        '500':
+        "500":
           description: Internal server error.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:internal-error
                 title: Internal Server Error
@@ -287,12 +287,12 @@ paths:
             type: string
             example: _include=defaultBranchName
       responses:
-        '200':
+        "200":
           description: Success.
           content:
             application/vnd.polaris.integrations.repos.repo-1+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ScmRepositoryResponseWithBranchV1'
+                $ref: "#/components/schemas/ScmRepositoryResponseWithBranchV1"
               example:
                 body:
                   id: 3fa85f64-5717-4562-b3fc-2c963f66afa6
@@ -301,8 +301,8 @@ paths:
                   scmProvider: GITHUB_STANDARD
                   applicationId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
                   projectId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
-                  createdAt: '2023-10-26T09:56:54.333Z'
-                  updatedAt: '2023-10-26T09:56:54.333Z'
+                  createdAt: "2023-10-26T09:56:54.333Z"
+                  updatedAt: "2023-10-26T09:56:54.333Z"
                   createdBy: Chuck Norris
                   updatedBy: Chuck Norris
                   defaultBranchName: main
@@ -310,45 +310,45 @@ paths:
                     - href: https://polaris.blackduck.com/api/integrations/repos/3fa85f64-5717-4562-b3fc-2c963f66afa6
                       rel: self
                       method: GET
-        '400':
+        "400":
           description: Bad request.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:bad-request
                 title: Bad Request
                 status: 400
                 detail: repositoryId value is in invalid format.
-        '401':
+        "401":
           description: Unauthorized.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Could not extract Organization-ID from request, Please retry the request.
-        '403':
+        "403":
           description: Forbidden.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:forbidden
                 title: Forbidden
                 status: 403
                 detail: You are not authorized to access this repository.
-        '500':
+        "500":
           description: Internal server error.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:internal-error
                 title: Internal Server Error
@@ -365,54 +365,54 @@ paths:
         content:
           application/vnd.polaris.integrations.repos.connection-request-1+json;charset=UTF-8:
             schema:
-              $ref: '#/components/schemas/ScmRepositoryRequestV1'
+              $ref: "#/components/schemas/ScmRepositoryRequestV1"
         required: true
       responses:
-        '200':
+        "200":
           description: Success.
           content:
             application/vnd.polaris.integrations.repos.repo-connection-1+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ScmRepositoryTestConnectionResponseV1'
-        '400':
+                $ref: "#/components/schemas/ScmRepositoryTestConnectionResponseV1"
+        "400":
           description: Bad request.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:bad-request
                 title: Bad Request
                 status: 400
                 detail: projectId value is in invalid format.
-        '401':
+        "401":
           description: Unauthorized.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Could not extract Organization-ID from request, Please retry the request.
-        '403':
+        "403":
           description: Forbidden.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:forbidden
                 title: Forbidden
                 status: 403
                 detail: You are not authorized to perform test connection operation on this repository.
-        '500':
+        "500":
           description: Internal server error.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:internal-error
                 title: Internal Server Error
@@ -451,51 +451,51 @@ paths:
             default: 100
             example: 10
       responses:
-        '200':
+        "200":
           description: Success.
           content:
             application/vnd.polaris.integrations.repos.repo-branch-list-1+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/RepositoryBranchesV1CollectionResponse'
-        '400':
+                $ref: "#/components/schemas/RepositoryBranchesV1CollectionResponse"
+        "400":
           description: Bad request.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:bad-request
                 title: Bad Request
                 status: 400
                 detail: repoId value is in invalid format.
-        '401':
+        "401":
           description: Unauthorized.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Could not extract Organization-ID from request, Please retry the request.
-        '403':
+        "403":
           description: Forbidden.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:forbidden
                 title: Forbidden
                 status: 403
                 detail: Not authorized to list repository branches.
-        '500':
+        "500":
           description: Internal server error.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:internal-error
                 title: Internal Server Error
@@ -512,17 +512,17 @@ paths:
         content:
           application/vnd.polaris.integrations.repos.scm.groups-auth-1+json;charset=UTF-8:
             schema:
-              $ref: '#/components/schemas/UpdateScmRepositoryByAppIdRequestV1'
+              $ref: "#/components/schemas/UpdateScmRepositoryByAppIdRequestV1"
         required: true
       responses:
-        '201':
+        "201":
           description: Resource has been created.
-        '400':
+        "400":
           description: Bad request.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               examples:
                 missingScmProvider:
                   value:
@@ -542,45 +542,45 @@ paths:
                     title: Bad Request
                     status: 400
                     detail: emailID is not valid for Bitbucket Cloud bulk onboarding.
-        '401':
+        "401":
           description: Unauthorized.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Could not extract Organization-ID from request, Please retry the request.
-        '403':
+        "403":
           description: Forbidden.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:forbidden
                 title: Forbidden
                 status: 403
                 detail: You are not authorized to update the repository settings.
-        '500':
+        "500":
           description: Internal server error.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:internal-error
                 title: Internal Server Error
                 status: 500
                 detail: An unexpected error occurred.
-        '501':
+        "501":
           description: Feature Not implemented
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:not-implemented
                 title: Not Implemented
@@ -595,51 +595,51 @@ paths:
       summary: Listing of all SCM providers.
       description: This API lists all the SCM providers supported (including both cloud-hosted & self-hosted) and includes the version details if the hosting type is self-hosted.
       responses:
-        '200':
+        "200":
           description: Success.
           content:
             application/vnd.scm.providers-list-1+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ScmProviderResponseV1Response'
-        '400':
+                $ref: "#/components/schemas/ScmProviderResponseV1Response"
+        "400":
           description: Bad request.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:bad-request
                 title: Bad Request
                 status: 400
                 detail: An unexpected error happened while listing versions for scm providers from the library.
-        '401':
+        "401":
           description: Unauthorized.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Could not extract Organization-ID from request, Please retry the request.
-        '500':
+        "500":
           description: Internal server error.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:internal-error
                 title: Internal Server Error
                 status: 500
                 detail: An unexpected error happened while listing versions.
-        '501':
+        "501":
           description: Feature Not implemented
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:not-implemented
                 title: Not Implemented
@@ -669,7 +669,7 @@ paths:
         content:
           application/vnd.polaris.integrations.repos.bulk-repo-import-1+json;charset=UTF-8:
             schema:
-              $ref: '#/components/schemas/ImportRepositoriesForAGroupRequestV1'
+              $ref: "#/components/schemas/ImportRepositoriesForAGroupRequestV1"
             examples:
               Bulk import request for Github:
                 description: Bulk import request for SCM providers like Github with flat repository structure (organization -> repositories)
@@ -753,7 +753,7 @@ paths:
                       excludeRepositories: []
         required: true
       responses:
-        '202':
+        "202":
           description: Request Accepted for Processing.
           headers:
             Location:
@@ -763,12 +763,12 @@ paths:
                 format: url
                 example: https://polaris.synopsys.com/repositories-import/b2dbb34e-ce92-4218-a78f-8f20a2300a54
               description: URL to check the status of import job.
-        '400':
+        "400":
           description: Bad request.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:bad-request
                 title: Bad Request
@@ -793,56 +793,56 @@ paths:
                     title: Bad Request
                     status: 400
                     detail: emailID is not valid for Bitbucket Cloud bulk onboarding.
-        '401':
+        "401":
           description: Unauthorized.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Could not extract Organization-ID from request, Please retry the request.
-        '403':
+        "403":
           description: Forbidden.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:forbidden
                 title: Forbidden
                 status: 403
                 detail: User does not have required access to any repository-group.
-        '409':
+        "409":
           description: Conflict.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:conflict
                 title: Conflict
                 status: 409
                 detail: Another Import Job is under process, please try again after sometime (or abort previous job).
-        '500':
+        "500":
           description: Internal server error.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:internal-error
                 title: Internal Server Error
                 status: 500
                 detail: An unexpected error occurred while importing the groups and repositories.
-        '501':
+        "501":
           description: Feature Not implemented
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:not-implemented
                 title: Not Implemented
@@ -890,7 +890,7 @@ paths:
             example: |
               [ state==COMPLETED, state=in=(COMPLETED,NOT_STARTED), portfolioItemId==3fa85f64-5717-4562-b3fc-2c963f66afa6 ]
       responses:
-        '200':
+        "200":
           description: Success.
           content:
             application/vnd.polaris.integrations.repos.bulk-repo-import-groups-status-1+json;charset=UTF-8:
@@ -900,7 +900,7 @@ paths:
                   _items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/GetRepoImportGroupsStatusResponseV1'
+                      $ref: "#/components/schemas/GetRepoImportGroupsStatusResponseV1"
                   _links:
                     type: array
                     items:
@@ -923,46 +923,46 @@ paths:
                         rel: last
                         method: GET
                   _collection:
-                    $ref: '#/components/schemas/RepoImportStatusPageInformation'
-        '400':
+                    $ref: "#/components/schemas/RepoImportStatusPageInformation"
+        "400":
           description: Bad request.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:bad-request
                 title: Bad Request
                 status: 400
                 detail: Limit value must not be less than 0 and cannot be more than 100.
-        '401':
+        "401":
           description: Unauthorized.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Could not extract Organization-ID from request, Please retry the request.
-        '500':
+        "500":
           description: Internal server error.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:internal-error
                 title: Internal Server Error
                 status: 500
                 detail: An unexpected error occurred while getting repositories import groups status.
-        '501':
+        "501":
           description: Feature Not implemented
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:not-implemented
                 title: Not Implemented
@@ -993,7 +993,7 @@ paths:
         content:
           application/vnd.polaris.integrations.repos.bulk-group-import-1+json;charset=UTF-8:
             schema:
-              $ref: '#/components/schemas/UpdatedImportRepositoriesRequestV1'
+              $ref: "#/components/schemas/UpdatedImportRepositoriesRequestV1"
             examples:
               Bulk import request for Github:
                 description: Bulk import request for SCM providers like Github with flat repository structure (organization -> repositories)
@@ -1097,7 +1097,7 @@ paths:
                           excludeRepositories: []
         required: true
       responses:
-        '202':
+        "202":
           description: Request Accepted for Processing.
           headers:
             Location:
@@ -1107,12 +1107,12 @@ paths:
                 format: url
                 example: https://polaris.synopsys.com/groups-repositories-import/b2dbb34e-ce92-4218-a78f-8f20a2300a54
               description: URL to check the status of import job.
-        '400':
+        "400":
           description: Bad request.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:bad-request
                 title: Bad Request
@@ -1137,56 +1137,56 @@ paths:
                     title: Bad Request
                     status: 400
                     detail: emailID is not valid for Bitbucket Cloud bulk onboarding.
-        '401':
+        "401":
           description: Unauthorized.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Could not extract Organization-ID from request, Please retry the request.
-        '403':
+        "403":
           description: Forbidden.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:forbidden
                 title: Forbidden
                 status: 403
                 detail: User does not have required access to any repository-group.
-        '409':
+        "409":
           description: Conflict.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:conflict
                 title: Conflict
                 status: 409
                 detail: Another Import Job is under process, please try again after sometime (or abort previous job).
-        '500':
+        "500":
           description: Internal server error.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:internal-error
                 title: Internal Server Error
                 status: 500
                 detail: An unexpected error occurred while importing the groups and repositories.
-        '501':
+        "501":
           description: Feature Not implemented
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:not-implemented
                 title: Not Implemented
@@ -1212,76 +1212,76 @@ paths:
         content:
           application/vnd.polaris.integrations.repos.bulk-group-import-1+json;charset=UTF-8:
             schema:
-              $ref: '#/components/schemas/UpdateRepositoriesImportRequestV1'
+              $ref: "#/components/schemas/UpdateRepositoriesImportRequestV1"
         required: true
       responses:
-        '200':
+        "200":
           description: Success.
           content:
             application/vnd.polaris.integrations.repos.bulk-group-import-1+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/UpdatedRepositoriesImportResponseV1'
-        '400':
+                $ref: "#/components/schemas/UpdatedRepositoriesImportResponseV1"
+        "400":
           description: Bad request.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:bad-request
                 title: Bad Request
                 status: 400
                 detail: Specified action is invalid, only action allowed is ABORT.
-        '401':
+        "401":
           description: Unauthorized.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Could not extract Organization-ID from request, Please retry the request.
-        '403':
+        "403":
           description: Forbidden.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:forbidden
                 title: Forbidden
                 status: 403
                 detail: Access is denied.
-        '404':
+        "404":
           description: Not found.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:not-found
                 title: Not found
                 status: 404
                 detail: No matching records found for repositories import jobId - 0a50c9ab-b068-498e-b068-0d695ca4ef03
-        '500':
+        "500":
           description: Internal server error.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:internal-error
                 title: Internal Server Error
                 status: 500
                 detail: An unexpected error occurred while updating repositories.
-        '501':
+        "501":
           description: Feature Not implemented
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:not-implemented
                 title: Not Implemented
@@ -1304,62 +1304,62 @@ paths:
             type: string
             format: uuid
       responses:
-        '200':
+        "200":
           description: Success.
           content:
             application/vnd.polaris.integrations.repos.bulk-group-import-status-1+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/GetGroupsRepositoriesImportStatusResponseV1'
-        '400':
+                $ref: "#/components/schemas/GetGroupsRepositoriesImportStatusResponseV1"
+        "400":
           description: Bad request.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:bad-request
                 title: Bad Request
                 status: 400
                 detail: Please provide valid UUID for repositoriesImportJobId field.
-        '401':
+        "401":
           description: Unauthorized.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Could not extract Organization-ID from request, Please retry the request.
-        '404':
+        "404":
           description: Not found.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:not-found
                 title: Not found
                 status: 404
                 detail: No matching records found for repositories import jobId - 0a50c9ab-b068-498e-b068-0d695ca4ef03
-        '500':
+        "500":
           description: Internal server error.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:internal-error
                 title: Internal Server Error
                 status: 500
                 detail: An unexpected error occurred while getting repositories import status by id.
-        '501':
+        "501":
           description: Feature Not implemented
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:not-implemented
                 title: Not Implemented
@@ -1405,7 +1405,7 @@ paths:
             example: |
               [ state==COMPLETED, state=in=(COMPLETED,ABORTED) ]
       responses:
-        '200':
+        "200":
           description: Success.
           content:
             application/vnd.polaris.integrations.repos.bulk-group-import-status-1+json;charset=UTF-8:
@@ -1479,46 +1479,46 @@ paths:
                         rel: last
                         method: GET
                   _collection:
-                    $ref: '#/components/schemas/GroupsRepoImportStatusPageInformation'
-        '400':
+                    $ref: "#/components/schemas/GroupsRepoImportStatusPageInformation"
+        "400":
           description: Bad request.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:bad-request
                 title: Bad Request
                 status: 400
                 detail: Limit value must not be less than 0 and cannot be more than 100.
-        '401':
+        "401":
           description: Unauthorized.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Could not extract Organization-ID from request, Please retry the request.
-        '500':
+        "500":
           description: Internal server error.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:internal-error
                 title: Internal Server Error
                 status: 500
                 detail: An unexpected error occurred while getting repositories import status by id.
-        '501':
+        "501":
           description: Feature Not implemented
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:not-implemented
                 title: Not Implemented
@@ -1537,7 +1537,7 @@ paths:
           in: query
           description: Name of the scm provider
           schema:
-            $ref: '#/components/schemas/ScmProvider'
+            $ref: "#/components/schemas/ScmProvider"
           required: true
         - name: X-Polaris-SCM-PAT
           in: header
@@ -1552,7 +1552,7 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Success.
           content:
             application/vnd.polaris.integrations.repos.scm.repo-connection-1+json;charset=UTF-8:
@@ -1576,12 +1576,12 @@ paths:
                       - href: https://polaris.synopsys.com/api/scm/integrations/connection
                         rel: self
                         method: GET
-        '400':
+        "400":
           description: Bad request.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               examples:
                 blankToken:
                   value:
@@ -1601,34 +1601,34 @@ paths:
                     title: Bad Request
                     status: 400
                     detail: emailID is not valid for Bitbucket Cloud bulk onboarding.
-        '401':
+        "401":
           description: Unauthorized.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Could not extract Organization-ID from request, Please retry the request.
-        '500':
+        "500":
           description: Internal server error.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:internal-error
                 title: Internal Server Error
                 status: 500
                 detail: An unexpected error happened while testing connection for given provider and token.
-        '501':
+        "501":
           description: Feature Not implemented
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:not-implemented
                 title: Not Implemented
@@ -1647,7 +1647,7 @@ paths:
           in: query
           description: Name of the scm provider
           schema:
-            $ref: '#/components/schemas/ScmProvider'
+            $ref: "#/components/schemas/ScmProvider"
           required: true
         - name: _cursor
           in: query
@@ -1656,7 +1656,7 @@ paths:
             if not specified.
           schema:
             type: string
-            example: '1'
+            example: "1"
         - name: _limit
           in: query
           description: Restricts the number of results to the given limit. The default of 100 is used if no value is provided.
@@ -1684,7 +1684,7 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/vnd.polaris.integrations.repos.scm.group-list-1+json;charset=UTF-8:
@@ -1694,7 +1694,7 @@ paths:
                   _items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/group'
+                      $ref: "#/components/schemas/group"
                   _links:
                     type: array
                     items:
@@ -1716,13 +1716,13 @@ paths:
                         rel: next
                         method: GET
                   _collection:
-                    $ref: '#/components/schemas/groupCollection'
-        '400':
+                    $ref: "#/components/schemas/groupCollection"
+        "400":
           description: Bad request.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               examples:
                 unsupportedProvider:
                   value:
@@ -1745,34 +1745,34 @@ paths:
                     title: Bad Request
                     status: 400
                     detail: emailID is not valid for Bitbucket Cloud bulk onboarding.
-        '401':
+        "401":
           description: Unauthorized.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Could not extract Organization-ID from request, Please retry the request.
-        '500':
+        "500":
           description: Internal server error.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:internal-error
                 title: Internal Server Error
                 status: 500
                 detail: An error occurred while listing group details for the given provider and token.
-        '501':
+        "501":
           description: Feature Not implemented
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:not-implemented
                 title: Not Implemented
@@ -1791,7 +1791,7 @@ paths:
           in: query
           description: Name of the scm provider
           schema:
-            $ref: '#/components/schemas/ScmProvider'
+            $ref: "#/components/schemas/ScmProvider"
         - name: groupName
           in: query
           description: Name of the group
@@ -1823,7 +1823,7 @@ paths:
             if not specified.
           schema:
             type: string
-            example: '1'
+            example: "1"
         - name: _limit
           in: query
           description: Restricts the number of results to the given limit. The default of 100 is used if no value is provided.
@@ -1843,7 +1843,7 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/vnd.polaris.integrations.repos.scm.repo-list-1+json;charset=UTF-8:
@@ -1853,7 +1853,7 @@ paths:
                   _items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/repository'
+                      $ref: "#/components/schemas/repository"
                   _links:
                     type: array
                     items:
@@ -1875,13 +1875,13 @@ paths:
                         rel: next
                         method: GET
                   _collection:
-                    $ref: '#/components/schemas/repositoryCollection'
-        '400':
+                    $ref: "#/components/schemas/repositoryCollection"
+        "400":
           description: Bad request.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               examples:
                 unsupportedProvider:
                   value:
@@ -1904,34 +1904,34 @@ paths:
                     title: Bad Request
                     status: 400
                     detail: emailID is not valid for Bitbucket Cloud bulk onboarding.
-        '401':
+        "401":
           description: Unauthorized.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Could not extract Organization-ID from request, Please retry the request.
-        '500':
+        "500":
           description: Internal server error.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:internal-error
                 title: Internal Server Error
                 status: 500
                 detail: An error occurred while listing repositories for the given provider and token. Please check the provider and token info and try again.
-        '501':
+        "501":
           description: Feature Not implemented
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:not-implemented
                 title: Not Implemented
@@ -1956,7 +1956,7 @@ paths:
           in: query
           description: Name of the scm provider
           schema:
-            $ref: '#/components/schemas/ScmProvider'
+            $ref: "#/components/schemas/ScmProvider"
         - name: _cursor
           in: query
           description: >-
@@ -1964,7 +1964,7 @@ paths:
             if not specified.
           schema:
             type: string
-            example: '1'
+            example: "1"
         - name: _limit
           in: query
           description: Restricts the number of results to the given limit. The default of 100 is used if no value is provided.
@@ -1978,7 +1978,7 @@ paths:
             type: string
           required: true
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/vnd.polaris.integrations.repos.scm.project-list-1+json;charset=UTF-8:
@@ -1988,7 +1988,7 @@ paths:
                   _items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/project'
+                      $ref: "#/components/schemas/project"
                   _links:
                     type: array
                     items:
@@ -2010,46 +2010,46 @@ paths:
                         rel: next
                         method: GET
                   _collection:
-                    $ref: '#/components/schemas/repositoryCollection'
-        '400':
+                    $ref: "#/components/schemas/repositoryCollection"
+        "400":
           description: Bad request.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:bad-request
                 title: Bad Request
                 status: 400
                 detail: Bulk onboarding is not supported for the Azure.
-        '401':
+        "401":
           description: Unauthorized.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Could not extract Organization-ID from request, Please retry the request.
-        '500':
+        "500":
           description: Internal server error.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:internal-error
                 title: Internal Server Error
                 status: 500
                 detail: An error occurred while listing projects for the given provider and token. Please check the provider and token info and try again.
-        '501':
+        "501":
           description: Feature Not implemented
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:not-implemented
                 title: Not Implemented
@@ -2066,50 +2066,50 @@ paths:
         content:
           application/vnd.polaris.integrations.repos.groups-settings-update-1+json;charset=UTF-8:
             schema:
-              $ref: '#/components/schemas/GroupsSettingsRequest'
+              $ref: "#/components/schemas/GroupsSettingsRequest"
         required: true
       responses:
-        '202':
+        "202":
           description: Accepted.
-        '400':
+        "400":
           description: Bad request.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:bad-request
                 title: Bad Request
                 status: 400
                 detail: Application ID required.
-        '401':
+        "401":
           description: Unauthorized.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Not authorized to update the group settings.
-        '500':
+        "500":
           description: Internal server error.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:internal-error
                 title: Internal Server Error
                 status: 500
                 detail: An unexpected error occurred.
-        '501':
+        "501":
           description: Feature Not implemented.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:not-implemented
                 title: Not Implemented
@@ -2130,7 +2130,7 @@ paths:
           schema:
             type: string
             example: |
-              [ 
+              [
                   applicationId=in=(1d44c6d4-dde4-4c37-b068-9e7eb21c4a19, 1d44c6d4-dde4-4c37-b068-9e7eb21c4a19),
                   groupId=in=(0a50c9ab-7c75-498e-8b18-0d695ca4ef03);repositoryId=in=(1d44c6d4-dde4-4c37-b068-9e7eb21c4a19, 1d44c6d4-dde4-4c37-b068-9e7eb21c4a19), projectId=in=(0a50c9ab-7c75-498e-8b18-0d695ca4ef03, 0a50c9ab-7c75-498e-8b18-0d695ca4ef02)
               ]
@@ -2151,7 +2151,7 @@ paths:
             type: integer
             default: 0
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/vnd.polaris.integrations.repos.groups-settings-1+json;charset=UTF-8:
@@ -2161,7 +2161,7 @@ paths:
                   _items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/GroupsSettingsResponse'
+                      $ref: "#/components/schemas/GroupsSettingsResponse"
                   _links:
                     type: array
                     items:
@@ -2183,35 +2183,35 @@ paths:
                         rel: next
                         method: GET
                   _collection:
-                    $ref: '#/components/schemas/groupCollection'
-        '400':
+                    $ref: "#/components/schemas/groupCollection"
+        "400":
           description: Bad request.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:bad-request
                 title: Bad Request
                 status: 400
                 detail: Please provide valid filter param, example value==demo.
-        '500':
+        "500":
           description: Internal server error.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:internal-error
                 title: Internal Server Error
                 status: 500
                 detail: An unexpected error occurred.
-        '501':
+        "501":
           description: Feature Not implemented.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:not-implemented
                 title: Not Implemented
@@ -2236,7 +2236,7 @@ paths:
           application/vnd.polaris.integrations.repos.groups-connection-request-1+json;charset=UTF-8:
             schema:
               allOf:
-                - $ref: '#/components/schemas/GroupConnectionRequest'
+                - $ref: "#/components/schemas/GroupConnectionRequest"
                 - properties:
                     email:
                       type: string
@@ -2245,14 +2245,14 @@ paths:
                       example: user@email.com
         required: true
       responses:
-        '200':
+        "200":
           description: OK.
-        '400':
+        "400":
           description: Bad Request.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               examples:
                 invalidWorkspaceUrl:
                   summary: Invalid workspace URL
@@ -2275,34 +2275,34 @@ paths:
                     title: Bad Request
                     status: 400
                     detail: emailID is not valid for Bitbucket Cloud bulk onboarding.
-        '403':
+        "403":
           description: Bad Request.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:bad-request
                 title: Unauthorized
                 status: 403
                 detail: SCM provider is required
-        '500':
+        "500":
           description: Internal server error.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:internal-error
                 title: Internal Server Error
                 status: 500
                 detail: An unexpected error occurred.
-        '501':
+        "501":
           description: Feature Not implemented.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:not-implemented
                 title: Not Implemented
@@ -2315,7 +2315,7 @@ paths:
       operationId: groupMappingStatus
       summary: Get group mapping status with it's corresponding repositories.
       description: >
-        This API retrieves the mapping status of an application to its associated projects. 
+        This API retrieves the mapping status of an application to its associated projects.
 
 
         It verifies whether the application is correctly configured with groups or organizations in the SCM provider and whether the projects are properly mapped to repositories within those groups or
@@ -2355,40 +2355,40 @@ paths:
             type: integer
             default: 0
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/vnd.polaris.integrations.repos.group-mapping-status-1+json:
               schema:
-                $ref: '#/components/schemas/GroupMappingStatusResponse'
-        '400':
+                $ref: "#/components/schemas/GroupMappingStatusResponse"
+        "400":
           description: Bad request.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:bad-request
                 title: Bad Request
                 status: 400
                 detail: applicationId is missing
-        '403':
+        "403":
           description: Unauthorized request.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:forbidden
                 title: Forbidden
                 status: 403
                 detail: Not authorized to list group mapping status.
-        '500':
+        "500":
           description: Internal server error.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:internal-error
                 title: Internal Server Error
@@ -2411,39 +2411,39 @@ paths:
         content:
           application/vnd.polaris.integrations.repos.test-settings-create-1+json;charset=UTF-8:
             schema:
-              $ref: '#/components/schemas/TestSettingsRequest'
+              $ref: "#/components/schemas/TestSettingsRequest"
         required: true
       responses:
-        '202':
+        "202":
           description: Accepted.
-        '400':
+        "400":
           description: Bad request.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:bad-request
                 title: Bad Request
                 status: 400
-                detail: 'Invalid scope: invalid_scope'
-        '403':
+                detail: "Invalid scope: invalid_scope"
+        "403":
           description: Unauthorized request.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:forbidden
                 title: Forbidden
                 status: 403
                 detail: Not authorized to create the test settings.
-        '500':
+        "500":
           description: Internal server error.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:internal-error
                 title: Internal Server Error
@@ -2480,40 +2480,40 @@ paths:
               - branch
             example: application
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/vnd.polaris.integrations.repos.test-settings+json:
               schema:
-                $ref: '#/components/schemas/TestSettingsResponse'
-        '400':
+                $ref: "#/components/schemas/TestSettingsResponse"
+        "400":
           description: Bad request.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:bad-request
                 title: Bad Request
                 status: 400
                 detail: scope is missing
-        '403':
+        "403":
           description: Unauthorized request.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:forbidden
                 title: Forbidden
                 status: 403
                 detail: Not authorized to read the test settings.
-        '500':
+        "500":
           description: Internal server error.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:internal-error
                 title: Internal Server Error
@@ -2549,36 +2549,36 @@ paths:
               - branch
             example: application
       responses:
-        '200':
+        "200":
           description: Successful response
-        '400':
+        "400":
           description: Bad request.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:bad-request
                 title: Bad Request
                 status: 400
                 detail: scope is missing
-        '403':
+        "403":
           description: Unauthorized request.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:forbidden
                 title: Forbidden
                 status: 403
                 detail: Not authorized to delete the test settings.
-        '500':
+        "500":
           description: Internal server error.
           content:
             application/problem+json;charset=UTF-8:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: "#/components/schemas/ErrorResponse"
               example:
                 type: urn:x-scm-integrations:internal-error
                 title: Internal Server Error
@@ -2597,7 +2597,7 @@ components:
         _items:
           type: array
           items:
-            $ref: '#/components/schemas/RepositoryBranchesResponseV1'
+            $ref: "#/components/schemas/RepositoryBranchesResponseV1"
         _links:
           type: array
           items:
@@ -2620,7 +2620,7 @@ components:
               rel: last
               method: GET
         _collection:
-          $ref: '#/components/schemas/PageInformation'
+          $ref: "#/components/schemas/PageInformation"
     RepositoryBranchesResponseV1:
       type: object
       properties:
@@ -2670,9 +2670,9 @@ components:
           description: The repository URL from SCM the provider.
           example: https://github.com/Org-A/repo-1
         scmProvider:
-          $ref: '#/components/schemas/ScmProvider'
+          $ref: "#/components/schemas/ScmProvider"
         scmAuthentication:
-          $ref: '#/components/schemas/CreateScmAuthRequestV1'
+          $ref: "#/components/schemas/CreateScmAuthRequestV1"
     GroupConnectionRequest:
       type: object
       properties:
@@ -2680,14 +2680,14 @@ components:
           type: string
           description: The SCM group url.
         scmProvider:
-          $ref: '#/components/schemas/ScmProvider'
+          $ref: "#/components/schemas/ScmProvider"
     GroupMappingStatusResponse:
       type: object
       properties:
         _items:
           type: array
           items:
-            $ref: '#/components/schemas/GroupMappingStatus'
+            $ref: "#/components/schemas/GroupMappingStatus"
           description: The list of status for each project in the given application.
         _links:
           type: array
@@ -2716,7 +2716,7 @@ components:
               rel: last
               method: GET
         _collection:
-          $ref: '#/components/schemas/PageInformation'
+          $ref: "#/components/schemas/PageInformation"
     GroupMappingStatus:
       type: object
       properties:
@@ -2759,7 +2759,7 @@ components:
           description: Indicates whether the test settings are inherited from a parent scope.
           example: false
         testSyncSettings:
-          $ref: '#/components/schemas/TestSyncSettings'
+          $ref: "#/components/schemas/TestSyncSettings"
         _links:
           type: array
           description: represents a collection of hypermedia links associated with this resource. Each link provides additional context or actions that can be performed on the resource.
@@ -2800,19 +2800,19 @@ components:
             branch ID for a branch scope.
           example: 2d3da7e5-c722-43ac-8e44-51f2f3661ea2
         testSyncSettings:
-          $ref: '#/components/schemas/TestSyncSettings'
+          $ref: "#/components/schemas/TestSyncSettings"
     TestSyncSettings:
       type: object
       properties:
         branch:
-          $ref: '#/components/schemas/BranchTestSyncSettings'
+          $ref: "#/components/schemas/BranchTestSyncSettings"
     BranchTestSyncSettings:
       type: object
       properties:
         default:
-          $ref: '#/components/schemas/DefaultBranchSyncSettings'
+          $ref: "#/components/schemas/DefaultBranchSyncSettings"
         nonDefault:
-          $ref: '#/components/schemas/NonDefaultBranchSyncSettings'
+          $ref: "#/components/schemas/NonDefaultBranchSyncSettings"
     DefaultBranchSyncSettings:
       type: object
       properties:
@@ -2853,7 +2853,7 @@ components:
         _items:
           type: array
           items:
-            $ref: '#/components/schemas/ScmRepositoriesResponseV1'
+            $ref: "#/components/schemas/ScmRepositoriesResponseV1"
           description: The list of repositories.
         _links:
           type: array
@@ -2877,7 +2877,7 @@ components:
               rel: last
               method: GET
         _collection:
-          $ref: '#/components/schemas/PageInformation'
+          $ref: "#/components/schemas/PageInformation"
     ScmRepositoriesResponseV1:
       type: object
       required:
@@ -2905,7 +2905,7 @@ components:
           description: The repository URL associated with the project available from SCM provider.
           example: https://github.com/Org-A/repo-1
         scmProvider:
-          $ref: '#/components/schemas/ScmProvider'
+          $ref: "#/components/schemas/ScmProvider"
         applicationId:
           type: string
           description: The applicationId corresponding to the repository that is associated with a project.
@@ -2946,7 +2946,7 @@ components:
           description: The repository URL associated with the project available from SCM provider.
           example: https://github.com/Org-A/repo-1
         scmProvider:
-          $ref: '#/components/schemas/ScmProvider'
+          $ref: "#/components/schemas/ScmProvider"
         applicationId:
           type: string
           description: The applicationId corresponding to the repository that is associated with a project.
@@ -3005,7 +3005,7 @@ components:
           description: The repository URL associated with the project available from SCM provider.
           example: https://github.com/Org-A/repo-1
         scmProvider:
-          $ref: '#/components/schemas/ScmProvider'
+          $ref: "#/components/schemas/ScmProvider"
         applicationId:
           type: string
           description: The applicationId corresponding to the repository that is associated with a project.
@@ -3091,7 +3091,7 @@ components:
       properties:
         body:
           oneOf:
-            - $ref: '#/components/schemas/ScmRepositoryWithBranch'
+            - $ref: "#/components/schemas/ScmRepositoryWithBranch"
     ScmRepositoryWithBranch:
       type: object
       properties:
@@ -3108,7 +3108,7 @@ components:
           description: The repository URL associated with the project available from SCM provider.
           example: https://www.github.com/te-repo
         scmProvider:
-          $ref: '#/components/schemas/ScmProvider'
+          $ref: "#/components/schemas/ScmProvider"
         applicationId:
           type: string
           description: The application ID or portfolioItemId corresponding to the repository that is associated with a project.
@@ -3217,9 +3217,9 @@ components:
           description: The applicationId of the project.
           format: uuid
         scmProvider:
-          $ref: '#/components/schemas/ScmProvider'
+          $ref: "#/components/schemas/ScmProvider"
         scmAuthentication:
-          $ref: '#/components/schemas/CreateScmAuthRequestV1'
+          $ref: "#/components/schemas/CreateScmAuthRequestV1"
         groupUrl:
           type: string
           description: Url of the group
@@ -3228,7 +3228,7 @@ components:
       type: object
       properties:
         scmProvider:
-          $ref: '#/components/schemas/ScmProvider'
+          $ref: "#/components/schemas/ScmProvider"
         automaticMapping:
           type: boolean
           description: Indicator to automatically map all the accessible groups and repositories to applications and projects respectively.
@@ -3452,12 +3452,12 @@ components:
           type: string
           format: date-time
           description: Created datetime of the repository import job. Uses the ISO 8601 standard for expressing datetime. More details are here `https://en.wikipedia.org/wiki/ISO_8601#Times`
-          example: '2023-07-29T14:30:33.067Z'
+          example: "2023-07-29T14:30:33.067Z"
         updatedAt:
           type: string
           format: date-time
           description: Updated datetime of the repository import job. Uses the ISO 8601 standard for expressing datetime. More details are here `https://en.wikipedia.org/wiki/ISO_8601#Times`
-          example: '2023-07-29T14:30:33.067Z'
+          example: "2023-07-29T14:30:33.067Z"
         createdBy:
           type: string
           format: uuid
@@ -3489,7 +3489,7 @@ components:
         _items:
           type: array
           items:
-            $ref: '#/components/schemas/ScmProviderResponseV1'
+            $ref: "#/components/schemas/ScmProviderResponseV1"
         _links:
           type: array
           items:
@@ -3502,12 +3502,12 @@ components:
               method:
                 type: string
         _collection:
-          $ref: '#/components/schemas/PageInformation'
+          $ref: "#/components/schemas/PageInformation"
     ScmProviderResponseV1:
       type: object
       properties:
         scmProvider:
-          $ref: '#/components/schemas/ScmProvider'
+          $ref: "#/components/schemas/ScmProvider"
         scmHostingType:
           type: string
           enum:
@@ -3522,12 +3522,12 @@ components:
           type: string
           pattern: ^[0-9]+\.[0-9]+(\.[0-9]+)?$
           description: Minimum supported version. It will be empty in case of CLOUD_HOSTED.
-          example: '8.9'
+          example: "8.9"
         maxVersion:
           type: string
           pattern: ^[0-9]+\.[0-9]+(\.[0-9]+)?$
           description: Maximum supported version. It will be empty in case of CLOUD_HOSTED.
-          example: '8.19'
+          example: "8.19"
     GetGroupsRepositoriesImportStatusResponseV1:
       type: object
       properties:
@@ -3646,7 +3646,7 @@ components:
               type: string
               format: date-time
               description: Created datetime of the repository import job. Uses the ISO 8601 standard for expressing datetime. More details are here `https://en.wikipedia.org/wiki/ISO_8601#Times`
-              example: '2023-07-29T14:30:33.067Z'
+              example: "2023-07-29T14:30:33.067Z"
     group:
       type: object
       properties:
@@ -3658,7 +3658,7 @@ components:
           type: string
           description: name of the group
       example:
-        id: '5432454'
+        id: "5432454"
         name: Group One
     groupCollection:
       properties:
@@ -3691,7 +3691,7 @@ components:
           format: url
           description: Url of the repository
         scmProvider:
-          $ref: '#/components/schemas/ScmProvider'
+          $ref: "#/components/schemas/ScmProvider"
         applicationId:
           type: string
           format: uuid
@@ -3723,8 +3723,8 @@ components:
         scmProvider: GITHUB_STANDARD
         applicationId: 3ea85f61-3317-4562-b3fc-3d683f66aeb9
         projectId: 3ea85f61-3317-4562-b3fc-3d683f66aeb9
-        createdAt: '2023-07-29T14:30:33.067Z'
-        updatedAt: '2023-07-29T14:30:33.067Z'
+        createdAt: "2023-07-29T14:30:33.067Z"
+        updatedAt: "2023-07-29T14:30:33.067Z"
         createdBy: example@example.com
         updatedBy: example@example.com
     project:

@@ -63,18 +63,18 @@ paths:
           schema:
             type: string
             example: |
-              [ 
+              [
                 applicationId==1d44c6d4-dde4-4c37-b068-9e7eb21c4a19,
-                projectId==0a50c9ab-7c75-498e-8b18-0d695ca4ef03 and state==CANCELLED, 
-                projectId==0a50c9ab-7c75-498e-8b18-0d695ca4ef03 or state==CANCELLED, 
-                state=in=(CANCELLED,FAILED), 
-                updatedDate==2023-11-03T17:07:59Z, 
+                projectId==0a50c9ab-7c75-498e-8b18-0d695ca4ef03 and state==CANCELLED,
+                projectId==0a50c9ab-7c75-498e-8b18-0d695ca4ef03 or state==CANCELLED,
+                state=in=(CANCELLED,FAILED),
+                updatedDate==2023-11-03T17:07:59Z,
                 state=out=CANCELLED
               ]
         - name: _sort
           in: query
           description: >-
-            Sorts the collection on the provided attributes. Default sorting uses `startDate` in `descending` order. The format of the `_sort` parameter is 
+            Sorts the collection on the provided attributes. Default sorting uses `startDate` in `descending` order. The format of the `_sort` parameter is
             `{field_name}|{asc|desc}[,{field_name}|{asc|desc}[,...]]`. Available values for sorting are `applicationId`, `projectId`,`entitlementId`, `streamId`, `state`, `startDate`,
             `expectedEndDate`, `toolId`, `branchId`, `testMode`, `scanMode`, `assessmentType`, `triage` and `updatedDate`.
           schema:
@@ -105,7 +105,7 @@ paths:
             type: string
           example: _include=comments.
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/vnd.polaris.tests.tests-list-1+json:
@@ -120,17 +120,17 @@ paths:
                     type: array
                     items:
                       items:
-                        $ref: '#/components/schemas/tests-v2'
+                        $ref: "#/components/schemas/tests-v2"
                   _links:
-                    $ref: '#/components/schemas/links'
+                    $ref: "#/components/schemas/links"
                   _collection:
-                    $ref: '#/components/schemas/testCollection'
-        '400':
+                    $ref: "#/components/schemas/testCollection"
+        "400":
           description: Bad request. Note that ID attributes in _filter are not validated for UUID formats.
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               examples:
                 Unrecognized:
                   value:
@@ -144,67 +144,67 @@ paths:
                     title: Bad request
                     status: 400
                     detail: Request cannot be processed, Invalid Input
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Operation is not permitted
-        '403':
+        "403":
           description: Forbidden
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Forbidden
                 title: Forbidden
                 status: 403
                 detail: Access denied, cannot access the requested resource
-        '404':
+        "404":
           description: Not found
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Not-Found
                 title: Not found
                 status: 404
                 detail: Requested resource is not found
-        '500':
+        "500":
           description: Internal server error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Error
                 title: Internal server error
                 status: 500
                 detail: Unexpected error occurred in processing the request
-        '503':
+        "503":
           description: Service unavailable
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Unavailable
                 title: Service unavailable
                 status: 503
                 detail: Unexpected error occurred in processing the request
-        '504':
+        "504":
           description: Gateway timeout
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Gateway-Timeout
                 title: Gateway Timeout
@@ -217,23 +217,23 @@ paths:
       summary: |
         Creates new tests.
       description: |
-        Creates tests in accordance with the available entitlements or assessmentTypes. If multiple entitlements/assessmentTypes are provided, a separate test is created for each. 
+        Creates tests in accordance with the available entitlements or assessmentTypes. If multiple entitlements/assessmentTypes are provided, a separate test is created for each.
          **Note:** To create SOURCE_UPLOAD and EXTERNAL_ANALYSIS together, provide testMode=null and artifacts of type THIRD_PARTY_RESULTS and SOURCE_CODE. To create SCM and EXTERNAL_ANALYSIS tests together, provide testMode=null and artifacts of type THIRD_PARTY_RESULTS only.
-         **Compatibility matrix for test mode, scan mode, and artifact type:**  
+         **Compatibility matrix for test mode, scan mode, and artifact type:**
         | Assessment Type           | Test Mode                 | Scan Mode               | Artifact Type                       |
         |---------------------------|---------------------------|-------------------------|-------------------------------------|
         | SAST                      | SOURCE_UPLOAD             | CAPTURE_ANALYSIS        | SOURCE_CODE                         |
-        | SAST                      | SCM                       | CAPTURE_ANALYSIS        | SOURCE_CODE                         |   
+        | SAST                      | SCM                       | CAPTURE_ANALYSIS        | SOURCE_CODE                         |
         | SAST                      | CI                        | ANALYSIS_ONLY           | TOOL_CAPTURE, TOOL_ERROR, CLI_ERROR |
-        | SCA                       | SOURCE_UPLOAD             | CAPTURE_ANALYSIS        | SOURCE_CODE                         |   
-        | SCA                       | SCM                       | SCANNING_MATCHING       | SOURCE_CODE                         |  
-        | SCA                       | CI                        | SCA_SIGNATURE           | TOOL_CAPTURE, TOOL_ERROR, CLI_ERROR | 
-        | SCA                       | CI                        | SCA_PACKAGE             | TOOL_CAPTURE, TOOL_ERROR, CLI_ERROR |                  
-        | DAST                      | DAST_WEBAPP               | DYNAMIC_TEST            | PROFILE_SETTING                     | 
-        | DAST                      | DAST_PREFLIGHT            | DYNAMIC-PREFLIGHT       | PROFILE_SETTING                     | 
-        | DAST                      | DAST_API                  | DYNAMIC_TEST            | PROFILE_SETTING, APP_SPEC           | 
-        | DAST                      | DAST_API_PREFLIGHT        | DYNAMIC-PREFLIGHT       | PROFILE_SETTING, APP_SPEC           | 
-        | EXTERNAL_ANALYSIS         | THIRD_PARTY_RESULT_UPLOAD | IMPORT-RESULTS          | THIRD_PARTY_RESULTS                 | 
+        | SCA                       | SOURCE_UPLOAD             | CAPTURE_ANALYSIS        | SOURCE_CODE                         |
+        | SCA                       | SCM                       | SCANNING_MATCHING       | SOURCE_CODE                         |
+        | SCA                       | CI                        | SCA_SIGNATURE           | TOOL_CAPTURE, TOOL_ERROR, CLI_ERROR |
+        | SCA                       | CI                        | SCA_PACKAGE             | TOOL_CAPTURE, TOOL_ERROR, CLI_ERROR |
+        | DAST                      | DAST_WEBAPP               | DYNAMIC_TEST            | PROFILE_SETTING                     |
+        | DAST                      | DAST_PREFLIGHT            | DYNAMIC-PREFLIGHT       | PROFILE_SETTING                     |
+        | DAST                      | DAST_API                  | DYNAMIC_TEST            | PROFILE_SETTING, APP_SPEC           |
+        | DAST                      | DAST_API_PREFLIGHT        | DYNAMIC-PREFLIGHT       | PROFILE_SETTING, APP_SPEC           |
+        | EXTERNAL_ANALYSIS         | THIRD_PARTY_RESULT_UPLOAD | IMPORT-RESULTS          | THIRD_PARTY_RESULTS                 |
         | SAST                      | CI                        | SAST_FULL_ISSUE_UPLOAD  | SCAN_OUTPUT                         |
         | SAST                      | CI                        | SAST_RAPID_ISSUE_UPLOAD | SCAN_OUTPUT                         |
 
@@ -242,7 +242,7 @@ paths:
         | Assessment Type           | SAST   | SCA     | DAST        | EXTERNAL_ANALYSIS |
         |---------------------------|--------|---------|-------------|-------------------|
         | SAST                      | NO     | YES     | NO          | YES               |
-        | SCA                       | YES    | NO      | NO          | YES               |  
+        | SCA                       | YES    | NO      | NO          | YES               |
         | DAST                      | NO     | NO      | YES         | NO                |
         | EXTERNAL_ANALYSIS         | YES    | YES     | NO          | YES               |
       requestBody:
@@ -250,7 +250,7 @@ paths:
         content:
           application/vnd.polaris.tests.tests-bulk-create-1+json:
             schema:
-              $ref: '#/components/schemas/createTestRequest-v1'
+              $ref: "#/components/schemas/createTestRequest-v1"
             examples:
               SAST:
                 description: Example of a create test request for SAST assessment type
@@ -338,84 +338,84 @@ paths:
                   artifacts:
                     - 6cd85f64-5717-4562-b3fc-2c963f66afdb
       responses:
-        '207':
+        "207":
           description: Tests were created successfully. The response contains multiple individual responses, each with its own status, headers, and body within the array.
           content:
             application/vnd.polaris.tests.tests-bulk-1+json:
               schema:
-                $ref: '#/components/schemas/createTestResponse-v1'
-        '400':
+                $ref: "#/components/schemas/createTestResponse-v1"
+        "400":
           description: Bad request
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Bad-Request
                 title: Bad request
                 status: 400
                 detail: Request cannot be processed, as the request-body is not valid or one of the ID's specified is not valid or accessible
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Operation is not permitted
-        '403':
+        "403":
           description: Forbidden
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Forbidden
                 title: Forbidden
                 status: 403
                 detail: Access denied, cannot access the requested resource
-        '415':
+        "415":
           description: Unsupported media-type
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:media-type-not-supported
                 title: Forbidden
                 status: 415
                 detail: Content type 'application/vnd.tm.tests-bulk-1.json' not supported
-        '500':
+        "500":
           description: Internal server error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Error
                 title: Internal server error
                 status: 500
                 detail: Unexpected error occurred in processing the request
-        '503':
+        "503":
           description: Service unavailable
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Unavailable
                 title: Service unavailable
                 status: 503
                 detail: Unexpected error occurred in accepting the request, service is not available
-        '504':
+        "504":
           description: Gateway timeout
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Gateway-Timeout
                 title: Gateway Timeout
@@ -430,7 +430,7 @@ paths:
         Returns all tests.
       description: |
         By default, returns all tests (up to 100 entries) created for the organization and accessible to the current user.
-          
+
         *Note: This endpoint is deprecated and will be removed in the future. Please use `/api/tests` instead.*
       parameters:
         - name: id
@@ -481,19 +481,19 @@ paths:
           schema:
             type: string
             format: date
-          example: '2022-08-24'
+          example: "2022-08-24"
         - name: expectedEndDate
           in: query
           description: Filters for tests that match the specified `expectedEndDate`. The date format is expected to be `YYYY-MM-DD`.
           schema:
             type: string
             format: date
-          example: '2022-08-25'
+          example: "2022-08-25"
         - name: testMode
           in: query
           description: Filters for tests that match the specified test mode.
           schema:
-            $ref: '#/components/schemas/testMode'
+            $ref: "#/components/schemas/testMode"
           example: SOURCE_UPLOAD
         - name: scanMode
           in: query
@@ -546,7 +546,7 @@ paths:
         - name: _sort
           in: query
           description: >-
-            Sorts the collection on the provided attributes. Default sorting uses `startDate` in `descending` order. The format of the `_sort` parameter is 
+            Sorts the collection on the provided attributes. Default sorting uses `startDate` in `descending` order. The format of the `_sort` parameter is
             `{field_name}|{asc|desc}[,{field_name}|{asc|desc}[,...]]`. Available values for sorting are `portfolioItemId`,`portfolioSubItemId`,`applicationId`, `projectId`,`entitlementId`, `streamId`,
             `state`, `startDate`, `expectedEndDate`, `toolId`, `branchId`, `testMode`, `scanMode`, `assessmentType`, `triage` and `updatedDate`.
           schema:
@@ -561,13 +561,13 @@ paths:
           schema:
             type: string
             example: |
-              [ 
+              [
                 applicationId==1d44c6d4-dde4-4c37-b068-9e7eb21c4a19,
-                projectId==0a50c9ab-7c75-498e-8b18-0d695ca4ef03 and state==CANCELLED, 
-                projectId==0a50c9ab-7c75-498e-8b18-0d695ca4ef03 or state==CANCELLED, 
-                state=in=(CANCELLED,FAILED), 
-                updatedDate==2023-11-03T17:07:59Z, 
-                state=out=CANCELLED 
+                projectId==0a50c9ab-7c75-498e-8b18-0d695ca4ef03 and state==CANCELLED,
+                projectId==0a50c9ab-7c75-498e-8b18-0d695ca4ef03 or state==CANCELLED,
+                state=in=(CANCELLED,FAILED),
+                updatedDate==2023-11-03T17:07:59Z,
+                state=out=CANCELLED
               ]
         - name: _limit
           in: query
@@ -594,7 +594,7 @@ paths:
             type: string
           example: _include=comments.
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/vnd.tm.tests-1+json:
@@ -608,17 +608,17 @@ paths:
                   _items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/tests'
+                      $ref: "#/components/schemas/tests"
                   _links:
-                    $ref: '#/components/schemas/links'
+                    $ref: "#/components/schemas/links"
                   _collection:
-                    $ref: '#/components/schemas/testCollection'
-        '400':
+                    $ref: "#/components/schemas/testCollection"
+        "400":
           description: Bad request. Note that ID attributes in _filter are not validated for UUID formats.
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               examples:
                 Unrecognized:
                   value:
@@ -632,67 +632,67 @@ paths:
                     title: Bad request
                     status: 400
                     detail: Request cannot be processed, Invalid Input
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Operation is not permitted
-        '403':
+        "403":
           description: Forbidden
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Forbidden
                 title: Forbidden
                 status: 403
                 detail: Access denied, cannot access the requested resource
-        '404':
+        "404":
           description: Not found
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Not-Found
                 title: Not found
                 status: 404
                 detail: Requested resource is not found
-        '500':
+        "500":
           description: Internal server error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Error
                 title: Internal server error
                 status: 500
                 detail: Unexpected error occurred in processing the request
-        '503':
+        "503":
           description: Service unavailable
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Unavailable
                 title: Service unavailable
                 status: 503
                 detail: Unexpected error occurred in processing the request
-        '504':
+        "504":
           description: Gateway timeout
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Gateway-Timeout
                 title: Gateway Timeout
@@ -706,10 +706,10 @@ paths:
       summary: |
         Creates new tests.
       description: >
-        Creates tests in accordance with the available entitlements or assessmentTypes. If multiple entitlements/assessmentTypes are provided, a separate test is created for each. 
+        Creates tests in accordance with the available entitlements or assessmentTypes. If multiple entitlements/assessmentTypes are provided, a separate test is created for each.
 
 
-        **Note:** 
+        **Note:**
 
         1. To create SOURCE_UPLOAD and EXTERNAL_ANALYSIS together, provide testMode=null and artifacts of type THIRD_PARTY_RESULTS and SOURCE_CODE. To create SCM and EXTERNAL_ANALYSIS tests together,
         provide testMode=null and artifacts of type THIRD_PARTY_RESULTS only.
@@ -717,7 +717,7 @@ paths:
         2. This endpoint is deprecated and will be removed in the future. Please use `/api/tests` instead.
 
 
-        **Compatibility matrix for test mode, scan mode, and artifact type:**  
+        **Compatibility matrix for test mode, scan mode, and artifact type:**
 
 
         | Assessment Type           | Test Mode                 | Scan Mode         | Artifact Type                       |
@@ -726,27 +726,27 @@ paths:
 
         | SAST                      | SOURCE_UPLOAD             | CAPTURE_ANALYSIS  | SOURCE_CODE                         |
 
-        | SAST                      | SCM                       | CAPTURE_ANALYSIS  | SOURCE_CODE                         |   
+        | SAST                      | SCM                       | CAPTURE_ANALYSIS  | SOURCE_CODE                         |
 
-        | SAST                      | CI                        | ANALYSIS_ONLY     | TOOL_CAPTURE, TOOL_ERROR, CLI_ERROR |               
+        | SAST                      | CI                        | ANALYSIS_ONLY     | TOOL_CAPTURE, TOOL_ERROR, CLI_ERROR |
 
-        | SCA                       | SOURCE_UPLOAD             | CAPTURE_ANALYSIS  | SOURCE_CODE                         |   
+        | SCA                       | SOURCE_UPLOAD             | CAPTURE_ANALYSIS  | SOURCE_CODE                         |
 
-        | SCA                       | SCM                       | SCANNING_MATCHING | SOURCE_CODE                         |  
+        | SCA                       | SCM                       | SCANNING_MATCHING | SOURCE_CODE                         |
 
-        | SCA                       | CI                        | SCA_SIGNATURE     | TOOL_CAPTURE, TOOL_ERROR, CLI_ERROR | 
+        | SCA                       | CI                        | SCA_SIGNATURE     | TOOL_CAPTURE, TOOL_ERROR, CLI_ERROR |
 
-        | SCA                       | CI                        | SCA_PACKAGE       | TOOL_CAPTURE, TOOL_ERROR, CLI_ERROR |                  
+        | SCA                       | CI                        | SCA_PACKAGE       | TOOL_CAPTURE, TOOL_ERROR, CLI_ERROR |
 
-        | DAST                      | DAST_WEBAPP               | DYNAMIC_TEST      | PROFILE_SETTING                     | 
+        | DAST                      | DAST_WEBAPP               | DYNAMIC_TEST      | PROFILE_SETTING                     |
 
-        | DAST                      | DAST_PREFLIGHT            | DYNAMIC-PREFLIGHT | PROFILE_SETTING                     | 
+        | DAST                      | DAST_PREFLIGHT            | DYNAMIC-PREFLIGHT | PROFILE_SETTING                     |
 
-        | DAST                      | DAST_API                  | DYNAMIC_TEST      | PROFILE_SETTING, APP_SPEC           | 
+        | DAST                      | DAST_API                  | DYNAMIC_TEST      | PROFILE_SETTING, APP_SPEC           |
 
-        | DAST                      | DAST_API_PREFLIGHT        | DYNAMIC-PREFLIGHT | PROFILE_SETTING, APP_SPEC           | 
+        | DAST                      | DAST_API_PREFLIGHT        | DYNAMIC-PREFLIGHT | PROFILE_SETTING, APP_SPEC           |
 
-        | EXTERNAL_ANALYSIS         | THIRD_PARTY_RESULT_UPLOAD | IMPORT-RESULTS    | THIRD_PARTY_RESULTS                 | 
+        | EXTERNAL_ANALYSIS         | THIRD_PARTY_RESULT_UPLOAD | IMPORT-RESULTS    | THIRD_PARTY_RESULTS                 |
 
 
         **Compatibility matrix for bulk test creation:**
@@ -758,7 +758,7 @@ paths:
 
         | SAST                      | NO     | YES     | NO          | YES               |
 
-        | SCA                       | YES    | NO      | NO          | YES               |  
+        | SCA                       | YES    | NO      | NO          | YES               |
 
         | DAST                      | NO     | NO      | YES         | NO                |
 
@@ -771,7 +771,7 @@ paths:
         content:
           application/vnd.tm.tests-bulk-1+json:
             schema:
-              $ref: '#/components/schemas/createTestRequest'
+              $ref: "#/components/schemas/createTestRequest"
             examples:
               SAST:
                 description: Example of a create test request for SAST assessment type
@@ -870,84 +870,84 @@ paths:
                   artifacts:
                     - 6cd85f64-5717-4562-b3fc-2c963f66afdb
       responses:
-        '207':
+        "207":
           description: Tests were created successfully. The response contains multiple individual responses, each with its own status, headers, and body within the array.
           content:
             application/vnd.tm.tests-bulk-1+json:
               schema:
-                $ref: '#/components/schemas/createTestResponse'
-        '400':
+                $ref: "#/components/schemas/createTestResponse"
+        "400":
           description: Bad request
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Bad-Request
                 title: Bad request
                 status: 400
                 detail: Request cannot be processed, as the request-body is not valid or one of the ID's specified is not valid or accessible
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Operation is not permitted
-        '403':
+        "403":
           description: Forbidden
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Forbidden
                 title: Forbidden
                 status: 403
                 detail: Access denied, cannot access the requested resource
-        '415':
+        "415":
           description: Unsupported media-type
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:media-type-not-supported
                 title: Forbidden
                 status: 415
                 detail: Content type 'application/vnd.tm.tests-bulk-1.json' not supported
-        '500':
+        "500":
           description: Internal server error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Error
                 title: Internal server error
                 status: 500
                 detail: Unexpected error occurred in processing the request
-        '503':
+        "503":
           description: Service unavailable
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Unavailable
                 title: Service unavailable
                 status: 503
                 detail: Unexpected error occurred in accepting the request, service is not available
-        '504':
+        "504":
           description: Gateway timeout
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Gateway-Timeout
                 title: Gateway Timeout
@@ -982,97 +982,97 @@ paths:
         content:
           application/vnd.polaris.tests.test-actions-1+json:
             schema:
-              $ref: '#/components/schemas/updateTestRequestPayload-v1'
+              $ref: "#/components/schemas/updateTestRequestPayload-v1"
       responses:
-        '200':
+        "200":
           description: Test updated successfully
           content:
             application/vnd.polaris.tests.test-1+json:
               schema:
-                $ref: '#/components/schemas/updateTestResponse-v2'
-        '400':
+                $ref: "#/components/schemas/updateTestResponse-v2"
+        "400":
           description: Bad request
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Bad-Request
                 title: Bad request
                 status: 400
                 detail: Request cannot be processed, as the request-body is not valid or one of the ID's specified is not valid or accessible
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Operation is not permitted
-        '403':
+        "403":
           description: Forbidden
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Forbidden
                 title: Forbidden
                 status: 403
                 detail: Access denied, cannot access the requested resource
-        '404':
+        "404":
           description: Not Found
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Not-Found
                 title: Not Found
                 status: 404
                 detail: Requested resource not found
-        '415':
+        "415":
           description: Unsupported media-type
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Unsupported media-type
                 title: Forbidden
                 status: 415
                 detail: Unsupported media-type, please retry the request with `application/vnd.tm.test-actions-1+json`
-        '500':
+        "500":
           description: Internal server error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Error
                 title: Internal server error
                 status: 500
                 detail: Unexpected error occurred while processing the request
-        '503':
+        "503":
           description: Service unavailable
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Unavailable
                 title: Service unavailable
                 status: 503
                 detail: Unexpected error occurred in accepting the request. service is not available
-        '504':
+        "504":
           description: Gateway timeout
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Gateway-Timeout
                 title: Gateway Timeout
@@ -1096,84 +1096,84 @@ paths:
             format: uuid
           example: 5796d731-4923-4690-b865-1482ae74403d
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/vnd.polaris.tests.test-1+json:
               schema:
-                $ref: '#/components/schemas/getTestByIdResponse-v2'
-        '400':
+                $ref: "#/components/schemas/getTestByIdResponse-v2"
+        "400":
           description: Bad request
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Bad-Request
                 title: Bad request
                 status: 400
                 detail: Please provide valid UUID for test Id field
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Operation is not permitted
-        '403':
+        "403":
           description: Forbidden
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Forbidden
                 title: Forbidden
                 status: 403
                 detail: Access denied, cannot access the requested resource
-        '404':
+        "404":
           description: Not Found
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Not-Found
                 title: Not Found
                 status: 404
                 detail: No matching records found for testId - 5796d731-4923-4690-b865-1482ae74403d
-        '500':
+        "500":
           description: Internal server error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Error
                 title: Internal server error
                 status: 500
                 detail: Not able to get test data
-        '503':
+        "503":
           description: Service unavailable
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Unavailable
                 title: Service unavailable
                 status: 503
                 detail: Unexpected error occurred in accepting the request, service is not available
-        '504':
+        "504":
           description: Gateway timeout
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Gateway-Timeout
                 title: Gateway Timeout
@@ -1193,7 +1193,7 @@ paths:
         + Artifacts (artifacts) and tool information (toolId) is mandatory in the payload to perform this action on tests that have testMode=CI and assessmentType=SAST or SCA.
         * CANCEL - You can cancel the test if its current state is not one of the following: `COMPLETED`, `FAILED`, `CANCELLED`, or `NOT RUN`.
         * FAILED - This action is supported on a test that is in `WAITING_FOR_CAPTURE` for continuous integration workflows. Artifact information in the payload is not required to perform this action.
-          
+
         *Note: This endpoint is deprecated and will be removed in the future. Please use `/api/tests/{testId}` instead.*
       parameters:
         - name: testId
@@ -1209,97 +1209,97 @@ paths:
         content:
           application/vnd.tm.test-actions-1+json:
             schema:
-              $ref: '#/components/schemas/updateTestRequestPayload'
+              $ref: "#/components/schemas/updateTestRequestPayload"
       responses:
-        '200':
+        "200":
           description: Test updated successfully
           content:
             application/vnd.tm.test-actions-1+json:
               schema:
-                $ref: '#/components/schemas/updateTestResponse'
-        '400':
+                $ref: "#/components/schemas/updateTestResponse"
+        "400":
           description: Bad request
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Bad-Request
                 title: Bad request
                 status: 400
                 detail: Request cannot be processed, as the request-body is not valid or one of the ID's specified is not valid or accessible
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Operation is not permitted
-        '403':
+        "403":
           description: Forbidden
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Forbidden
                 title: Forbidden
                 status: 403
                 detail: Access denied, cannot access the requested resource
-        '404':
+        "404":
           description: Not Found
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Not-Found
                 title: Not Found
                 status: 404
                 detail: Requested resource not found
-        '415':
+        "415":
           description: Unsupported media-type
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Unsupported media-type
                 title: Forbidden
                 status: 415
                 detail: Unsupported media-type, please retry the request with `application/vnd.tm.test-actions-1+json`
-        '500':
+        "500":
           description: Internal server error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Error
                 title: Internal server error
                 status: 500
                 detail: Unexpected error occurred while processing the request
-        '503':
+        "503":
           description: Service unavailable
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Unavailable
                 title: Service unavailable
                 status: 503
                 detail: Unexpected error occurred in accepting the request. service is not available
-        '504':
+        "504":
           description: Gateway timeout
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Gateway-Timeout
                 title: Gateway Timeout
@@ -1314,7 +1314,7 @@ paths:
         Fetches details of a specified test.
       description: |
         Fetches the details of a test that matches the specified `testId`.
-          
+
         *Note: This endpoint is deprecated and will be removed in the future. Please use `/api/tests/{testId}` instead.*
       parameters:
         - name: testId
@@ -1326,84 +1326,84 @@ paths:
             format: uuid
           example: 5796d731-4923-4690-b865-1482ae74403d
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/vnd.tm.tests-1+json:
               schema:
-                $ref: '#/components/schemas/getTestByIdResponse'
-        '400':
+                $ref: "#/components/schemas/getTestByIdResponse"
+        "400":
           description: Bad request
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Bad-Request
                 title: Bad request
                 status: 400
                 detail: Please provide valid UUID for test Id field
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Operation is not permitted
-        '403':
+        "403":
           description: Forbidden
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Forbidden
                 title: Forbidden
                 status: 403
                 detail: Access denied, cannot access the requested resource
-        '404':
+        "404":
           description: Not Found
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Not-Found
                 title: Not Found
                 status: 404
                 detail: No matching records found for testId - 5796d731-4923-4690-b865-1482ae74403d
-        '500':
+        "500":
           description: Internal server error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Error
                 title: Internal server error
                 status: 500
                 detail: Not able to get test data
-        '503':
+        "503":
           description: Service unavailable
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Unavailable
                 title: Service unavailable
                 status: 503
                 detail: Unexpected error occurred in accepting the request, service is not available
-        '504':
+        "504":
           description: Gateway timeout
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Gateway-Timeout
                 title: Gateway Timeout
@@ -1428,7 +1428,7 @@ paths:
             format: uuid
           example: 5796d731-4923-4690-b865-1482ae74403d
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/vnd.polaris.tests.tests-comments-1+json:
@@ -1438,17 +1438,17 @@ paths:
                   _items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/comments'
+                      $ref: "#/components/schemas/comments"
                   _collection:
-                    $ref: '#/components/schemas/commentCollection'
+                    $ref: "#/components/schemas/commentCollection"
                   _links:
-                    $ref: '#/components/schemas/links'
-        '400':
+                    $ref: "#/components/schemas/links"
+        "400":
           description: Bad request
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               examples:
                 Invalid Input:
                   value:
@@ -1456,67 +1456,67 @@ paths:
                     title: Bad request
                     status: 400
                     detail: Please provide valid UUID for test Id field
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Operation is not permitted
-        '403':
+        "403":
           description: Forbidden
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Forbidden
                 title: Forbidden
                 status: 403
                 detail: Access denied, cannot access the requested resource
-        '404':
+        "404":
           description: Not found
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Not-Found
                 title: Not found
                 status: 404
                 detail: No matching records found for testId - 5796d731-4923-4690-b865-1482ae74403d
-        '500':
+        "500":
           description: Internal server error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Error
                 title: Internal server error
                 status: 500
                 detail: Unexpected error occurred in processing the request
-        '503':
+        "503":
           description: Service unavailable
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Unavailable
                 title: Service unavailable
                 status: 503
                 detail: Unexpected error occurred in processing the request
-        '504':
+        "504":
           description: Gateway timeout
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Gateway-Timeout
                 title: Gateway Timeout
@@ -1531,7 +1531,7 @@ paths:
         Fetches comments of a test.
       description: |
         Fetches comment of a test that matches the specified `testId`. A maximum of 500 entries are returned and these entries are sorted by the created date in descending order.
-          
+
         *Note: This endpoint is deprecated and will be removed in the future. Please use `/api/tests/{testId}/comments` instead.*
       parameters:
         - name: testId
@@ -1543,7 +1543,7 @@ paths:
             format: uuid
           example: 5796d731-4923-4690-b865-1482ae74403d
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/vnd.tm.test-comments-1+json:
@@ -1553,17 +1553,17 @@ paths:
                   _items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/comments'
+                      $ref: "#/components/schemas/comments"
                   _collection:
-                    $ref: '#/components/schemas/commentCollection'
+                    $ref: "#/components/schemas/commentCollection"
                   _links:
-                    $ref: '#/components/schemas/links'
-        '400':
+                    $ref: "#/components/schemas/links"
+        "400":
           description: Bad request
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               examples:
                 Invalid Input:
                   value:
@@ -1571,67 +1571,67 @@ paths:
                     title: Bad request
                     status: 400
                     detail: Please provide valid UUID for test Id field
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Operation is not permitted
-        '403':
+        "403":
           description: Forbidden
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Forbidden
                 title: Forbidden
                 status: 403
                 detail: Access denied, cannot access the requested resource
-        '404':
+        "404":
           description: Not found
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Not-Found
                 title: Not found
                 status: 404
                 detail: No matching records found for testId - 5796d731-4923-4690-b865-1482ae74403d
-        '500':
+        "500":
           description: Internal server error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Error
                 title: Internal server error
                 status: 500
                 detail: Unexpected error occurred in processing the request
-        '503':
+        "503":
           description: Service unavailable
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Unavailable
                 title: Service unavailable
                 status: 503
                 detail: Unexpected error occurred in processing the request
-        '504':
+        "504":
           description: Gateway timeout
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Gateway-Timeout
                 title: Gateway Timeout
@@ -1660,18 +1660,18 @@ paths:
             format: uuid
           example: 5796d731-4923-4690-b865-1482ae74403d
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/vnd.polaris.tests.test-metrics-1+json:
               schema:
-                $ref: '#/components/schemas/getTestMetricsByTestIdResponse'
-        '400':
+                $ref: "#/components/schemas/getTestMetricsByTestIdResponse"
+        "400":
           description: Bad request
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               examples:
                 Invalid Input:
                   value:
@@ -1679,67 +1679,67 @@ paths:
                     title: Bad request
                     status: 400
                     detail: Please provide valid UUID for Test Id field
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Operation is not permitted
-        '403':
+        "403":
           description: Forbidden
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Forbidden
                 title: Forbidden
                 status: 403
                 detail: Access denied, cannot access the requested resource
-        '404':
+        "404":
           description: Not found
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Not-Found
                 title: Not found
                 status: 404
                 detail: No matching records found for testId - 5796d731-4923-4690-b865-1482ae74403d
-        '500':
+        "500":
           description: Internal server error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Error
                 title: Internal server error
                 status: 500
                 detail: Unexpected error occurred in processing the request
-        '503':
+        "503":
           description: Service unavailable
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Unavailable
                 title: Service unavailable
                 status: 503
                 detail: Unexpected error occurred in processing the request
-        '504':
+        "504":
           description: Gateway timeout
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Gateway-Timeout
                 title: Gateway Timeout
@@ -1758,8 +1758,8 @@ paths:
 
         **Note:** These metrics would be `null` for tests with assessment types other than SAST. x-feature-flag-description-1: flag: poldeliver-2244-scm-api-taxonomy value: |
           Fetches metrics for a test that matches the specified `testId`. Metrics include lines of code, total number of files captured, count of files captured by type, total number of files analyzed and duration of the scan.
-          
-          **Note:** 
+
+          **Note:**
           1. These metrics would be `null` for tests with assessment types other than SAST.
           2. This endpoint is deprecated and will be removed in the future. Please use `/api/tests/{testId}/test-metrics` instead.
       parameters:
@@ -1772,18 +1772,18 @@ paths:
             format: uuid
           example: 5796d731-4923-4690-b865-1482ae74403d
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/vnd.tm.test-metrics-1+json:
               schema:
-                $ref: '#/components/schemas/getTestMetricsByTestIdResponse'
-        '400':
+                $ref: "#/components/schemas/getTestMetricsByTestIdResponse"
+        "400":
           description: Bad request
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               examples:
                 Invalid Input:
                   value:
@@ -1791,67 +1791,67 @@ paths:
                     title: Bad request
                     status: 400
                     detail: Please provide valid UUID for Test Id field
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Operation is not permitted
-        '403':
+        "403":
           description: Forbidden
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Forbidden
                 title: Forbidden
                 status: 403
                 detail: Access denied, cannot access the requested resource
-        '404':
+        "404":
           description: Not found
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Not-Found
                 title: Not found
                 status: 404
                 detail: No matching records found for testId - 5796d731-4923-4690-b865-1482ae74403d
-        '500':
+        "500":
           description: Internal server error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Error
                 title: Internal server error
                 status: 500
                 detail: Unexpected error occurred in processing the request
-        '503':
+        "503":
           description: Service unavailable
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Unavailable
                 title: Service unavailable
                 status: 503
                 detail: Unexpected error occurred in processing the request
-        '504':
+        "504":
           description: Gateway timeout
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Gateway-Timeout
                 title: Gateway Timeout
@@ -1885,11 +1885,11 @@ paths:
                 -H "x-goog-resumable:start"\
                 "<response.signedUrl>"
             ```
-          * The value of **fileHash** should be a Base64-encoded 
+          * The value of **fileHash** should be a Base64-encoded
             * We use `gsutil` to calculate hash. For reference: `https://cloud.google.com/storage/docs/gsutil/commands/hash`
             * Use the value generated in md5 from the response.
-            * Example to generate the fileHash using command: 
-            ``` 
+            * Example to generate the fileHash using command:
+            ```
               ~/sources/sigug/WebGoat/.github [main] $ gsutil hash -m dependabot.yml
               Hashes [base64] for dependabot.yml:
               Hash (md5):  snzADfKbKdkcxc0HDZnAnA==
@@ -1900,86 +1900,86 @@ paths:
         content:
           application/vnd.polaris.tests.test-artifacts-1+json:
             schema:
-              $ref: '#/components/schemas/createArtifact'
+              $ref: "#/components/schemas/createArtifact"
       responses:
-        '200':
+        "200":
           description: Artifact created successfully
           content:
             application/vnd.polaris.tests.test-artifacts-1+json:
               schema:
-                $ref: '#/components/schemas/ArtifactResponse'
-        '400':
+                $ref: "#/components/schemas/ArtifactResponse"
+        "400":
           description: Bad request
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Bad-Request
                 title: Bad request
                 status: 400
                 detail: Request cannot be processed, as the request-body is not valid or file metadata is not valid
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Operation is not permitted
-        '403':
+        "403":
           description: Forbidden
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Forbidden
                 title: Forbidden
                 status: 403
                 detail: Access denied, cannot access the requested resource
-        '415':
+        "415":
           description: Unsupported media-type
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Unsupported media-type
                 title: Forbidden
                 status: 415
                 detail: Unsupported media-type, please retry the request with `application/vnd.tm.test-artifacts-1+json`
-        '500':
+        "500":
           description: Internal server error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Error
                 title: Internal server error
                 status: 500
                 detail: Unexpected error occurred in processing the request
-        '503':
+        "503":
           description: Service unavailable
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Unavailable
                 title: Service unavailable
                 status: 503
                 detail: Unexpected error occurred in accepting the request, service is not available
-        '504':
+        "504":
           description: Gateway timeout
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Gateway-Timeout
                 title: Gateway Timeout
@@ -2012,103 +2012,103 @@ paths:
                 -H "x-goog-resumable:start"\
                 "<response.signedUrl>"
             ```
-          * The value of **fileHash** should be a Base64-encoded 
+          * The value of **fileHash** should be a Base64-encoded
             * We use `gsutil` to calculate hash. For reference: `https://cloud.google.com/storage/docs/gsutil/commands/hash`
             * Use the value generated in md5 from the response.
-            * Example to generate the fileHash using command: 
-            ``` 
+            * Example to generate the fileHash using command:
+            ```
               ~/sources/sigug/WebGoat/.github [main] $ gsutil hash -m dependabot.yml
               Hashes [base64] for dependabot.yml:
               Hash (md5):  snzADfKbKdkcxc0HDZnAnA==
               Operation completed over 1 objects/352.0 B.
             ```
-          
+
           *Note: This endpoint is deprecated and will be removed in the future. Please use `/api/tests/artifacts` instead.*
       requestBody:
         required: true
         content:
           application/vnd.tm.test-artifacts-1+json:
             schema:
-              $ref: '#/components/schemas/createArtifact'
+              $ref: "#/components/schemas/createArtifact"
       responses:
-        '200':
+        "200":
           description: Artifact created successfully
           content:
             application/vnd.tm.test-artifacts-1+json:
               schema:
-                $ref: '#/components/schemas/ArtifactResponse'
-        '400':
+                $ref: "#/components/schemas/ArtifactResponse"
+        "400":
           description: Bad request
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Bad-Request
                 title: Bad request
                 status: 400
                 detail: Request cannot be processed, as the request-body is not valid or file metadata is not valid
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Operation is not permitted
-        '403':
+        "403":
           description: Forbidden
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Forbidden
                 title: Forbidden
                 status: 403
                 detail: Access denied, cannot access the requested resource
-        '415':
+        "415":
           description: Unsupported media-type
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Unsupported media-type
                 title: Forbidden
                 status: 415
                 detail: Unsupported media-type, please retry the request with `application/vnd.tm.test-artifacts-1+json`
-        '500':
+        "500":
           description: Internal server error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Error
                 title: Internal server error
                 status: 500
                 detail: Unexpected error occurred in processing the request
-        '503':
+        "503":
           description: Service unavailable
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Unavailable
                 title: Service unavailable
                 status: 503
                 detail: Unexpected error occurred in accepting the request, service is not available
-        '504':
+        "504":
           description: Gateway timeout
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Gateway-Timeout
                 title: Gateway Timeout
@@ -2136,7 +2136,7 @@ paths:
             format: uuid
           example: 5796d731-4923-4690-b865-1482ae74403d
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/vnd.polaris.tests.test-artifacts-list-1+json:
@@ -2146,17 +2146,17 @@ paths:
                   _items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/getAllArtifacts'
+                      $ref: "#/components/schemas/getAllArtifacts"
                   _collection:
-                    $ref: '#/components/schemas/getAllArtifactsCollection'
+                    $ref: "#/components/schemas/getAllArtifactsCollection"
                   _links:
-                    $ref: '#/components/schemas/links'
-        '400':
+                    $ref: "#/components/schemas/links"
+        "400":
           description: Bad request
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               examples:
                 Invalid Input:
                   value:
@@ -2164,67 +2164,67 @@ paths:
                     title: Bad request
                     status: 400
                     detail: Please provide valid UUID for Test Id field
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Operation is not permitted
-        '403':
+        "403":
           description: Forbidden
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Forbidden
                 title: Forbidden
                 status: 403
                 detail: Access denied, cannot access the requested resource
-        '404':
+        "404":
           description: Not found
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Not-Found
                 title: Not found
                 status: 404
                 detail: No matching records found for testId - 5796d731-4923-4690-b865-1482ae74403d
-        '500':
+        "500":
           description: Internal server error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Error
                 title: Internal server error
                 status: 500
                 detail: Unexpected error occurred in processing the request
-        '503':
+        "503":
           description: Service unavailable
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Unavailable
                 title: Service unavailable
                 status: 503
                 detail: Unexpected error occurred in processing the request
-        '504':
+        "504":
           description: Gateway timeout
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Gateway-Timeout
                 title: Gateway Timeout
@@ -2253,7 +2253,7 @@ paths:
             format: uuid
           example: 5796d731-4923-4690-b865-1482ae74403d
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/vnd.tm.test-list-artifacts-1+json:
@@ -2263,17 +2263,17 @@ paths:
                   _items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/getAllArtifacts'
+                      $ref: "#/components/schemas/getAllArtifacts"
                   _collection:
-                    $ref: '#/components/schemas/getAllArtifactsCollection'
+                    $ref: "#/components/schemas/getAllArtifactsCollection"
                   _links:
-                    $ref: '#/components/schemas/links'
-        '400':
+                    $ref: "#/components/schemas/links"
+        "400":
           description: Bad request
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               examples:
                 Invalid Input:
                   value:
@@ -2281,67 +2281,67 @@ paths:
                     title: Bad request
                     status: 400
                     detail: Please provide valid UUID for Test Id field
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Operation is not permitted
-        '403':
+        "403":
           description: Forbidden
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Forbidden
                 title: Forbidden
                 status: 403
                 detail: Access denied, cannot access the requested resource
-        '404':
+        "404":
           description: Not found
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Not-Found
                 title: Not found
                 status: 404
                 detail: No matching records found for testId - 5796d731-4923-4690-b865-1482ae74403d
-        '500':
+        "500":
           description: Internal server error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Error
                 title: Internal server error
                 status: 500
                 detail: Unexpected error occurred in processing the request
-        '503':
+        "503":
           description: Service unavailable
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Unavailable
                 title: Service unavailable
                 status: 503
                 detail: Unexpected error occurred in processing the request
-        '504':
+        "504":
           description: Gateway timeout
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Gateway-Timeout
                 title: Gateway Timeout
@@ -2377,19 +2377,19 @@ paths:
             format: uuid
           example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/octet-stream:
               schema:
                 type: string
                 format: binary
-        '400':
+        "400":
           description: Bad request
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               examples:
                 Invalid Input:
                   value:
@@ -2397,67 +2397,67 @@ paths:
                     title: Bad request
                     status: 400
                     detail: Please provide valid UUID for Test Id field
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Operation is not permitted
-        '403':
+        "403":
           description: Forbidden
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Forbidden
                 title: Forbidden
                 status: 403
                 detail: Access denied, cannot access the requested resource
-        '404':
+        "404":
           description: Not found
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Not-Found
                 title: Not found
                 status: 404
                 detail: No matching records found for testId - 5796d731-4923-4690-b865-1482ae74403d
-        '500':
+        "500":
           description: Internal server error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Error
                 title: Internal server error
                 status: 500
                 detail: Unexpected error occurred in processing the request
-        '503':
+        "503":
           description: Service unavailable
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Unavailable
                 title: Service unavailable
                 status: 503
                 detail: Unexpected error occurred in processing the request
-        '504':
+        "504":
           description: Gateway timeout
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Gateway-Timeout
                 title: Gateway Timeout
@@ -2473,7 +2473,7 @@ paths:
       description: |
         This API enables the file to be downloaded for the specified testId and artifactId. The artifact-id can be retrieved by calling the `GET /tests/{id}/artifacts` endpoint.
 
-        **Note:** 
+        **Note:**
         1. Only SCREENSHOT artifact-type is supported to be downloaded.
         2. This endpoint is deprecated and will be removed in the future. Please use `/api/tests/{testId}/artifacts/{artifactId}` instead.
       parameters:
@@ -2494,19 +2494,19 @@ paths:
             format: uuid
           example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/octet-stream:
               schema:
                 type: string
                 format: binary
-        '400':
+        "400":
           description: Bad request
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               examples:
                 Invalid Input:
                   value:
@@ -2514,67 +2514,67 @@ paths:
                     title: Bad request
                     status: 400
                     detail: Please provide valid UUID for Test Id field
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Operation is not permitted
-        '403':
+        "403":
           description: Forbidden
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Forbidden
                 title: Forbidden
                 status: 403
                 detail: Access denied, cannot access the requested resource
-        '404':
+        "404":
           description: Not found
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Not-Found
                 title: Not found
                 status: 404
                 detail: No matching records found for testId - 5796d731-4923-4690-b865-1482ae74403d
-        '500':
+        "500":
           description: Internal server error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Error
                 title: Internal server error
                 status: 500
                 detail: Unexpected error occurred in processing the request
-        '503':
+        "503":
           description: Service unavailable
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Unavailable
                 title: Service unavailable
                 status: 503
                 detail: Unexpected error occurred in processing the request
-        '504':
+        "504":
           description: Gateway timeout
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Gateway-Timeout
                 title: Gateway Timeout
@@ -2598,7 +2598,7 @@ paths:
             type: string
           example: subscriptionId=='d381106b-6232-4035-ab48-5fcda471f265'
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/vnd.polaris.tests.metrics-1+json:
@@ -2608,17 +2608,17 @@ paths:
                   _items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/testMetrics'
+                      $ref: "#/components/schemas/testMetrics"
                   _collection:
-                    $ref: '#/components/schemas/testMetricsCollection'
+                    $ref: "#/components/schemas/testMetricsCollection"
                   _links:
-                    $ref: '#/components/schemas/links'
-        '400':
+                    $ref: "#/components/schemas/links"
+        "400":
           description: Bad request
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               examples:
                 Invalid Input:
                   value:
@@ -2626,67 +2626,67 @@ paths:
                     title: Bad request
                     status: 400
                     detail: Please provide valid/sort filter keys
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Operation is not permitted
-        '403':
+        "403":
           description: Forbidden
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Forbidden
                 title: Forbidden
                 status: 403
                 detail: Access denied, cannot access the requested resource
-        '500':
+        "500":
           description: Internal server error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Error
                 title: Internal server error
                 status: 500
                 detail: Unexpected error occurred in processing the request
-        '501':
+        "501":
           description: Feature Not supported
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:not-supported
                 title: Not Implemented
                 status: 501
                 detail: Metrics is not supported yet
-        '503':
+        "503":
           description: Service unavailable
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Unavailable
                 title: Service unavailable
                 status: 503
                 detail: Unexpected error occurred in processing the request
-        '504':
+        "504":
           description: Gateway timeout
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Gateway-Timeout
                 title: Gateway Timeout
@@ -2712,7 +2712,7 @@ paths:
             type: string
           example: subscriptionId=='d381106b-6232-4035-ab48-5fcda471f265'
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/vnd.tm.metrics-1+json:
@@ -2722,17 +2722,17 @@ paths:
                   _items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/testMetrics'
+                      $ref: "#/components/schemas/testMetrics"
                   _collection:
-                    $ref: '#/components/schemas/testMetricsCollection'
+                    $ref: "#/components/schemas/testMetricsCollection"
                   _links:
-                    $ref: '#/components/schemas/links'
-        '400':
+                    $ref: "#/components/schemas/links"
+        "400":
           description: Bad request
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               examples:
                 Invalid Input:
                   value:
@@ -2740,67 +2740,67 @@ paths:
                     title: Bad request
                     status: 400
                     detail: Please provide valid/sort filter keys
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Operation is not permitted
-        '403':
+        "403":
           description: Forbidden
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Forbidden
                 title: Forbidden
                 status: 403
                 detail: Access denied, cannot access the requested resource
-        '500':
+        "500":
           description: Internal server error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Error
                 title: Internal server error
                 status: 500
                 detail: Unexpected error occurred in processing the request
-        '501':
+        "501":
           description: Feature Not supported
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:not-supported
                 title: Not Implemented
                 status: 501
                 detail: Metrics is not supported yet
-        '503':
+        "503":
           description: Service unavailable
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Unavailable
                 title: Service unavailable
                 status: 503
                 detail: Unexpected error occurred in processing the request
-        '504':
+        "504":
           description: Gateway timeout
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Gateway-Timeout
                 title: Gateway Timeout
@@ -2826,84 +2826,84 @@ paths:
             format: uuid
           example: 5796d731-4923-4690-b865-1482ae74403d
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/vnd.polaris.tests.test-profiles-1+json:
               schema:
-                $ref: '#/components/schemas/testProfile'
-        '400':
+                $ref: "#/components/schemas/testProfile"
+        "400":
           description: Bad request
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Bad-Request
                 title: Bad request
                 status: 400
                 detail: Please provide valid UUID for test Id field
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Operation is not permitted
-        '403':
+        "403":
           description: Forbidden
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Forbidden
                 title: Forbidden
                 status: 403
                 detail: Access denied, cannot access the requested resource
-        '404':
+        "404":
           description: Not Found
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Not-Found
                 title: Not Found
                 status: 404
                 detail: No matching records found for testId - 5796d731-4923-4690-b865-1482ae74403d
-        '500':
+        "500":
           description: Internal server error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Error
                 title: Internal server error
                 status: 500
                 detail: unable to fetch profile data
-        '503':
+        "503":
           description: Service unavailable
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Unavailable
                 title: Service unavailable
                 status: 503
                 detail: Unexpected error occurred in accepting the request, service is not available
-        '504':
+        "504":
           description: Gateway timeout
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Gateway-Timeout
                 title: Gateway Timeout
@@ -2930,84 +2930,84 @@ paths:
             format: uuid
           example: 5796d731-4923-4690-b865-1482ae74403d
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/vnd.tm.profiles-1+json:
               schema:
-                $ref: '#/components/schemas/testProfile'
-        '400':
+                $ref: "#/components/schemas/testProfile"
+        "400":
           description: Bad request
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Bad-Request
                 title: Bad request
                 status: 400
                 detail: Please provide valid UUID for test Id field
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Operation is not permitted
-        '403':
+        "403":
           description: Forbidden
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Forbidden
                 title: Forbidden
                 status: 403
                 detail: Access denied, cannot access the requested resource
-        '404':
+        "404":
           description: Not Found
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Not-Found
                 title: Not Found
                 status: 404
                 detail: No matching records found for testId - 5796d731-4923-4690-b865-1482ae74403d
-        '500':
+        "500":
           description: Internal server error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Error
                 title: Internal server error
                 status: 500
                 detail: unable to fetch profile data
-        '503':
+        "503":
           description: Service unavailable
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Unavailable
                 title: Service unavailable
                 status: 503
                 detail: Unexpected error occurred in accepting the request, service is not available
-        '504':
+        "504":
           description: Gateway timeout
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Gateway-Timeout
                 title: Gateway Timeout
@@ -3074,7 +3074,7 @@ paths:
             type: integer
             default: 0
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/vnd.polaris.tests.tests-list-1+json:
@@ -3084,17 +3084,17 @@ paths:
                   _items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/tests-v1'
+                      $ref: "#/components/schemas/tests-v1"
                   _links:
-                    $ref: '#/components/schemas/links'
+                    $ref: "#/components/schemas/links"
                   _collection:
-                    $ref: '#/components/schemas/testCollection'
-        '400':
+                    $ref: "#/components/schemas/testCollection"
+        "400":
           description: Bad request. Note that attributes in _limit are not validated for integer formats.
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               examples:
                 Unrecognized:
                   value:
@@ -3108,67 +3108,67 @@ paths:
                     title: Bad request
                     status: 400
                     detail: Request cannot be processed, Invalid Input
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Operation is not permitted
-        '403':
+        "403":
           description: Forbidden
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Forbidden
                 title: Forbidden
                 status: 403
                 detail: Access denied, cannot access the requested resource
-        '404':
+        "404":
           description: Not found
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Not-Found
                 title: Not found
                 status: 404
                 detail: Requested resource is not found
-        '500':
+        "500":
           description: Internal server error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Error
                 title: Internal server error
                 status: 500
                 detail: Unexpected error occurred in processing the request
-        '503':
+        "503":
           description: Service unavailable
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Unavailable
                 title: Service unavailable
                 status: 503
                 detail: Unexpected error occurred in processing the request
-        '504':
+        "504":
           description: Gateway timeout
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Gateway-Timeout
                 title: Gateway Timeout
@@ -3236,7 +3236,7 @@ paths:
             type: integer
             default: 0
       responses:
-        '200':
+        "200":
           description: Successful response
           content:
             application/vnd.tm.tests-1+json:
@@ -3246,17 +3246,17 @@ paths:
                   _items:
                     type: array
                     items:
-                      $ref: '#/components/schemas/tests'
+                      $ref: "#/components/schemas/tests"
                   _links:
-                    $ref: '#/components/schemas/links'
+                    $ref: "#/components/schemas/links"
                   _collection:
-                    $ref: '#/components/schemas/testCollection'
-        '400':
+                    $ref: "#/components/schemas/testCollection"
+        "400":
           description: Bad request. Note that attributes in _limit are not validated for integer formats.
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               examples:
                 Unrecognized:
                   value:
@@ -3270,67 +3270,67 @@ paths:
                     title: Bad request
                     status: 400
                     detail: Request cannot be processed, Invalid Input
-        '401':
+        "401":
           description: Unauthorized
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Unauthorized
                 title: Unauthorized
                 status: 401
                 detail: Operation is not permitted
-        '403':
+        "403":
           description: Forbidden
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Forbidden
                 title: Forbidden
                 status: 403
                 detail: Access denied, cannot access the requested resource
-        '404':
+        "404":
           description: Not found
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Not-Found
                 title: Not found
                 status: 404
                 detail: Requested resource is not found
-        '500':
+        "500":
           description: Internal server error
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Error
                 title: Internal server error
                 status: 500
                 detail: Unexpected error occurred in processing the request
-        '503':
+        "503":
           description: Service unavailable
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Service-Unavailable
                 title: Service unavailable
                 status: 503
                 detail: Unexpected error occurred in processing the request
-        '504':
+        "504":
           description: Gateway timeout
           content:
             application/problem+json:
               schema:
-                $ref: '#/components/schemas/errorBody'
+                $ref: "#/components/schemas/errorBody"
               example:
                 type: urn:x-test-manager:Gateway-Timeout
                 title: Gateway Timeout
@@ -3383,7 +3383,7 @@ components:
             - progress
           properties:
             name:
-              $ref: '#/components/schemas/testStateName'
+              $ref: "#/components/schemas/testStateName"
             description:
               type: string
               description: The brief summary of the state and details about the state, like operations allowed.
@@ -3434,7 +3434,7 @@ components:
           type: array
           description: A list of comments associated with the test.
           items:
-            $ref: '#/components/schemas/comments'
+            $ref: "#/components/schemas/comments"
         startDate:
           type: string
           format: date-time
@@ -3456,7 +3456,7 @@ components:
           type: string
           format: uuid
         testMode:
-          $ref: '#/components/schemas/testMode'
+          $ref: "#/components/schemas/testMode"
         scanMode:
           type: string
         assessmentType:
@@ -3501,9 +3501,9 @@ components:
             type: SOURCE_CODE
           - id: 0ad95df7-2c70-4d91-8233-4df8d70aa812
             type: SOURCE_CODE
-        createdDate: '2021-07-29T14:30:33.067Z'
-        startDate: '2021-07-29T14:30:33.067Z'
-        expectedEndDate: '2021-07-29T14:30:33.067Z'
+        createdDate: "2021-07-29T14:30:33.067Z"
+        startDate: "2021-07-29T14:30:33.067Z"
+        expectedEndDate: "2021-07-29T14:30:33.067Z"
         testDuration: 154000
         notes: Really big notes...
         portfolioItemId: 1d44c6d4-dde4-4c37-b068-9e7eb21c4a19
@@ -3557,7 +3557,7 @@ components:
             - progress
           properties:
             name:
-              $ref: '#/components/schemas/testStateName'
+              $ref: "#/components/schemas/testStateName"
             description:
               type: string
               description: The brief summary of the state and details about the state, like operations allowed.
@@ -3608,7 +3608,7 @@ components:
           type: array
           description: A list of comments associated with the test.
           items:
-            $ref: '#/components/schemas/comments'
+            $ref: "#/components/schemas/comments"
         startDate:
           type: string
           format: date-time
@@ -3624,7 +3624,7 @@ components:
           type: string
           format: uuid
         testMode:
-          $ref: '#/components/schemas/testMode'
+          $ref: "#/components/schemas/testMode"
         scanMode:
           type: string
         assessmentType:
@@ -3669,9 +3669,9 @@ components:
             type: SOURCE_CODE
           - id: 0ad95df7-2c70-4d91-8233-4df8d70aa812
             type: SOURCE_CODE
-        createdDate: '2021-07-29T14:30:33.067Z'
-        startDate: '2021-07-29T14:30:33.067Z'
-        expectedEndDate: '2021-07-29T14:30:33.067Z'
+        createdDate: "2021-07-29T14:30:33.067Z"
+        startDate: "2021-07-29T14:30:33.067Z"
+        expectedEndDate: "2021-07-29T14:30:33.067Z"
         testDuration: 154000
         notes: Really big notes...
         streamId: 0a50c9ab-7c75-498e-8b18-0d695ca4ef03
@@ -3722,7 +3722,7 @@ components:
             - progress
           properties:
             name:
-              $ref: '#/components/schemas/testStateName'
+              $ref: "#/components/schemas/testStateName"
             description:
               type: string
               description: The brief summary of the state and details about the state, like operations allowed.
@@ -3773,7 +3773,7 @@ components:
           type: array
           description: A list of comments associated with the test.
           items:
-            $ref: '#/components/schemas/comments'
+            $ref: "#/components/schemas/comments"
         startDate:
           type: string
           format: date-time
@@ -3789,7 +3789,7 @@ components:
           type: string
           format: uuid
         testMode:
-          $ref: '#/components/schemas/testMode'
+          $ref: "#/components/schemas/testMode"
         scanMode:
           type: string
         assessmentType:
@@ -3846,9 +3846,9 @@ components:
             type: SOURCE_CODE
           - id: 0ad95df7-2c70-4d91-8233-4df8d70aa812
             type: SOURCE_CODE
-        createdDate: '2021-07-29T14:30:33.067Z'
-        startDate: '2021-07-29T14:30:33.067Z'
-        expectedEndDate: '2021-07-29T14:30:33.067Z'
+        createdDate: "2021-07-29T14:30:33.067Z"
+        startDate: "2021-07-29T14:30:33.067Z"
+        expectedEndDate: "2021-07-29T14:30:33.067Z"
         testDuration: 154000
         notes: Really big notes...
         streamId: 0a50c9ab-7c75-498e-8b18-0d695ca4ef03
@@ -3892,13 +3892,13 @@ components:
         updatedBy:
           type:
             - string
-            - 'null'
+            - "null"
           format: uuid
           description: Unique identifier for the user who last updated the comment.
         updatedDate:
           type:
             - string
-            - 'null'
+            - "null"
           format: date-time
           description: The date and time when the comment was last updated.
         commentText:
@@ -3912,7 +3912,7 @@ components:
         id: 0a50c9ab-b068-498e-b068-0d695ca4ef03
         testId: 0a50c9ab-7c75-498e-8b18-0d695ca4ef03
         createdBy: 1d44c6d4-dde4-4c37-b068-9e7eb21c4a19
-        createdDate: '2021-07-29T14:30:33.067Z'
+        createdDate: "2021-07-29T14:30:33.067Z"
         updatedBy: 0a50c9ab-7c75-498e-8b18-0d695ca4ef03
         commentText: Assessor comment ...
         stateChange: false
@@ -4172,7 +4172,7 @@ components:
               - EXTERNAL_ANALYSIS
               - DAST
         testMode:
-          $ref: '#/components/schemas/testMode'
+          $ref: "#/components/schemas/testMode"
         scanMode:
           type: string
           enum:
@@ -4269,7 +4269,7 @@ components:
               - EXTERNAL_ANALYSIS
               - DAST
         testMode:
-          $ref: '#/components/schemas/testMode'
+          $ref: "#/components/schemas/testMode"
         scanMode:
           type: string
           enum:
@@ -4332,7 +4332,7 @@ components:
         responses:
           type: array
           items:
-            $ref: '#/components/schemas/createTestResponseObject'
+            $ref: "#/components/schemas/createTestResponseObject"
           description: The response array containing the response objects.
       deprecated: true
     createTestResponse-v1:
@@ -4344,7 +4344,7 @@ components:
         responses:
           type: array
           items:
-            $ref: '#/components/schemas/createTestResponseObject-v1'
+            $ref: "#/components/schemas/createTestResponseObject-v1"
           description: The response array containing the response objects.
     createTestResponseObject:
       type: object
@@ -4360,11 +4360,11 @@ components:
           type: array
           description: Headers in the response of a test creation request.
           items:
-            $ref: '#/components/schemas/headersArray'
+            $ref: "#/components/schemas/headersArray"
         body:
-          $ref: '#/components/schemas/extendedTests'
+          $ref: "#/components/schemas/extendedTests"
         error:
-          $ref: '#/components/schemas/errorBody'
+          $ref: "#/components/schemas/errorBody"
       example:
         status: 200
         headers:
@@ -4382,12 +4382,12 @@ components:
             error: false
             manualInterventionRequired: false
             operations: []
-            errorDetail: ''
-            operationInfo: ''
-          createdDate: '2021-07-29T14:30:33.067Z'
-          updatedDate: '2021-07-29T14:30:33.067Z'
-          startDate: '2021-07-29T14:30:33.067Z'
-          expectedEndDate: '2021-07-29T14:30:33.067Z'
+            errorDetail: ""
+            operationInfo: ""
+          createdDate: "2021-07-29T14:30:33.067Z"
+          updatedDate: "2021-07-29T14:30:33.067Z"
+          startDate: "2021-07-29T14:30:33.067Z"
+          expectedEndDate: "2021-07-29T14:30:33.067Z"
           testDuration: 154000
           notes: Really big notes...
           portfolioItemId: 1d44c6d4-dde4-4c37-b068-9e7eb21c4a19
@@ -4414,11 +4414,11 @@ components:
           type: array
           description: Headers in the response of a test creation request.
           items:
-            $ref: '#/components/schemas/headersArray'
+            $ref: "#/components/schemas/headersArray"
         body:
-          $ref: '#/components/schemas/extendedTests'
+          $ref: "#/components/schemas/extendedTests"
         error:
-          $ref: '#/components/schemas/errorBody'
+          $ref: "#/components/schemas/errorBody"
       example:
         status: 200
         headers:
@@ -4436,12 +4436,12 @@ components:
             error: false
             manualInterventionRequired: false
             operations: []
-            errorDetail: ''
-            operationInfo: ''
-          createdDate: '2021-07-29T14:30:33.067Z'
-          updatedDate: '2021-07-29T14:30:33.067Z'
-          startDate: '2021-07-29T14:30:33.067Z'
-          expectedEndDate: '2021-07-29T14:30:33.067Z'
+            errorDetail: ""
+            operationInfo: ""
+          createdDate: "2021-07-29T14:30:33.067Z"
+          updatedDate: "2021-07-29T14:30:33.067Z"
+          startDate: "2021-07-29T14:30:33.067Z"
+          expectedEndDate: "2021-07-29T14:30:33.067Z"
           testDuration: 154000
           notes: Really big notes...
           testMode: SOURCE_UPLOAD
@@ -4496,7 +4496,7 @@ components:
             - progress
           properties:
             name:
-              $ref: '#/components/schemas/testStateName'
+              $ref: "#/components/schemas/testStateName"
             description:
               type: string
               description: The brief summary of the state and details about the state, like operations allowed.
@@ -4554,7 +4554,7 @@ components:
           format: uuid
           description: The portfolio-subitem identifier for the test.
         testMode:
-          $ref: '#/components/schemas/testMode'
+          $ref: "#/components/schemas/testMode"
         scanMode:
           type: string
           description: ScanMode is deduced from testMode and type of test(SAST/SCA).
@@ -4571,7 +4571,7 @@ components:
               format: uuid
               description: Unique identifier of the project profile.
         _links:
-          $ref: '#/components/schemas/links'
+          $ref: "#/components/schemas/links"
     createArtifact:
       type: object
       properties:
@@ -4602,10 +4602,10 @@ components:
       example:
         fileName: sample.zip
         fileHash: ehdsg8Rx/21ZjOP1DDOwbw==
-        fileSize: '1024'
+        fileSize: "1024"
         entitlementId: adeeebb4-a398-4f31-98d0-0fc811c5fda9
         artifactType: SOURCE_CODE
-        createdAt: '2017-01-15T01:30:15.010Z'
+        createdAt: "2017-01-15T01:30:15.010Z"
     ArtifactResponse:
       type: object
       properties:
@@ -4618,11 +4618,11 @@ components:
           type: string
           format: date-time
         _links:
-          $ref: '#/components/schemas/links'
+          $ref: "#/components/schemas/links"
       example:
         artifactId: 3fa85f64-5717-4562-b3fc-2c963f66afa6
         signedUrl: https://storage.googleapis.com/example-bucket/12345678910/7ffd3936-0309-4a10-b48c-a924143a0673.zip?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=foo-bar
-        createdAt: '2017-01-15T01:30:15.010Z'
+        createdAt: "2017-01-15T01:30:15.010Z"
         _links:
           - href: https://polaris.blackduck.com/api/test-manager/tests/artifacts/3fa85f64-5717-4562-b3fc-2c963f66afa6
             rel: self
@@ -4674,24 +4674,24 @@ components:
       properties:
         body:
           oneOf:
-            - $ref: '#/components/schemas/tests'
-            - $ref: '#/components/schemas/errorBody'
+            - $ref: "#/components/schemas/tests"
+            - $ref: "#/components/schemas/errorBody"
       deprecated: true
     updateTestResponse-v1:
       type: object
       properties:
         body:
           oneOf:
-            - $ref: '#/components/schemas/tests-v1'
-            - $ref: '#/components/schemas/errorBody'
+            - $ref: "#/components/schemas/tests-v1"
+            - $ref: "#/components/schemas/errorBody"
       example:
         body:
           id: 5796d731-4923-4690-b865-1482ae74403d
           shortId: ST4E3ZD
           notes: hello this is notes;
-          createdDate: '2021-10-01T07:48:49Z'
-          startDate: '2021-10-01T07:48:49Z'
-          expectedEndDate: '2021-10-01T07:48:49Z'
+          createdDate: "2021-10-01T07:48:49Z"
+          startDate: "2021-10-01T07:48:49Z"
+          expectedEndDate: "2021-10-01T07:48:49Z"
           projectId: 4ee75520-121b-4764-8e68-9d17b522d6bf
           applicationId: e9561105-2b70-4821-9d48-8f7dcaaacb0d
           entitlementId: e9561105-2b70-4821-9d48-8f7dcaaacb0d
@@ -4715,16 +4715,16 @@ components:
       properties:
         body:
           oneOf:
-            - $ref: '#/components/schemas/tests-v2'
-            - $ref: '#/components/schemas/errorBody'
+            - $ref: "#/components/schemas/tests-v2"
+            - $ref: "#/components/schemas/errorBody"
       example:
         body:
           id: 5796d731-4923-4690-b865-1482ae74403d
           shortId: ST4E3ZD
           notes: hello this is notes;
-          createdDate: '2021-10-01T07:48:49Z'
-          startDate: '2021-10-01T07:48:49Z'
-          expectedEndDate: '2021-10-01T07:48:49Z'
+          createdDate: "2021-10-01T07:48:49Z"
+          startDate: "2021-10-01T07:48:49Z"
+          expectedEndDate: "2021-10-01T07:48:49Z"
           projectId: 4ee75520-121b-4764-8e68-9d17b522d6bf
           applicationId: e9561105-2b70-4821-9d48-8f7dcaaacb0d
           entitlementId: e9561105-2b70-4821-9d48-8f7dcaaacb0d
@@ -4751,15 +4751,15 @@ components:
       properties:
         body:
           oneOf:
-            - $ref: '#/components/schemas/tests'
-            - $ref: '#/components/schemas/errorBody'
+            - $ref: "#/components/schemas/tests"
+            - $ref: "#/components/schemas/errorBody"
       example:
         body:
           id: 5796d731-4923-4690-b865-1482ae74403d
           notes: hello this is notes;
-          createdDate: '2021-10-01T07:48:49Z'
-          startDate: '2021-10-01T07:48:49Z'
-          expectedEndDate: '2021-10-01T07:48:49Z'
+          createdDate: "2021-10-01T07:48:49Z"
+          startDate: "2021-10-01T07:48:49Z"
+          expectedEndDate: "2021-10-01T07:48:49Z"
           projectId: 4ee75520-121b-4764-8e68-9d17b522d6bf
           applicationId: e9561105-2b70-4821-9d48-8f7dcaaacb0d
           entitlementId: e9561105-2b70-4821-9d48-8f7dcaaacb0d
@@ -4792,15 +4792,15 @@ components:
       properties:
         body:
           oneOf:
-            - $ref: '#/components/schemas/tests-v1'
-            - $ref: '#/components/schemas/errorBody'
+            - $ref: "#/components/schemas/tests-v1"
+            - $ref: "#/components/schemas/errorBody"
       example:
         body:
           id: 5796d731-4923-4690-b865-1482ae74403d
           notes: hello this is notes;
-          createdDate: '2021-10-01T07:48:49Z'
-          startDate: '2021-10-01T07:48:49Z'
-          expectedEndDate: '2021-10-01T07:48:49Z'
+          createdDate: "2021-10-01T07:48:49Z"
+          startDate: "2021-10-01T07:48:49Z"
+          expectedEndDate: "2021-10-01T07:48:49Z"
           projectId: 4ee75520-121b-4764-8e68-9d17b522d6bf
           applicationId: e9561105-2b70-4821-9d48-8f7dcaaacb0d
           entitlementId: e9561105-2b70-4821-9d48-8f7dcaaacb0d
@@ -4830,15 +4830,15 @@ components:
       properties:
         body:
           oneOf:
-            - $ref: '#/components/schemas/tests-v2'
-            - $ref: '#/components/schemas/errorBody'
+            - $ref: "#/components/schemas/tests-v2"
+            - $ref: "#/components/schemas/errorBody"
       example:
         body:
           id: 5796d731-4923-4690-b865-1482ae74403d
           notes: hello this is notes;
-          createdDate: '2021-10-01T07:48:49Z'
-          startDate: '2021-10-01T07:48:49Z'
-          expectedEndDate: '2021-10-01T07:48:49Z'
+          createdDate: "2021-10-01T07:48:49Z"
+          startDate: "2021-10-01T07:48:49Z"
+          expectedEndDate: "2021-10-01T07:48:49Z"
           projectId: 4ee75520-121b-4764-8e68-9d17b522d6bf
           applicationId: e9561105-2b70-4821-9d48-8f7dcaaacb0d
           entitlementId: e9561105-2b70-4821-9d48-8f7dcaaacb0d
@@ -4871,8 +4871,8 @@ components:
       properties:
         body:
           oneOf:
-            - $ref: '#/components/schemas/test-metrics'
-            - $ref: '#/components/schemas/errorBody'
+            - $ref: "#/components/schemas/test-metrics"
+            - $ref: "#/components/schemas/errorBody"
       example:
         body:
           testId: 5796d731-4923-4690-b865-1482ae74403d
@@ -4892,7 +4892,7 @@ components:
         _items:
           type: array
           items:
-            $ref: '#/components/schemas/getAllArtifactsMetadata'
+            $ref: "#/components/schemas/getAllArtifactsMetadata"
     getAllArtifactsMetadata:
       type: object
       properties:
@@ -4921,8 +4921,8 @@ components:
         body:
           description: The body containing the list of Artifact metadata fetched.
           oneOf:
-            - $ref: '#/components/schemas/getAllArtifactsBody'
-            - $ref: '#/components/schemas/errorBody'
+            - $ref: "#/components/schemas/getAllArtifactsBody"
+            - $ref: "#/components/schemas/errorBody"
       example:
         body:
           _items:
@@ -4931,13 +4931,13 @@ components:
               fileSize: 100
               fileHash: abcde
               artifactType: TOOL
-              createdAt: '1970-01-01T00:00:00Z'
+              createdAt: "1970-01-01T00:00:00Z"
             - id: a1ed9f61-8fa2-48e0-b81b-aaf765920882
               fileName: test1.zip
               fileSize: 200
               fileHash: abcdef
               artifactType: TOOL
-              createdAt: '1970-01-01T00:00:00Z'
+              createdAt: "1970-01-01T00:00:00Z"
     testProfile:
       type: object
       properties:
