@@ -195,3 +195,23 @@
   - Polymorphic body schemas (forms/saml/selenium/none/import) should be accepted as JSON strings in tool layer, parsed before calling service
   - getProjectSubResourceCount also uses getAllOffset with ACCEPT_SUB_RESOURCES (not a separate count media type)
 ---
+
+## 2026-02-19 - PRD-P7
+- Implemented Labels CRUD + merge across all layers:
+  1. src/api/portfolio.ts: Added CreateLabelRequest, Label, MergeLabelRequest imports; added ACCEPT_LABELS constant; added createLabel() (POST), getLabels() (getAllOffset), getLabel() (client.get), updateLabel() (PATCH), deleteLabel() (DELETE, void), mergeLabels() (POST to /labels/merge)
+  2. src/services/portfolio.ts: Added imports for Label, CreateLabelRequest, MergeLabelRequest; added CreateLabelOptions, GetLabelsOptions, GetLabelOptions, UpdateLabelOptions, DeleteLabelOptions, MergeLabelsOptions interfaces and corresponding service wrapper functions
+  3. src/mcp/tools/create-label.ts: Created create_label tool (readOnlyHint: false)
+  4. src/mcp/tools/get-labels.ts: Created get_labels tool (readOnlyHint: true)
+  5. src/mcp/tools/get-label.ts: Created get_label tool (readOnlyHint: true, include_usage_stats param)
+  6. src/mcp/tools/update-label.ts: Created update_label tool (readOnlyHint: false)
+  7. src/mcp/tools/delete-label.ts: Created delete_label tool (readOnlyHint: false, destructiveHint: true)
+  8. src/mcp/tools/merge-labels.ts: Created merge_labels tool (readOnlyHint: false)
+  9. src/mcp/tools/index.ts: Registered all 6 new tools
+- Files changed: src/api/portfolio.ts, src/services/portfolio.ts, 6 new tool files, src/mcp/tools/index.ts, prd.json
+- **Learnings for future iterations:**
+  - ACCEPT_LABELS = "application/vnd.polaris.portfolios.labels-1+json"
+  - Label paths are org-level: /api/portfolios/labels (no portfolioId in path)
+  - mergeLabels posts to /api/portfolios/labels/merge with body { labelsToMerge: string[], targetLabel: { name, description? } }
+  - deno lint requires braces around single-line if statements — run `deno fmt` to auto-fix
+  - UpdateLabelOptions.name is optional but CreateLabelRequest.name is required — use `options.name ?? ""` as default when constructing body
+---
