@@ -1,3 +1,21 @@
+## 2026-02-19T23:00:00Z - PRD-R5
+- Implemented Bulk group import and job management
+- Files changed:
+  - `src/api/repos.ts`: Added imports for BulkGroupImportJobStatus, BulkGroupImportUpdateResponse; added `importGroupsRepos()`, `updateGroupImportJob()`, `getGroupImportJobStatus()`, `getAllGroupImportStatuses()` API functions with interfaces (RoleUserMapping, GroupRepositorySelection, ImportGroupsReposParams, UpdateGroupImportJobParams, GetAllGroupImportStatusesParams)
+  - `src/services/repos.ts`: Added imports for BulkGroupImportJobStatus, BulkGroupImportUpdateResponse; added `bulkImportGroups()`, `abortGroupImportJob()`, `getGroupImportJobStatus()`, `getAllGroupImportStatuses()` service functions with Options interfaces
+  - `src/mcp/tools/bulk-import-groups.ts` (new): Write tool for initiating bulk group+repo import; parses repository_selections JSON string and splits comma-separated policy IDs
+  - `src/mcp/tools/abort-group-import-job.ts` (new): Write tool for aborting a bulk group import job
+  - `src/mcp/tools/get-group-import-job-status.ts` (new): Read tool for getting a single job status by ID
+  - `src/mcp/tools/get-all-group-import-statuses.ts` (new): Read tool for listing all group import job statuses with optional filter
+  - `src/mcp/tools/index.ts`: Registered all 4 new tools
+  - `prd.json`: Set PRD-R5 passes: true
+- All checks pass: `deno task check`, `deno lint`, `deno fmt --check`
+- **Learnings for future iterations:**
+  - The `abortGroupImportJob` service hardcodes `action: "ABORT"` per spec (only valid action)
+  - Bulk group import POST uses `fetchLocation()` same as bulk repo import for 202+Location pattern
+  - `GroupRepositorySelection` interface reuses `RepositorySelection` for repositories/nestedRepositories fields
+---
+
 ## Codebase Patterns
 
 - `import { getClient }` in API files must be aliased as `_getClient` if not used in that file, or deno lint will fail with no-unused-vars
