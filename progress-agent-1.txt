@@ -74,3 +74,23 @@
   - deno fmt collapses multi-line description strings to single line when they fit within 100 chars — run `deno fmt` then re-check if fmt fails
   - getPortfolioBranches uses a separate API path /api/portfolios/{portfolioId}/branches (not the project-scoped path)
 ---
+
+## 2026-02-19 - PRD-P6
+- Implemented Artifacts + Entitlements across all layers
+- Files changed:
+  - `src/api/portfolio.ts`: Added imports for new types; added ACCEPT_ARTIFACTS, ACCEPT_APP_ENTITLEMENTS, ACCEPT_ENTITLEMENT_QTY, ACCEPT_PORTFOLIO_ENTITLEMENTS constants; added createArtifact (POST), getArtifact (GET), getApplicationEntitlements (GET), updateEntitlementQuantity (PATCH), getPortfolioEntitlements (GET) functions
+  - `src/services/portfolio.ts`: Added imports for new types; added CreateArtifactOptions, GetArtifactOptions, GetApplicationEntitlementsOptions, UpdateEntitlementQuantityOptions, GetPortfolioEntitlementsOptions interfaces and corresponding service functions
+  - `src/mcp/tools/create-artifact.ts`: New tool create_artifact (readOnlyHint: false)
+  - `src/mcp/tools/get-artifact.ts`: New tool get_artifact (readOnlyHint: true)
+  - `src/mcp/tools/get-application-entitlements.ts`: New tool get_application_entitlements (readOnlyHint: true)
+  - `src/mcp/tools/update-entitlement-quantity.ts`: New tool update_entitlement_quantity (readOnlyHint: false)
+  - `src/mcp/tools/get-portfolio-entitlements.ts`: New tool get_portfolio_entitlements (readOnlyHint: true)
+  - `src/mcp/tools/index.ts`: Registered all 5 new tools
+  - `prd.json`: Set PRD-P6 passes: true
+- `deno task check` passes, `deno task lint` passes, `deno fmt --check` passes
+- **Learnings for future iterations:**
+  - getArtifact uses client.get<T>(path) with no accept header (spec returns application/octet-stream for the binary, but we model the JSON metadata response)
+  - Long string constants > 100 chars need wrapping: `const ACCEPT_APP_ENTITLEMENTS =\n  "...";` pattern
+  - handler function arg destructuring > 100 chars needs multi-line format: `handler: async (\n  { ... },\n) => {`
+  - Run `deno fmt` then re-check when fmt fails — it auto-fixes both constant and handler formatting
+---

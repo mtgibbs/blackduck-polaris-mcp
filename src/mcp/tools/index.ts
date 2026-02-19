@@ -69,6 +69,11 @@ import { getOrganizationSettingsTool } from "./get-organization-settings.ts";
 import { updateOrganizationSettingsTool } from "./update-organization-settings.ts";
 import { getRiskScoringSettingsTool } from "./get-risk-scoring-settings.ts";
 import { updateRiskScoringSettingsTool } from "./update-risk-scoring-settings.ts";
+import { createArtifactTool } from "./create-artifact.ts";
+import { getArtifactTool } from "./get-artifact.ts";
+import { getApplicationEntitlementsTool } from "./get-application-entitlements.ts";
+import { updateEntitlementQuantityTool } from "./update-entitlement-quantity.ts";
+import { getPortfolioEntitlementsTool } from "./get-portfolio-entitlements.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -141,4 +146,9 @@ export const tools: AnyToolDefinition[] = [
   updateOrganizationSettingsTool,
   getRiskScoringSettingsTool,
   updateRiskScoringSettingsTool,
+  createArtifactTool,
+  getArtifactTool,
+  getApplicationEntitlementsTool,
+  updateEntitlementQuantityTool,
+  getPortfolioEntitlementsTool,
 ];

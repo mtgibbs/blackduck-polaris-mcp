@@ -1,16 +1,22 @@
 import { getClient } from "./client.ts";
 import type {
   Application,
+  ApplicationEntitlementsResponse,
   Branch,
   CreateApplicationRequest,
   CreateBranchRequest,
   CreateLabelRequest,
+  CreateProfileArtifactRequest,
   CreateProjectRequest,
+  EntitlementQuantityUpdateRequest,
+  EntitlementQuantityUpdateResponse,
   Label,
   MergeLabelRequest,
   OrganizationSettings,
   Portfolio,
+  PortfolioEntitlement,
   Profile,
+  ProfileArtifact,
   Project,
   ProjectSubResource,
   ProjectSubResourceCountItem,
@@ -24,6 +30,13 @@ const ACCEPT = "application/vnd.polaris.portfolios-1+json";
 const ACCEPT_APPS = "application/vnd.polaris.portfolios.applications-1+json";
 const ACCEPT_PROJECTS = "application/vnd.polaris.portfolios.projects-1+json";
 const ACCEPT_BRANCHES = "application/vnd.polaris.portfolios.branches-1+json";
+const ACCEPT_ARTIFACTS = "application/vnd.polaris.profile-artifacts-1+json";
+const ACCEPT_APP_ENTITLEMENTS =
+  "application/vnd.polaris.portfolios.application-entitlements-1+json";
+const ACCEPT_ENTITLEMENT_QTY =
+  "application/vnd.polaris.portfolios.application-entitlements-quantity-1+json";
+const ACCEPT_PORTFOLIO_ENTITLEMENTS =
+  "application/vnd.polaris.portfolios.portfolio-entitlements-1+json";
 
 // --- Portfolios ---
 
@@ -459,4 +472,71 @@ export function updateRiskScoringSettings(params: {
     accept: ACCEPT_RISK_SCORING,
     contentType: ACCEPT_RISK_SCORING,
   });
+}
+
+// --- Artifacts ---
+
+export function createArtifact(params: {
+  portfolioId: string;
+  applicationId: string;
+  body: CreateProfileArtifactRequest;
+}): Promise<ProfileArtifact> {
+  const client = getClient();
+  return client.fetch<ProfileArtifact>(
+    `/api/portfolios/${params.portfolioId}/applications/${params.applicationId}/artifacts`,
+    { method: "POST", body: params.body, accept: ACCEPT_ARTIFACTS, contentType: ACCEPT_ARTIFACTS },
+  );
+}
+
+export function getArtifact(params: {
+  portfolioId: string;
+  applicationId: string;
+  artifactId: string;
+}): Promise<ProfileArtifact> {
+  const client = getClient();
+  return client.get<ProfileArtifact>(
+    `/api/portfolios/${params.portfolioId}/applications/${params.applicationId}/artifacts/${params.artifactId}`,
+  );
+}
+
+// --- Entitlements ---
+
+export function getApplicationEntitlements(params: {
+  portfolioId: string;
+  applicationId: string;
+}): Promise<ApplicationEntitlementsResponse> {
+  const client = getClient();
+  return client.get<ApplicationEntitlementsResponse>(
+    `/api/portfolios/${params.portfolioId}/applications/${params.applicationId}/entitlements`,
+    undefined,
+    ACCEPT_APP_ENTITLEMENTS,
+  );
+}
+
+export function updateEntitlementQuantity(params: {
+  portfolioId: string;
+  applicationId: string;
+  body: EntitlementQuantityUpdateRequest;
+}): Promise<EntitlementQuantityUpdateResponse> {
+  const client = getClient();
+  return client.fetch<EntitlementQuantityUpdateResponse>(
+    `/api/portfolios/${params.portfolioId}/applications/${params.applicationId}/entitlements/quantity`,
+    {
+      method: "PATCH",
+      body: params.body,
+      accept: ACCEPT_ENTITLEMENT_QTY,
+      contentType: ACCEPT_ENTITLEMENT_QTY,
+    },
+  );
+}
+
+export function getPortfolioEntitlements(params: {
+  portfolioId: string;
+}): Promise<PortfolioEntitlement> {
+  const client = getClient();
+  return client.get<PortfolioEntitlement>(
+    `/api/portfolios/${params.portfolioId}/entitlements`,
+    undefined,
+    ACCEPT_PORTFOLIO_ENTITLEMENTS,
+  );
 }

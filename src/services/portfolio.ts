@@ -1,16 +1,22 @@
 import * as portfolioApi from "../api/portfolio.ts";
 import type {
   Application,
+  ApplicationEntitlementsResponse,
   Branch,
   CreateApplicationRequest,
   CreateBranchRequest,
   CreateLabelRequest,
+  CreateProfileArtifactRequest,
   CreateProjectRequest,
+  EntitlementQuantityUpdateRequest,
+  EntitlementQuantityUpdateResponse,
   Label,
   MergeLabelRequest,
   OrganizationSettings,
   Portfolio,
+  PortfolioEntitlement,
   Profile,
+  ProfileArtifact,
   Project,
   ProjectSubResource,
   ProjectSubResourceCountItem,
@@ -429,4 +435,83 @@ export function updateRiskScoringSettings(
   return portfolioApi.updateRiskScoringSettings({
     body: { isEnabled: options.isEnabled, riskFactors: options.riskFactors },
   });
+}
+
+// --- Artifacts ---
+
+export interface CreateArtifactOptions {
+  portfolioId: string;
+  applicationId: string;
+  fileName: string;
+  fileHash: string;
+  fileSize: string;
+  artifactType: string;
+}
+
+export function createArtifact(options: CreateArtifactOptions): Promise<ProfileArtifact> {
+  const body: CreateProfileArtifactRequest = {
+    fileName: options.fileName,
+    fileHash: options.fileHash,
+    fileSize: options.fileSize,
+    artifactType: options.artifactType,
+  };
+  return portfolioApi.createArtifact({
+    portfolioId: options.portfolioId,
+    applicationId: options.applicationId,
+    body,
+  });
+}
+
+export interface GetArtifactOptions {
+  portfolioId: string;
+  applicationId: string;
+  artifactId: string;
+}
+
+export function getArtifact(options: GetArtifactOptions): Promise<ProfileArtifact> {
+  return portfolioApi.getArtifact(options);
+}
+
+// --- Entitlements ---
+
+export interface GetApplicationEntitlementsOptions {
+  portfolioId: string;
+  applicationId: string;
+}
+
+export function getApplicationEntitlements(
+  options: GetApplicationEntitlementsOptions,
+): Promise<ApplicationEntitlementsResponse> {
+  return portfolioApi.getApplicationEntitlements(options);
+}
+
+export interface UpdateEntitlementQuantityOptions {
+  portfolioId: string;
+  applicationId: string;
+  entitlementIds: string[];
+  quantity: number;
+}
+
+export function updateEntitlementQuantity(
+  options: UpdateEntitlementQuantityOptions,
+): Promise<EntitlementQuantityUpdateResponse> {
+  const body: EntitlementQuantityUpdateRequest = {
+    entitlementIds: options.entitlementIds,
+    quantity: options.quantity,
+  };
+  return portfolioApi.updateEntitlementQuantity({
+    portfolioId: options.portfolioId,
+    applicationId: options.applicationId,
+    body,
+  });
+}
+
+export interface GetPortfolioEntitlementsOptions {
+  portfolioId: string;
+}
+
+export function getPortfolioEntitlements(
+  options: GetPortfolioEntitlementsOptions,
+): Promise<PortfolioEntitlement> {
+  return portfolioApi.getPortfolioEntitlements(options);
 }
