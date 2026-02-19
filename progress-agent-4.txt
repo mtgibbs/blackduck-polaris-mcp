@@ -15,6 +15,24 @@
   - getTaxon is a single-item GET (not paginated); getTaxonomies/getTaxonSubtaxa/getTaxonIssueTypes use cursor pagination
 ---
 
+## 2026-02-19 - PRD-F8
+- Implemented component versions read endpoints across all layers:
+  1. src/types/polaris.ts: Added SecurityRisk, MatchType type aliases; ComponentInfo, LicenseEntry, LicenseDefinition, ComponentVersionTriageProperty, ComponentVersion, ComponentVersionCountGroup, ComponentVersionCountItem interfaces
+  2. src/api/findings.ts: Added ACCEPT_COMPONENT_VERSIONS constant; getComponentVersions() (cursor-paginated), getComponentVersion() (single GET), getComponentVersionCount() (cursor-paginated)
+  3. src/services/findings.ts: Added getComponentVersions(), getComponentVersion(), getComponentVersionCount() service functions
+  4. src/mcp/tools/get-component-versions.ts: Created get_component_versions tool with project/app/branch/test scoping, filter, include_component, include_license, max_results
+  5. src/mcp/tools/get-component-version.ts: Created get_component_version tool with required id and optional scoping/include params
+  6. src/mcp/tools/get-component-version-count.ts: Created get_component_version_count tool with group param (comma-separated string → array)
+  7. src/mcp/tools/index.ts: Registered all three new tools
+- Files changed: src/types/polaris.ts, src/api/findings.ts, src/services/findings.ts, src/mcp/tools/get-component-versions.ts (new), src/mcp/tools/get-component-version.ts (new), src/mcp/tools/get-component-version-count.ts (new), src/mcp/tools/index.ts, prd.json
+- **Learnings for future iterations:**
+  - ACCEPT_COMPONENT_VERSIONS = "application/vnd.polaris.findings.component-versions-1+json"
+  - LicenseDefinition can be a CONJUNCTIVE/DISJUNCTIVE composite (with `licenses` array) OR a single license (with `license` array)
+  - ComponentVersion.triageProperties uses key/value pairs where value can be string | boolean
+  - deno fmt auto-fixes inline if/else into blocks when line is too long — run `deno fmt` then re-check
+  - PRD-F9 and PRD-F10 need ACCEPT_COMPONENT_VERSIONS from this story; it's module-private so those stories will re-declare it
+---
+
 ## Codebase Patterns
 - Tool definitions: schema is plain object of Zod types (NOT z.object()), handler destructures args, return jsonResponse(data) or errorResponse(msg)
 - API layer uses client.fetch<T>() for non-GET requests with {method, params, body, accept, contentType}
