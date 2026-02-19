@@ -41,6 +41,12 @@ import { assignComponentVersionLicenseTool } from "./assign-component-version-li
 import { getComponentOriginsTool } from "./get-component-origins.ts";
 import { getComponentOriginTool } from "./get-component-origin.ts";
 import { getComponentOriginMatchesTool } from "./get-component-origin-matches.ts";
+import { getScmRepositoriesTool } from "./get-scm-repositories.ts";
+import { getScmRepositoryTool } from "./get-scm-repository.ts";
+import { getScmRepositoryBranchesTool } from "./get-scm-repository-branches.ts";
+import { createScmRepositoryTool } from "./create-scm-repository.ts";
+import { updateScmRepositoryTool } from "./update-scm-repository.ts";
+import { testScmRepoConnectionTool } from "./test-scm-repo-connection.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -85,4 +91,10 @@ export const tools: AnyToolDefinition[] = [
   getComponentOriginsTool,
   getComponentOriginTool,
   getComponentOriginMatchesTool,
+  getScmRepositoriesTool,
+  getScmRepositoryTool,
+  getScmRepositoryBranchesTool,
+  createScmRepositoryTool,
+  updateScmRepositoryTool,
+  testScmRepoConnectionTool,
 ];
