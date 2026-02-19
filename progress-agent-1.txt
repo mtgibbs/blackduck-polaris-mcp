@@ -53,3 +53,24 @@
   - All portfolio types live in src/types/polaris.ts (not separate files); add them after the Branch interface in the Portfolio section
   - MergeLabelRequest.targetLabel uses inline object type `{ name: string; description?: string }` per spec
 ---
+
+## 2026-02-19 - PRD-P4
+- Implemented Branch CRUD + portfolio-wide project and branch queries
+- Files changed:
+  - `src/api/portfolio.ts`: Added imports for CreateBranchRequest, UpdateBranchRequest; added getBranch, createBranch, updateBranch, deleteBranch, getPortfolioBranches functions
+  - `src/services/portfolio.ts`: Added imports for CreateBranchRequest, UpdateBranchRequest; added GetBranchOptions, CreateBranchOptions, UpdateBranchOptions, DeleteBranchOptions, GetPortfolioBranchesOptions interfaces and corresponding service functions
+  - `src/mcp/tools/get-branch.ts`: New tool get_branch (readOnlyHint: true)
+  - `src/mcp/tools/create-branch.ts`: New tool create_branch (readOnlyHint: false)
+  - `src/mcp/tools/update-branch.ts`: New tool update_branch (readOnlyHint: false)
+  - `src/mcp/tools/delete-branch.ts`: New tool delete_branch (readOnlyHint: false, destructiveHint: true)
+  - `src/mcp/tools/get-portfolio-projects.ts`: New tool get_portfolio_projects wrapping existing getProjects({portfolioId}) without applicationId
+  - `src/mcp/tools/get-portfolio-branches.ts`: New tool get_portfolio_branches (readOnlyHint: true)
+  - `src/mcp/tools/index.ts`: Registered all 6 new tools
+  - `prd.json`: Set PRD-P4 passes: true
+- `deno lint` passes, `deno fmt --check` passes
+- **Learnings for future iterations:**
+  - Parallel agents may modify the same files; rebase conflicts in portfolio.ts and services/portfolio.ts were resolved by merging both sets of imports (PRD-P2 added Application types, PRD-P4 added Branch types)
+  - The portfolio-wide project listing reuses existing getProjects() with no applicationId — just a new tool wrapper, no new API/service function needed
+  - deno fmt collapses multi-line description strings to single line when they fit within 100 chars — run `deno fmt` then re-check if fmt fails
+  - getPortfolioBranches uses a separate API path /api/portfolios/{portfolioId}/branches (not the project-scoped path)
+---
