@@ -8,6 +8,7 @@ import type {
   CreateLabelRequest,
   CreateProfileArtifactRequest,
   CreateProjectRequest,
+  DashboardItem,
   EntitlementQuantityUpdateRequest,
   EntitlementQuantityUpdateResponse,
   Label,
@@ -539,4 +540,22 @@ export function getPortfolioEntitlements(params: {
     undefined,
     ACCEPT_PORTFOLIO_ENTITLEMENTS,
   );
+}
+
+// --- Dashboard ---
+
+const ACCEPT_DASHBOARD = "application/vnd.polaris.portfolios.dashboard-1+json";
+
+export function getDashboard(params: {
+  portfolioId: string;
+  filter?: string;
+  sort?: string;
+}): Promise<DashboardItem[]> {
+  const client = getClient();
+  const path = `/api/portfolios/portfolios/${params.portfolioId}/dashboard`;
+  const queryParams: Record<string, string | number | boolean | undefined> = {
+    _filter: params.filter,
+    _sort: params.sort,
+  };
+  return client.getAllOffset<DashboardItem>(path, queryParams, ACCEPT_DASHBOARD);
 }

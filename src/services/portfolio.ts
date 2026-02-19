@@ -8,6 +8,7 @@ import type {
   CreateLabelRequest,
   CreateProfileArtifactRequest,
   CreateProjectRequest,
+  DashboardItem,
   EntitlementQuantityUpdateRequest,
   EntitlementQuantityUpdateResponse,
   Label,
@@ -514,4 +515,16 @@ export function getPortfolioEntitlements(
   options: GetPortfolioEntitlementsOptions,
 ): Promise<PortfolioEntitlement> {
   return portfolioApi.getPortfolioEntitlements(options);
+}
+
+// --- Dashboard ---
+
+export interface GetDashboardOptions {
+  portfolioId: string;
+  filter?: string;
+  sort?: string;
+}
+
+export function getDashboard(options: GetDashboardOptions): Promise<DashboardItem[]> {
+  return portfolioApi.getDashboard(options);
 }

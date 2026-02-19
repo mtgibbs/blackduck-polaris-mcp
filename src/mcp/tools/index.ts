@@ -74,6 +74,7 @@ import { getArtifactTool } from "./get-artifact.ts";
 import { getApplicationEntitlementsTool } from "./get-application-entitlements.ts";
 import { updateEntitlementQuantityTool } from "./update-entitlement-quantity.ts";
 import { getPortfolioEntitlementsTool } from "./get-portfolio-entitlements.ts";
+import { getDashboardTool } from "./get-dashboard.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -151,4 +152,5 @@ export const tools: AnyToolDefinition[] = [
   getApplicationEntitlementsTool,
   updateEntitlementQuantityTool,
   getPortfolioEntitlementsTool,
+  getDashboardTool,
 ];

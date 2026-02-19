@@ -214,6 +214,20 @@
   - Tools with no required params use `_placeholder: z.string().optional()` schema pattern
 ---
 
+## 2026-02-19 - PRD-P9
+- Implemented Dashboard endpoint across all layers:
+  1. src/api/portfolio.ts: Added DashboardItem import; added ACCEPT_DASHBOARD constant; added getDashboard() (getAllOffset, path /api/portfolios/portfolios/{portfolioId}/dashboard, passes _filter and _sort as query params)
+  2. src/services/portfolio.ts: Added DashboardItem import; added GetDashboardOptions interface and getDashboard() wrapper function
+  3. src/mcp/tools/get-dashboard.ts: Created get_dashboard tool (readOnlyHint: true) with portfolio_id (required), filter (optional RSQL), sort (optional) params
+  4. src/mcp/tools/index.ts: Imported and registered getDashboardTool
+- Files changed: src/api/portfolio.ts, src/services/portfolio.ts, src/mcp/tools/get-dashboard.ts (new), src/mcp/tools/index.ts, prd.json
+- **Learnings for future iterations:**
+  - ACCEPT_DASHBOARD = "application/vnd.polaris.portfolios.dashboard-1+json"
+  - Dashboard path uses double "portfolios": /api/portfolios/portfolios/{portfolioId}/dashboard (base path /api/portfolios + spec path /portfolios/{portfolioId}/dashboard)
+  - getDashboard uses client.getAllOffset (paginated) — consistent with other list endpoints
+  - DashboardItem is in src/types/polaris.ts (added by PRD-P1)
+---
+
 ## 2026-02-19 - PRD-P7
 - Implemented Labels CRUD + merge across all layers:
   1. src/api/portfolio.ts: Added CreateLabelRequest, Label, MergeLabelRequest imports; added ACCEPT_LABELS constant; added createLabel() (POST), getLabels() (getAllOffset), getLabel() (client.get), updateLabel() (PATCH), deleteLabel() (DELETE, void), mergeLabels() (POST to /labels/merge)
