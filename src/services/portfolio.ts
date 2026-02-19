@@ -4,7 +4,10 @@ import type {
   Branch,
   CreateApplicationRequest,
   CreateBranchRequest,
+  CreateLabelRequest,
   CreateProjectRequest,
+  Label,
+  MergeLabelRequest,
   Portfolio,
   Profile,
   Project,
@@ -314,4 +317,73 @@ export interface UpdateProfileOptions {
 
 export function updateProfile(options: UpdateProfileOptions): Promise<Profile> {
   return portfolioApi.updateProfile(options);
+}
+
+// --- Labels ---
+
+export interface CreateLabelOptions {
+  name: string;
+  description?: string;
+}
+
+export function createLabel(options: CreateLabelOptions): Promise<Label> {
+  const body: CreateLabelRequest = { name: options.name };
+  if (options.description !== undefined) body.description = options.description;
+  return portfolioApi.createLabel({ body });
+}
+
+export interface GetLabelsOptions {
+  filter?: string;
+  sort?: string;
+}
+
+export function getLabels(options: GetLabelsOptions): Promise<Label[]> {
+  return portfolioApi.getLabels(options);
+}
+
+export interface GetLabelOptions {
+  labelId: string;
+  includeUsageStats?: boolean;
+}
+
+export function getLabel(options: GetLabelOptions): Promise<Label> {
+  return portfolioApi.getLabel(options);
+}
+
+export interface UpdateLabelOptions {
+  labelId: string;
+  name?: string;
+  description?: string;
+}
+
+export function updateLabel(options: UpdateLabelOptions): Promise<Label> {
+  const body: CreateLabelRequest = { name: options.name ?? "" };
+  if (options.name !== undefined) body.name = options.name;
+  if (options.description !== undefined) body.description = options.description;
+  return portfolioApi.updateLabel({ labelId: options.labelId, body });
+}
+
+export interface DeleteLabelOptions {
+  labelId: string;
+}
+
+export function deleteLabel(options: DeleteLabelOptions): Promise<void> {
+  return portfolioApi.deleteLabel({ labelId: options.labelId });
+}
+
+export interface MergeLabelsOptions {
+  labelsToMerge: string[];
+  targetName: string;
+  targetDescription?: string;
+}
+
+export function mergeLabels(options: MergeLabelsOptions): Promise<Label> {
+  const body: MergeLabelRequest = {
+    labelsToMerge: options.labelsToMerge,
+    targetLabel: { name: options.targetName },
+  };
+  if (options.targetDescription !== undefined) {
+    body.targetLabel.description = options.targetDescription;
+  }
+  return portfolioApi.mergeLabels({ body });
 }

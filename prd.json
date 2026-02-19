@@ -189,7 +189,7 @@
         "`deno fmt --check` passes with zero errors"
       ],
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "notes": "Depends on PRD-P1 for Label, CreateLabelRequest, MergeLabelRequest types. Label paths are /api/portfolios/labels (org-level, no portfolioId in path). The merge endpoint body uses { labelsToMerge: string[], targetLabel: { name, description? } } per the MergeLabelPayload schema in specs/portfolio.yaml.",
       "claimed_by": "agent-4",
       "claimed_at": "2026-02-19T21:03:40Z"

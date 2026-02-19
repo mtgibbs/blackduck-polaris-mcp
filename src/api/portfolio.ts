@@ -4,7 +4,10 @@ import type {
   Branch,
   CreateApplicationRequest,
   CreateBranchRequest,
+  CreateLabelRequest,
   CreateProjectRequest,
+  Label,
+  MergeLabelRequest,
   Portfolio,
   Profile,
   Project,
@@ -344,4 +347,69 @@ export function getPortfolioBranches(params: {
     queryParams,
     ACCEPT_BRANCHES,
   );
+}
+
+const ACCEPT_LABELS = "application/vnd.polaris.portfolios.labels-1+json";
+
+// --- Labels ---
+
+export function createLabel(params: { body: CreateLabelRequest }): Promise<Label> {
+  const client = getClient();
+  return client.fetch<Label>("/api/portfolios/labels", {
+    method: "POST",
+    body: params.body,
+    accept: ACCEPT_LABELS,
+    contentType: ACCEPT_LABELS,
+  });
+}
+
+export function getLabels(params: { filter?: string; sort?: string }): Promise<Label[]> {
+  const client = getClient();
+  const queryParams: Record<string, string | undefined> = {};
+  if (params.filter) queryParams._filter = params.filter;
+  if (params.sort) queryParams._sort = params.sort;
+  return client.getAllOffset<Label>("/api/portfolios/labels", queryParams, ACCEPT_LABELS);
+}
+
+export function getLabel(params: {
+  labelId: string;
+  includeUsageStats?: boolean;
+}): Promise<Label> {
+  const client = getClient();
+  const queryParams: Record<string, boolean | undefined> = {};
+  if (params.includeUsageStats !== undefined) {
+    queryParams.includeUsageStats = params.includeUsageStats;
+  }
+  return client.get<Label>(`/api/portfolios/labels/${params.labelId}`, queryParams, ACCEPT_LABELS);
+}
+
+export function updateLabel(params: {
+  labelId: string;
+  body: CreateLabelRequest;
+}): Promise<Label> {
+  const client = getClient();
+  return client.fetch<Label>(`/api/portfolios/labels/${params.labelId}`, {
+    method: "PATCH",
+    body: params.body,
+    accept: ACCEPT_LABELS,
+    contentType: ACCEPT_LABELS,
+  });
+}
+
+export function deleteLabel(params: { labelId: string }): Promise<void> {
+  const client = getClient();
+  return client.fetch<void>(`/api/portfolios/labels/${params.labelId}`, {
+    method: "DELETE",
+    accept: ACCEPT_LABELS,
+  });
+}
+
+export function mergeLabels(params: { body: MergeLabelRequest }): Promise<Label> {
+  const client = getClient();
+  return client.fetch<Label>("/api/portfolios/labels/merge", {
+    method: "POST",
+    body: params.body,
+    accept: ACCEPT_LABELS,
+    contentType: ACCEPT_LABELS,
+  });
 }

@@ -59,6 +59,12 @@ import { getProjectSubResourcesTool } from "./get-project-sub-resources.ts";
 import { getProjectSubResourceCountTool } from "./get-project-sub-resource-count.ts";
 import { getProfileTool } from "./get-profile.ts";
 import { updateProfileTool } from "./update-profile.ts";
+import { createLabelTool } from "./create-label.ts";
+import { getLabelsTool } from "./get-labels.ts";
+import { getLabelTool } from "./get-label.ts";
+import { updateLabelTool } from "./update-label.ts";
+import { deleteLabelTool } from "./delete-label.ts";
+import { mergeLabelsTool } from "./merge-labels.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -121,4 +127,10 @@ export const tools: AnyToolDefinition[] = [
   getProjectSubResourceCountTool,
   getProfileTool,
   updateProfileTool,
+  createLabelTool,
+  getLabelsTool,
+  getLabelTool,
+  updateLabelTool,
+  deleteLabelTool,
+  mergeLabelsTool,
 ];
