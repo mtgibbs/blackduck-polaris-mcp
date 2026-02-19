@@ -263,7 +263,9 @@
       ],
       "priority": 10,
       "passes": false,
-      "notes": "Depends on PRD-F1 and PRD-F8 (MatchType type alias). Component origins are SCA-specific — package provenance, security risk, and upgrade guidance."
+      "notes": "Depends on PRD-F1 and PRD-F8 (MatchType type alias). Component origins are SCA-specific — package provenance, security risk, and upgrade guidance.",
+      "claimed_by": "agent-4",
+      "claimed_at": "2026-02-19T18:17:05Z"
     }
   ]
 }
