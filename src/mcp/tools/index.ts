@@ -53,6 +53,8 @@ import { getScmRemoteReposTool } from "./get-scm-remote-repos.ts";
 import { getScmProjectsTool } from "./get-scm-projects.ts";
 import { testScmProviderConnectionTool } from "./test-scm-provider-connection.ts";
 import { createScmGroupAuthTool } from "./create-scm-group-auth.ts";
+import { bulkImportReposTool } from "./bulk-import-repos.ts";
+import { getBulkRepoImportGroupsStatusTool } from "./get-bulk-repo-import-groups-status.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -109,4 +111,6 @@ export const tools: AnyToolDefinition[] = [
   getScmProjectsTool,
   testScmProviderConnectionTool,
   createScmGroupAuthTool,
+  bulkImportReposTool,
+  getBulkRepoImportGroupsStatusTool,
 ];

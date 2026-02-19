@@ -176,6 +176,52 @@ export class PolarisClient {
   }
 
   /**
+   * Make a request and return the Location header from the response.
+   * Used for endpoints that return 202 with a Location header and no body.
+   */
+  async fetchLocation(path: string, options: RequestOptions = {}): Promise<string> {
+    if (!this.organizationId && !path.startsWith("/api/portfolios")) {
+      await this.resolveOrganizationId();
+    }
+
+    const url = this.buildUrl(path, options.params);
+    const headers = this.buildHeaders(options.accept, options.contentType);
+
+    if (options.headers) {
+      for (const [key, value] of Object.entries(options.headers)) {
+        headers.set(key, value);
+      }
+    }
+
+    const fetchOptions: globalThis.RequestInit = {
+      method: options.method ?? "POST",
+      headers,
+    };
+
+    if (options.body) {
+      fetchOptions.body = JSON.stringify(options.body);
+      if (!options.contentType) {
+        headers.set("Content-Type", "application/json");
+      }
+    }
+
+    const response = await globalThis.fetch(url, fetchOptions);
+
+    if (!response.ok) {
+      let detail = "";
+      try {
+        const problem = (await response.json()) as ProblemDetail;
+        detail = problem.detail ?? problem.title;
+      } catch {
+        detail = await response.text();
+      }
+      throw new Error(`Polaris API error ${response.status}: ${detail}`);
+    }
+
+    return response.headers.get("Location") ?? "";
+  }
+
+  /**
    * Fetch all pages using offset-based pagination.
    * Used by most Polaris services (portfolio, tests, auth, etc.)
    */

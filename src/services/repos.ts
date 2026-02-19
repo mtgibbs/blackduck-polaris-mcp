@@ -1,5 +1,6 @@
 import * as reposApi from "../api/repos.ts";
 import type {
+  BulkRepoImportGroupStatus,
   RepositoryBranch,
   ScmGroup,
   ScmProject,
@@ -196,4 +197,31 @@ export function createScmGroupAuth(options: CreateScmGroupAuthOptions): Promise<
     scmAuthentication,
     groupUrl: options.groupUrl,
   });
+}
+
+// --- Bulk Repo Import ---
+
+export interface BulkImportReposOptions {
+  applicationId: string;
+  scmProvider: string;
+  scmPat: string;
+  scmEmail?: string;
+  policySettings?: reposApi.PolicySettings;
+  repositories?: reposApi.RepositorySelection[];
+}
+
+export function bulkImportRepos(
+  options: BulkImportReposOptions,
+): Promise<{ location: string }> {
+  return reposApi.importReposForGroup(options);
+}
+
+export interface GetBulkRepoImportGroupsStatusOptions {
+  filter?: string;
+}
+
+export function getBulkRepoImportGroupsStatus(
+  options?: GetBulkRepoImportGroupsStatusOptions,
+): Promise<BulkRepoImportGroupStatus[]> {
+  return reposApi.getRepoImportGroupsStatus(options);
 }

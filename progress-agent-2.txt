@@ -9,6 +9,9 @@
 - No-arg MCP tools: use `_placeholder: z.string().optional()` in schema and `handler: async () => {}`
 - SCM endpoints with cursor pagination: accept cursor/limit params and return a single page via client.fetch() (not getAllOffset/getAllCursor) since custom headers can't be passed through pagination helpers
 
+- For 202+Location header responses: add `fetchLocation()` method to PolarisClient in client.ts that returns the Location header string instead of parsing JSON body
+- Bulk import tools: MCP tool takes repositories as JSON string (parse with JSON.parse), policy IDs as comma-separated string (split by comma)
+
 ---
 
 ## 2026-02-19T21:45:00Z - PRD-R1
@@ -47,6 +50,24 @@
   - `deno fmt` auto-fixes line length issues; always run after writing long lines
   - Service layer for auth params: construct `scmAuthentication` object conditionally only if any auth fields provided
   - ScmAuthentication is a reusable interface defined in api/repos.ts that other stories can import
+---
+
+## 2026-02-19T22:35:00Z - PRD-R4
+- Implemented Bulk repository import and status tracking
+- Files changed:
+  - `src/api/client.ts`: Added `fetchLocation()` method to PolarisClient for 202+Location header responses
+  - `src/api/repos.ts`: Added imports for BulkRepoImportGroupStatus; added `importReposForGroup()` and `getRepoImportGroupsStatus()` API functions with interfaces (RepositorySelection, PolicySettings, ImportReposForGroupParams, GetRepoImportGroupsStatusParams)
+  - `src/services/repos.ts`: Added import for BulkRepoImportGroupStatus; added `bulkImportRepos()` and `getBulkRepoImportGroupsStatus()` service functions with Options interfaces
+  - `src/mcp/tools/bulk-import-repos.ts` (new): Write tool for initiating bulk repo import; parses repositories JSON string and splits comma-separated policy IDs
+  - `src/mcp/tools/get-bulk-repo-import-groups-status.ts` (new): Read tool for getting bulk import groups status with optional filter
+  - `src/mcp/tools/index.ts`: Registered both new tools
+  - `prd.json`: Set PRD-R4 passes: true
+- All checks pass: `deno task check`, `deno lint`, `deno fmt --check`
+- **Learnings for future iterations:**
+  - HTTP 202 responses with Location header require a new client method `fetchLocation()` since `fetch()` tries to parse JSON body
+  - `client.fetchLocation()` returns `Promise<string>` (the Location header value)
+  - The pattern `Promise<{ location: string }>` wraps the location string for consistent API shape
+
 ---
 
 ## 2026-02-19T22:20:00Z - PRD-R3

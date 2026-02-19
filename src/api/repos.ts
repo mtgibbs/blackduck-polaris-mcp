@@ -1,5 +1,6 @@
 import { getClient } from "./client.ts";
 import type {
+  BulkRepoImportGroupStatus,
   RepositoryBranch,
   ScmGroup,
   ScmProject,
@@ -352,4 +353,68 @@ export function createGroupAuth(params: CreateGroupAuthParams): Promise<void> {
     accept: ACCEPT_GROUPS_AUTH,
     contentType: ACCEPT_GROUPS_AUTH,
   });
+}
+
+// --- Bulk Repo Import ---
+
+export interface RepositorySelection {
+  groupName: string;
+  allRepositoriesInGroup: boolean;
+  includeRepositories?: string[];
+  excludeRepositories?: string[];
+}
+
+export interface PolicySettings {
+  issuePolicyIds?: string[];
+  scanPolicyIds?: string[];
+}
+
+export interface ImportReposForGroupParams {
+  applicationId: string;
+  scmProvider: string;
+  scmPat: string;
+  scmEmail?: string;
+  policySettings?: PolicySettings;
+  repositories?: RepositorySelection[];
+}
+
+export async function importReposForGroup(
+  params: ImportReposForGroupParams,
+): Promise<{ location: string }> {
+  const client = getClient();
+  const headers: Record<string, string> = {
+    "X-Polaris-SCM-PAT": params.scmPat,
+  };
+  if (params.scmEmail) headers["X-Polaris-SCM-Email"] = params.scmEmail;
+  const body: Record<string, unknown> = {
+    applicationId: params.applicationId,
+    scmProvider: params.scmProvider,
+  };
+  if (params.policySettings) body.policySettings = params.policySettings;
+  if (params.repositories) body.repositories = params.repositories;
+  const location = await client.fetchLocation("/api/integrations/repos/bulk-repo-import", {
+    method: "POST",
+    body,
+    accept: ACCEPT_BULK_REPO_IMPORT,
+    contentType: ACCEPT_BULK_REPO_IMPORT,
+    headers,
+  });
+  return { location };
+}
+
+export interface GetRepoImportGroupsStatusParams {
+  filter?: string;
+}
+
+export function getRepoImportGroupsStatus(
+  params?: GetRepoImportGroupsStatusParams,
+): Promise<BulkRepoImportGroupStatus[]> {
+  const client = getClient();
+  const queryParams: Record<string, string | undefined> = {};
+  if (params?.filter) queryParams._filter = params.filter;
+  return client.getAllOffset<BulkRepoImportGroupStatus>(
+    "/api/integrations/repos/bulk-repo-import/groups/status",
+    queryParams,
+    ACCEPT_BULK_REPO_IMPORT_GROUPS_STATUS,
+  );
 }
