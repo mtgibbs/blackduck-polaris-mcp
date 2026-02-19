@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.1.3](https://github.com/mtgibbs/blackduck-polaris-mcp/compare/blackduck-polaris-mcp-v0.1.2...blackduck-polaris-mcp-v0.1.3) (2026-02-19)
+
+
+### Features
+
+* add bug tracking integration (Jira/Azure DevOps export) ([2d7763f](https://github.com/mtgibbs/blackduck-polaris-mcp/commit/2d7763f54eb4afa7a62950e598470f45ffb37ba7))
+* auto-resolve Organization-Id from portfolio API as fallback ([b858ca9](https://github.com/mtgibbs/blackduck-polaris-mcp/commit/b858ca937fe8e0da36229240a771e8c816fe21d5))
+* Complete Findings API implementation (35 endpoints) ([#5](https://github.com/mtgibbs/blackduck-polaris-mcp/issues/5)) ([fa3310d](https://github.com/mtgibbs/blackduck-polaris-mcp/commit/fa3310d8a16e6640e41d7fc3c283096934dbd36a))
+
+
+### Bug Fixes
+
+* align API layer with portfolio and findings OpenAPI specs ([0a8cb81](https://github.com/mtgibbs/blackduck-polaris-mcp/commit/0a8cb81359f8779e0a509c7d3b7f7337858970e5))
+* align API layer with portfolio and findings OpenAPI specs ([6973b20](https://github.com/mtgibbs/blackduck-polaris-mcp/commit/6973b2018523fba53bb6dd4ce0284e951f25399c))
+* align bug tracking API with actual OpenAPI spec ([4fc6aad](https://github.com/mtgibbs/blackduck-polaris-mcp/commit/4fc6aadff3f000e3a063518998897bc4b69a80e1))
+
 ## [0.1.2](https://github.com/mtgibbs/blackduck-polaris-mcp/compare/blackduck-polaris-mcp-v0.1.1...blackduck-polaris-mcp-v0.1.2) (2026-02-18)
 
 
