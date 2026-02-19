@@ -2,6 +2,7 @@ import { getClient } from "./client.ts";
 import type {
   BugTrackingConfiguration,
   CreateBugTrackingConfigRequest,
+  CreateProjectMappingRequest,
   ExportCommentRequest,
   ExternalIssueType,
   ExternalProject,
@@ -9,6 +10,7 @@ import type {
   ProjectMapping,
   TestConnectionResult,
   UpdateBugTrackingConfigRequest,
+  UpdateProjectMappingRequest,
 } from "../types/polaris.ts";
 
 const ACCEPT = "application/vnd.polaris.bugtracking.configuration-1+json";
@@ -249,6 +251,76 @@ export function addIssueExportComment(
       body,
       accept: ACCEPT,
       contentType: ACCEPT,
+    },
+  );
+}
+
+// --- Config-scoped Project Mappings ---
+
+export function createConfigProjectMapping(
+  configurationId: string,
+  body: CreateProjectMappingRequest,
+): Promise<ProjectMapping> {
+  const client = getClient();
+  return client.fetch<ProjectMapping>(
+    `/api/integrations/bugtracking/configurations/${configurationId}/project-mappings`,
+    {
+      method: "POST",
+      body,
+      accept: ACCEPT,
+      contentType: ACCEPT,
+    },
+  );
+}
+
+export function getConfigProjectMappings(configurationId: string): Promise<ProjectMapping[]> {
+  const client = getClient();
+  return client.getAllOffset<ProjectMapping>(
+    `/api/integrations/bugtracking/configurations/${configurationId}/project-mappings`,
+    undefined,
+    ACCEPT,
+  );
+}
+
+export function getConfigProjectMapping(
+  configurationId: string,
+  projectMappingId: string,
+): Promise<ProjectMapping> {
+  const client = getClient();
+  return client.get<ProjectMapping>(
+    `/api/integrations/bugtracking/configurations/${configurationId}/project-mappings/${projectMappingId}`,
+    undefined,
+    ACCEPT,
+  );
+}
+
+export function updateConfigProjectMapping(
+  configurationId: string,
+  projectMappingId: string,
+  body: UpdateProjectMappingRequest,
+): Promise<ProjectMapping> {
+  const client = getClient();
+  return client.fetch<ProjectMapping>(
+    `/api/integrations/bugtracking/configurations/${configurationId}/project-mappings/${projectMappingId}`,
+    {
+      method: "PATCH",
+      body,
+      accept: ACCEPT,
+      contentType: ACCEPT,
+    },
+  );
+}
+
+export function deleteConfigProjectMapping(
+  configurationId: string,
+  projectMappingId: string,
+): Promise<void> {
+  const client = getClient();
+  return client.fetch<void>(
+    `/api/integrations/bugtracking/configurations/${configurationId}/project-mappings/${projectMappingId}`,
+    {
+      method: "DELETE",
+      accept: ACCEPT,
     },
   );
 }

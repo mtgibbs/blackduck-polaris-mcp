@@ -51,6 +51,11 @@ import { deleteBugTrackingConfigTool } from "./delete-bug-tracking-config.ts";
 import { testBugTrackingConnectionTool } from "./test-bug-tracking-connection.ts";
 import { deleteIssueExportTool } from "./delete-issue-export.ts";
 import { addIssueExportCommentTool } from "./add-issue-export-comment.ts";
+import { createProjectMappingTool } from "./create-project-mapping.ts";
+import { getConfigProjectMappingsTool } from "./get-config-project-mappings.ts";
+import { getConfigProjectMappingTool } from "./get-config-project-mapping.ts";
+import { updateProjectMappingTool } from "./update-project-mapping.ts";
+import { deleteProjectMappingTool } from "./delete-project-mapping.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -105,4 +110,9 @@ export const tools: AnyToolDefinition[] = [
   testBugTrackingConnectionTool,
   deleteIssueExportTool,
   addIssueExportCommentTool,
+  createProjectMappingTool,
+  getConfigProjectMappingsTool,
+  getConfigProjectMappingTool,
+  updateProjectMappingTool,
+  deleteProjectMappingTool,
 ];

@@ -2,11 +2,13 @@ import * as bugTrackingApi from "../api/bug-tracking.ts";
 import type {
   BugTrackingConfiguration,
   BugTrackingSystemType,
+  CreateProjectMappingRequest,
   ExternalIssueType,
   ExternalProject,
   LinkedIssue,
   ProjectMapping,
   TestConnectionResult,
+  UpdateProjectMappingRequest,
 } from "../types/polaris.ts";
 
 // --- Configurations ---
@@ -197,4 +199,83 @@ export function addIssueExportComment(options: AddIssueExportCommentOptions): Pr
   return bugTrackingApi.addIssueExportComment(options.configurationId, options.issueId, {
     comment: options.comment,
   });
+}
+
+// --- Config-scoped Project Mappings ---
+
+export interface CreateConfigProjectMappingOptions {
+  configurationId: string;
+  projectId: string;
+  btsProjectKey: string;
+  btsProjectId?: string;
+  btsIssueType: string;
+}
+
+export function createConfigProjectMapping(
+  options: CreateConfigProjectMappingOptions,
+): Promise<ProjectMapping> {
+  const body: CreateProjectMappingRequest = {
+    projectId: options.projectId,
+    btsProjectKey: options.btsProjectKey,
+    btsIssueType: options.btsIssueType,
+  };
+  if (options.btsProjectId) body.btsProjectId = options.btsProjectId;
+  return bugTrackingApi.createConfigProjectMapping(options.configurationId, body);
+}
+
+export interface GetConfigProjectMappingsOptions {
+  configurationId: string;
+}
+
+export function getConfigProjectMappings(
+  options: GetConfigProjectMappingsOptions,
+): Promise<ProjectMapping[]> {
+  return bugTrackingApi.getConfigProjectMappings(options.configurationId);
+}
+
+export interface GetConfigProjectMappingOptions {
+  configurationId: string;
+  projectMappingId: string;
+}
+
+export function getConfigProjectMapping(
+  options: GetConfigProjectMappingOptions,
+): Promise<ProjectMapping> {
+  return bugTrackingApi.getConfigProjectMapping(options.configurationId, options.projectMappingId);
+}
+
+export interface UpdateConfigProjectMappingOptions {
+  configurationId: string;
+  projectMappingId: string;
+  btsProjectKey?: string;
+  btsProjectId?: string;
+  btsIssueType?: string;
+}
+
+export function updateConfigProjectMapping(
+  options: UpdateConfigProjectMappingOptions,
+): Promise<ProjectMapping> {
+  const body: UpdateProjectMappingRequest = {};
+  if (options.btsProjectKey) body.btsProjectKey = options.btsProjectKey;
+  if (options.btsProjectId) body.btsProjectId = options.btsProjectId;
+  if (options.btsIssueType) body.btsIssueType = options.btsIssueType;
+  return bugTrackingApi.updateConfigProjectMapping(
+    options.configurationId,
+    options.projectMappingId,
+    body,
+  );
+}
+
+export interface DeleteConfigProjectMappingOptions {
+  configurationId: string;
+  projectMappingId: string;
+}
+
+export function deleteConfigProjectMapping(
+  options: DeleteConfigProjectMappingOptions,
+): Promise<void> {
+  return bugTrackingApi.deleteConfigProjectMapping(
+    options.configurationId,
+    options.projectMappingId,
+  );
 }
