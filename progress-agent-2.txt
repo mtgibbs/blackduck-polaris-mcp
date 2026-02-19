@@ -23,3 +23,19 @@
   - The service layer for bug-tracking.ts already had some inconsistency: `getLinkedIssues` and `getLinkedIssue` in services used positional params (not the options pattern), but for new functions we follow the options pattern
   - Quality checks run cleanly: `deno task check`, `deno task lint`, `deno fmt --check` all pass
 ---
+
+## 2026-02-19 - PRD-BT5
+- Implemented delete issue export and add comment endpoints
+- Files changed:
+  - src/api/bug-tracking.ts: Added `deleteIssueExport(configurationId, issueId)` and `addIssueExportComment(configurationId, issueId, body)` functions
+  - src/services/bug-tracking.ts: Added `DeleteIssueExportOptions`, `deleteIssueExport(options)`, `AddIssueExportCommentOptions`, `addIssueExportComment(options)` service wrappers
+  - src/mcp/tools/delete-issue-export.ts: Created tool `delete_issue_export` with `config_id`, `issue_id` params, annotations include `destructiveHint: true`
+  - src/mcp/tools/add-issue-export-comment.ts: Created tool `add_issue_export_comment` with `config_id`, `issue_id`, `comment` params
+  - src/mcp/tools/index.ts: Registered both new tools
+  - prd.json: Set passes=true for PRD-BT5
+- **Learnings for future iterations:**
+  - `ExportCommentRequest` type was already added by PRD-BT1/agent-1 work before this iteration
+  - DELETE endpoints with no return body: use `client.fetch<void>()` with `method: "DELETE"`, `accept: ACCEPT` only (no contentType needed)
+  - For void-return DELETE tools, return `jsonResponse({ success: true })` as confirmation
+  - All checks passed: `deno task check`, `deno task lint`, `deno fmt --check`
+---

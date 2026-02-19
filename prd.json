@@ -130,7 +130,7 @@
         "`deno fmt --check` passes"
       ],
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "notes": "Depends on PRD-BT1 for ExportCommentRequest type. Delete only removes the Polaris-side link record, not the actual BTS issue. The comment endpoint creates a comment on the BTS ticket via the integration.",
       "claimed_by": "agent-2",
       "claimed_at": "2026-02-19T22:03:17Z"
