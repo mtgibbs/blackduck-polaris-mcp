@@ -1,6 +1,10 @@
 import { getClient } from "./client.ts";
 import type {
   RepositoryBranch,
+  ScmGroup,
+  ScmProject,
+  ScmProviderInfo,
+  ScmRemoteRepository,
   ScmRepository,
   ScmRepositoryCreateResponse,
   ScmRepositoryPatchResponse,
@@ -193,4 +197,159 @@ export function getRepositoryBranches(
     undefined,
     ACCEPT_BRANCH_LIST,
   );
+}
+
+// --- Providers ---
+
+export function getProviders(): Promise<ScmProviderInfo[]> {
+  const client = getClient();
+  return client.getAllOffset<ScmProviderInfo>(
+    "/api/integrations/repos/providers",
+    undefined,
+    ACCEPT_PROVIDERS_LIST,
+  );
+}
+
+// --- SCM Connection ---
+
+export interface TestScmConnectionParams {
+  scmProvider: string;
+  scmPat: string;
+  scmEmail?: string;
+}
+
+export function testScmConnection(params: TestScmConnectionParams): Promise<unknown> {
+  const client = getClient();
+  const headers: Record<string, string> = {
+    "X-Polaris-SCM-PAT": params.scmPat,
+  };
+  if (params.scmEmail) headers["X-Polaris-SCM-Email"] = params.scmEmail;
+  return client.fetch<unknown>("/api/integrations/repos/scm/test-connection", {
+    method: "GET",
+    params: { scmProvider: params.scmProvider },
+    accept: ACCEPT_SCM_CONNECTION,
+    headers,
+  });
+}
+
+// --- SCM Groups ---
+
+export interface GetScmGroupsParams {
+  scmProvider: string;
+  scmPat: string;
+  scmEmail?: string;
+  topLevelOnly?: boolean;
+  cursor?: string;
+  limit?: number;
+}
+
+export function getScmGroups(params: GetScmGroupsParams): Promise<ScmGroup[]> {
+  const client = getClient();
+  const headers: Record<string, string> = {
+    "X-Polaris-SCM-PAT": params.scmPat,
+  };
+  if (params.scmEmail) headers["X-Polaris-SCM-Email"] = params.scmEmail;
+  const queryParams: Record<string, string | number | boolean | undefined> = {
+    scmProvider: params.scmProvider,
+  };
+  if (params.topLevelOnly !== undefined) queryParams.topLevelOnly = params.topLevelOnly;
+  if (params.cursor) queryParams._cursor = params.cursor;
+  if (params.limit) queryParams._limit = params.limit;
+  return client.fetch<ScmGroup[]>("/api/integrations/repos/scm/groups", {
+    method: "GET",
+    params: queryParams,
+    accept: ACCEPT_SCM_GROUPS,
+    headers,
+  });
+}
+
+// --- SCM Remote Repos ---
+
+export interface GetScmRemoteReposParams {
+  scmPat: string;
+  scmProvider?: string;
+  groupName?: string;
+  projectName?: string;
+  repoSearchTerm?: string;
+  includeSubGroups?: boolean;
+  scmEmail?: string;
+  cursor?: string;
+  limit?: number;
+}
+
+export function getScmRemoteRepos(params: GetScmRemoteReposParams): Promise<ScmRemoteRepository[]> {
+  const client = getClient();
+  const headers: Record<string, string> = {
+    "X-Polaris-SCM-PAT": params.scmPat,
+  };
+  if (params.scmEmail) headers["X-Polaris-SCM-Email"] = params.scmEmail;
+  const queryParams: Record<string, string | number | boolean | undefined> = {};
+  if (params.scmProvider) queryParams.scmProvider = params.scmProvider;
+  if (params.groupName) queryParams.groupName = params.groupName;
+  if (params.projectName) queryParams.projectName = params.projectName;
+  if (params.repoSearchTerm) queryParams.repoSearchTerm = params.repoSearchTerm;
+  if (params.includeSubGroups !== undefined) queryParams.includeSubGroups = params.includeSubGroups;
+  if (params.cursor) queryParams._cursor = params.cursor;
+  if (params.limit) queryParams._limit = params.limit;
+  return client.fetch<ScmRemoteRepository[]>("/api/integrations/repos/scm", {
+    method: "GET",
+    params: queryParams,
+    accept: ACCEPT_SCM_REPOS,
+    headers,
+  });
+}
+
+// --- SCM Projects ---
+
+export interface GetScmProjectsParams {
+  groupName: string;
+  scmPat: string;
+  scmProvider?: string;
+  cursor?: string;
+  limit?: number;
+}
+
+export function getScmProjects(params: GetScmProjectsParams): Promise<ScmProject[]> {
+  const client = getClient();
+  const headers: Record<string, string> = {
+    "X-Polaris-SCM-PAT": params.scmPat,
+  };
+  const queryParams: Record<string, string | number | boolean | undefined> = {};
+  if (params.scmProvider) queryParams.scmProvider = params.scmProvider;
+  if (params.cursor) queryParams._cursor = params.cursor;
+  if (params.limit) queryParams._limit = params.limit;
+  return client.fetch<ScmProject[]>(
+    `/api/integrations/repos/scm/groups/${params.groupName}/projects`,
+    {
+      method: "GET",
+      params: queryParams,
+      accept: ACCEPT_SCM_PROJECTS,
+      headers,
+    },
+  );
+}
+
+// --- Group Auth ---
+
+export interface CreateGroupAuthParams {
+  applicationId: string;
+  scmProvider: string;
+  scmAuthentication?: ScmAuthentication;
+  groupUrl?: string;
+}
+
+export function createGroupAuth(params: CreateGroupAuthParams): Promise<void> {
+  const client = getClient();
+  const body: Record<string, unknown> = {
+    applicationId: params.applicationId,
+    scmProvider: params.scmProvider,
+  };
+  if (params.scmAuthentication) body.scmAuthentication = params.scmAuthentication;
+  if (params.groupUrl) body.groupUrl = params.groupUrl;
+  return client.fetch<void>("/api/integrations/repos/scm/groups/auth", {
+    method: "POST",
+    body,
+    accept: ACCEPT_GROUPS_AUTH,
+    contentType: ACCEPT_GROUPS_AUTH,
+  });
 }

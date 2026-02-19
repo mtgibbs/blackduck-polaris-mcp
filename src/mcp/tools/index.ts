@@ -47,6 +47,12 @@ import { getScmRepositoryBranchesTool } from "./get-scm-repository-branches.ts";
 import { createScmRepositoryTool } from "./create-scm-repository.ts";
 import { updateScmRepositoryTool } from "./update-scm-repository.ts";
 import { testScmRepoConnectionTool } from "./test-scm-repo-connection.ts";
+import { getScmProvidersTool } from "./get-scm-providers.ts";
+import { getScmGroupsTool } from "./get-scm-groups.ts";
+import { getScmRemoteReposTool } from "./get-scm-remote-repos.ts";
+import { getScmProjectsTool } from "./get-scm-projects.ts";
+import { testScmProviderConnectionTool } from "./test-scm-provider-connection.ts";
+import { createScmGroupAuthTool } from "./create-scm-group-auth.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -97,4 +103,10 @@ export const tools: AnyToolDefinition[] = [
   createScmRepositoryTool,
   updateScmRepositoryTool,
   testScmRepoConnectionTool,
+  getScmProvidersTool,
+  getScmGroupsTool,
+  getScmRemoteReposTool,
+  getScmProjectsTool,
+  testScmProviderConnectionTool,
+  createScmGroupAuthTool,
 ];

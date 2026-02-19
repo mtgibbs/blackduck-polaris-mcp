@@ -5,6 +5,9 @@
 - Services scaffold: use `import * as _reposApi from "../api/repos.ts"` with underscore prefix when no functions are exported yet
 - ScmRepositoryWithBranch: spec wraps response in a `body` property but the TypeScript interface captures the fields directly
 - Two Accept media type constants lack `;charset=UTF-8` suffix: ACCEPT_GROUP_MAPPING_STATUS and ACCEPT_TEST_SETTINGS
+- Custom headers (e.g. X-Polaris-SCM-PAT): extend `RequestOptions.headers?: Record<string, string>` in client.ts; fetch() loops over it to set on the Headers object
+- No-arg MCP tools: use `_placeholder: z.string().optional()` in schema and `handler: async () => {}`
+- SCM endpoints with cursor pagination: accept cursor/limit params and return a single page via client.fetch() (not getAllOffset/getAllCursor) since custom headers can't be passed through pagination helpers
 
 ---
 
@@ -44,4 +47,25 @@
   - `deno fmt` auto-fixes line length issues; always run after writing long lines
   - Service layer for auth params: construct `scmAuthentication` object conditionally only if any auth fields provided
   - ScmAuthentication is a reusable interface defined in api/repos.ts that other stories can import
+---
+
+## 2026-02-19T22:20:00Z - PRD-R3
+- Implemented SCM providers, groups, repositories, projects, and group auth endpoints
+- Files changed:
+  - `src/api/client.ts`: Added `headers?: Record<string, string>` to RequestOptions interface; fetch() now iterates and sets custom headers
+  - `src/api/repos.ts`: Added 6 API functions (getProviders, testScmConnection, getScmGroups, getScmRemoteRepos, getScmProjects, createGroupAuth) with param interfaces; added type imports for ScmGroup, ScmProject, ScmProviderInfo, ScmRemoteRepository
+  - `src/services/repos.ts`: Added 6 service functions with Options interfaces (getScmProviders, testScmProviderConnection, getScmProviderGroups, getScmProviderRepositories, getScmProviderProjects, createScmGroupAuth); added type imports
+  - `src/mcp/tools/get-scm-providers.ts` (new): Read tool, no-arg pattern with _placeholder
+  - `src/mcp/tools/get-scm-groups.ts` (new): Read tool with scm_provider, scm_pat, scm_email, top_level_only
+  - `src/mcp/tools/get-scm-remote-repos.ts` (new): Read tool with scm_pat plus optional filters
+  - `src/mcp/tools/get-scm-projects.ts` (new): Read tool for Azure DevOps projects within a group
+  - `src/mcp/tools/test-scm-provider-connection.ts` (new): Write tool for testing SCM connection
+  - `src/mcp/tools/create-scm-group-auth.ts` (new): Write tool for creating group authentication
+  - `src/mcp/tools/index.ts`: Registered all 6 new tools
+  - `prd.json`: Set PRD-R3 passes: true
+- All checks pass: `deno task check`, `deno lint`, `deno fmt --check`
+- **Learnings for future iterations:**
+  - SCM endpoints with custom headers (X-Polaris-SCM-PAT etc.) must use client.fetch() directly, not getAllOffset/getAllCursor helpers
+  - For cursor-paginated SCM endpoints, accept cursor/limit params and return a single page (first page if no cursor given)
+  - No-arg tools: use `_placeholder: z.string().optional()` schema + `handler: async () => {}`
 ---

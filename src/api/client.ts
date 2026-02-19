@@ -30,6 +30,7 @@ export interface RequestOptions {
   params?: Record<string, string | number | boolean | undefined>;
   accept?: string;
   contentType?: string;
+  headers?: Record<string, string>;
 }
 
 let client: PolarisClient | null = null;
@@ -127,6 +128,12 @@ export class PolarisClient {
 
     const url = this.buildUrl(path, options.params);
     const headers = this.buildHeaders(options.accept, options.contentType);
+
+    if (options.headers) {
+      for (const [key, value] of Object.entries(options.headers)) {
+        headers.set(key, value);
+      }
+    }
 
     const fetchOptions: globalThis.RequestInit = {
       method: options.method ?? "GET",
