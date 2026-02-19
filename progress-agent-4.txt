@@ -53,6 +53,25 @@
   - OperationStatus has status (PROCESSING|COMPLETED|ERROR), actionType (ADD|EDIT|DELETE), timestamp
 ---
 
+## 2026-02-19 - PRD-P2
+- Implemented Application CRUD (get, create, update, delete) across all layers:
+  1. src/types/polaris.ts: Added all 24 Portfolio type interfaces for PRD-P1 dependency (CreateApplicationRequest, UpdateApplicationRequest, CreateProjectRequest, UpdateProjectRequest, CreateBranchRequest, UpdateBranchRequest, ProjectSubResource, ProjectSubResourceCountItem, Profile, ProfileArtifact, CreateProfileArtifactRequest, Label, CreateLabelRequest, MergeLabelRequest, ApplicationEntitlementItem, ApplicationEntitlementsResponse, EntitlementQuantityUpdateRequest, EntitlementQuantityUpdateResponse, PortfolioEntitlement, OrganizationSettings, RiskCategory, RiskFactor, RiskScoringSettings, DashboardItem)
+  2. src/api/portfolio.ts: Refactored getApplication() from positional args to options object (GetApplicationParams); added createApplication(), updateApplication(), deleteApplication(); also imported CreateApplicationRequest and UpdateApplicationRequest
+  3. src/services/portfolio.ts: Added GetApplicationOptions interface; refactored getApplication() to use options object; added CreateApplicationOptions, UpdateApplicationOptions, DeleteApplicationOptions interfaces and corresponding service functions
+  4. src/mcp/tools/get-application.ts: Created get_application tool (readOnlyHint: true)
+  5. src/mcp/tools/create-application.ts: Created create_application tool (readOnlyHint: false)
+  6. src/mcp/tools/update-application.ts: Created update_application tool (readOnlyHint: false)
+  7. src/mcp/tools/delete-application.ts: Created delete_application tool (readOnlyHint: false, destructiveHint: true)
+  8. src/mcp/tools/index.ts: Registered all 4 new tools
+- Files changed: src/types/polaris.ts, src/api/portfolio.ts, src/services/portfolio.ts, src/mcp/tools/get-application.ts (new), src/mcp/tools/create-application.ts (new), src/mcp/tools/update-application.ts (new), src/mcp/tools/delete-application.ts (new), src/mcp/tools/index.ts, prd.json
+- **Learnings for future iterations:**
+  - Portfolio types all share the same polaris.ts file; Link forward references (LinkEntry used before it's defined at line 675) work fine in TypeScript same-file interfaces
+  - Agent-1 already implemented PRD-P3 (Project CRUD) in parallel — when rebasing, merge both sets of imports (CreateApplicationRequest + CreateProjectRequest both needed)
+  - Portfolio API media types: ACCEPT_APPS = "application/vnd.polaris.portfolios.applications-1+json", ACCEPT_PROJECTS = "application/vnd.polaris.portfolios.projects-1+json", ACCEPT_BRANCHES = "application/vnd.polaris.portfolios.branches-1+json"
+  - For delete (204) endpoints in tools: use `await deleteApplication(...)` then return `jsonResponse({ success: true })`
+  - Tool error handling pattern: wrap service call in try/catch, return errorResponse(err instanceof Error ? err.message : String(err))
+---
+
 ## Codebase Patterns
 - Tool definitions: schema is plain object of Zod types (NOT z.object()), handler destructures args, return jsonResponse(data) or errorResponse(msg)
 - API layer uses client.fetch<T>() for non-GET requests with {method, params, body, accept, contentType}
