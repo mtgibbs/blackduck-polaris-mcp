@@ -1,6 +1,10 @@
 import type { AnyToolDefinition } from "../types.ts";
 import { getPortfoliosTool } from "./get-portfolios.ts";
 import { getApplicationsTool } from "./get-applications.ts";
+import { getApplicationTool } from "./get-application.ts";
+import { createApplicationTool } from "./create-application.ts";
+import { updateApplicationTool } from "./update-application.ts";
+import { deleteApplicationTool } from "./delete-application.ts";
 import { getProjectsTool } from "./get-projects.ts";
 import { getBranchesTool } from "./get-branches.ts";
 import { getIssuesTool } from "./get-issues.ts";
@@ -49,6 +53,10 @@ import { deleteProjectTool } from "./delete-project.ts";
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
   getApplicationsTool,
+  getApplicationTool,
+  createApplicationTool,
+  updateApplicationTool,
+  deleteApplicationTool,
   getProjectsTool,
   getProjectTool,
   createProjectTool,

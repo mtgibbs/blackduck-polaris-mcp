@@ -2,9 +2,11 @@ import * as portfolioApi from "../api/portfolio.ts";
 import type {
   Application,
   Branch,
+  CreateApplicationRequest,
   CreateProjectRequest,
   Portfolio,
   Project,
+  UpdateApplicationRequest,
   UpdateProjectRequest,
 } from "../types/polaris.ts";
 
@@ -25,11 +27,63 @@ export function getApplications(
   return portfolioApi.getApplications(options);
 }
 
-export function getApplication(
-  portfolioId: string,
-  applicationId: string,
-): Promise<Application> {
-  return portfolioApi.getApplication(portfolioId, applicationId);
+export interface GetApplicationOptions {
+  portfolioId: string;
+  applicationId: string;
+}
+
+export function getApplication(options: GetApplicationOptions): Promise<Application> {
+  return portfolioApi.getApplication(options);
+}
+
+export interface CreateApplicationOptions {
+  portfolioId: string;
+  name: string;
+  description?: string;
+}
+
+export function createApplication(options: CreateApplicationOptions): Promise<Application> {
+  const body: CreateApplicationRequest = { name: options.name };
+  if (options.description !== undefined) body.description = options.description;
+  return portfolioApi.createApplication({ portfolioId: options.portfolioId, body });
+}
+
+export interface UpdateApplicationOptions {
+  portfolioId: string;
+  applicationId: string;
+  name?: string;
+  description?: string;
+  inTrash?: boolean;
+  autoDeleteSetting?: boolean;
+  branchRetentionPeriodSetting?: number;
+}
+
+export function updateApplication(options: UpdateApplicationOptions): Promise<Application> {
+  const body: UpdateApplicationRequest = {};
+  if (options.name !== undefined) body.name = options.name;
+  if (options.description !== undefined) body.description = options.description;
+  if (options.inTrash !== undefined) body.inTrash = options.inTrash;
+  if (options.autoDeleteSetting !== undefined) body.autoDeleteSetting = options.autoDeleteSetting;
+  if (options.branchRetentionPeriodSetting !== undefined) {
+    body.branchRetentionPeriodSetting = options.branchRetentionPeriodSetting;
+  }
+  return portfolioApi.updateApplication({
+    portfolioId: options.portfolioId,
+    applicationId: options.applicationId,
+    body,
+  });
+}
+
+export interface DeleteApplicationOptions {
+  portfolioId: string;
+  applicationId: string;
+}
+
+export function deleteApplication(options: DeleteApplicationOptions): Promise<void> {
+  return portfolioApi.deleteApplication({
+    portfolioId: options.portfolioId,
+    applicationId: options.applicationId,
+  });
 }
 
 export interface GetProjectsOptions {

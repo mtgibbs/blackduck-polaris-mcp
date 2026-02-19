@@ -2,9 +2,11 @@ import { getClient } from "./client.ts";
 import type {
   Application,
   Branch,
+  CreateApplicationRequest,
   CreateProjectRequest,
   Portfolio,
   Project,
+  UpdateApplicationRequest,
   UpdateProjectRequest,
 } from "../types/polaris.ts";
 
@@ -44,15 +46,51 @@ export function getApplications(
   );
 }
 
-export function getApplication(
-  portfolioId: string,
-  applicationId: string,
-): Promise<Application> {
+export interface GetApplicationParams {
+  portfolioId: string;
+  applicationId: string;
+}
+
+export function getApplication(params: GetApplicationParams): Promise<Application> {
   const client = getClient();
   return client.get<Application>(
-    `/api/portfolios/${portfolioId}/applications/${applicationId}`,
+    `/api/portfolios/${params.portfolioId}/applications/${params.applicationId}`,
     undefined,
     ACCEPT_APPS,
+  );
+}
+
+export function createApplication(params: {
+  portfolioId: string;
+  body: CreateApplicationRequest;
+}): Promise<Application> {
+  const client = getClient();
+  return client.fetch<Application>(
+    `/api/portfolios/${params.portfolioId}/applications`,
+    { method: "POST", body: params.body, accept: ACCEPT_APPS, contentType: ACCEPT_APPS },
+  );
+}
+
+export function updateApplication(params: {
+  portfolioId: string;
+  applicationId: string;
+  body: UpdateApplicationRequest;
+}): Promise<Application> {
+  const client = getClient();
+  return client.fetch<Application>(
+    `/api/portfolios/${params.portfolioId}/applications/${params.applicationId}`,
+    { method: "PATCH", body: params.body, accept: ACCEPT_APPS, contentType: ACCEPT_APPS },
+  );
+}
+
+export function deleteApplication(params: {
+  portfolioId: string;
+  applicationId: string;
+}): Promise<void> {
+  const client = getClient();
+  return client.fetch<void>(
+    `/api/portfolios/${params.portfolioId}/applications/${params.applicationId}`,
+    { method: "DELETE", accept: ACCEPT_APPS },
   );
 }
 
