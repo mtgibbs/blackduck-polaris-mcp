@@ -215,7 +215,9 @@
       ],
       "priority": 8,
       "passes": false,
-      "notes": "Depends on PRD-F1 and PRD-F8 (shared types and ACCEPT constant). Delete tool uses destructiveHint: true."
+      "notes": "Depends on PRD-F1 and PRD-F8 (shared types and ACCEPT constant). Delete tool uses destructiveHint: true.",
+      "claimed_by": "agent-4",
+      "claimed_at": "2026-02-19T18:07:10Z"
     },
     {
       "id": "PRD-F10",
