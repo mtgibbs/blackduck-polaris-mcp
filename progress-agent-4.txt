@@ -178,3 +178,20 @@
   - LicenseDefinition.license is LicenseEntry[] (array), not LicenseEntry (single object) per existing type definition
   - assignComponentVersionLicense uses same ACCEPT_COMPONENT_VERSIONS media type for both accept and contentType
 ---
+
+## 2026-02-19 - PRD-P5
+- Implemented project sub-resources + profiles across all layers:
+  1. src/api/portfolio.ts: Added ACCEPT_SUB_RESOURCES and ACCEPT_PROFILES constants; added getProjectSubResources() (getAllOffset, ACCEPT_SUB_RESOURCES), getProjectSubResourceCount() (getAllOffset, ACCEPT_SUB_RESOURCES), getProfile() (client.get, ACCEPT_PROFILES), updateProfile() (client.fetch PUT, ACCEPT_PROFILES)
+  2. src/services/portfolio.ts: Added GetProjectSubResourcesOptions, GetProjectSubResourceCountOptions, GetProfileOptions, UpdateProfileOptions interfaces and corresponding service wrapper functions
+  3. src/mcp/tools/get-project-sub-resources.ts: Created get_project_sub_resources tool (readOnlyHint: true)
+  4. src/mcp/tools/get-project-sub-resource-count.ts: Created get_project_sub_resource_count tool (readOnlyHint: true)
+  5. src/mcp/tools/get-profile.ts: Created get_profile tool (readOnlyHint: true)
+  6. src/mcp/tools/update-profile.ts: Created update_profile tool (readOnlyHint: false), JSON.parse(body) before calling service
+  7. src/mcp/tools/index.ts: Registered all 4 new tools
+- Files changed: src/api/portfolio.ts, src/services/portfolio.ts, src/mcp/tools/get-project-sub-resources.ts (new), src/mcp/tools/get-project-sub-resource-count.ts (new), src/mcp/tools/get-profile.ts (new), src/mcp/tools/update-profile.ts (new), src/mcp/tools/index.ts, prd.json
+- **Learnings for future iterations:**
+  - ACCEPT_SUB_RESOURCES = "application/vnd.polaris.portfolios.project-sub-resources-1+json", ACCEPT_PROFILES = "application/vnd.polaris.portfolios.profiles-1+json"
+  - Profile update uses PUT (not PATCH) per spec
+  - Polymorphic body schemas (forms/saml/selenium/none/import) should be accepted as JSON strings in tool layer, parsed before calling service
+  - getProjectSubResourceCount also uses getAllOffset with ACCEPT_SUB_RESOURCES (not a separate count media type)
+---

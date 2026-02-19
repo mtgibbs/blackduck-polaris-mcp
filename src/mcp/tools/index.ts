@@ -55,6 +55,10 @@ import { updateBranchTool } from "./update-branch.ts";
 import { deleteBranchTool } from "./delete-branch.ts";
 import { getPortfolioProjectsTool } from "./get-portfolio-projects.ts";
 import { getPortfolioBranchesTool } from "./get-portfolio-branches.ts";
+import { getProjectSubResourcesTool } from "./get-project-sub-resources.ts";
+import { getProjectSubResourceCountTool } from "./get-project-sub-resource-count.ts";
+import { getProfileTool } from "./get-profile.ts";
+import { updateProfileTool } from "./update-profile.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -113,4 +117,8 @@ export const tools: AnyToolDefinition[] = [
   deleteBranchTool,
   getPortfolioProjectsTool,
   getPortfolioBranchesTool,
+  getProjectSubResourcesTool,
+  getProjectSubResourceCountTool,
+  getProfileTool,
+  updateProfileTool,
 ];

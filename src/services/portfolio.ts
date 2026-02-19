@@ -6,7 +6,10 @@ import type {
   CreateBranchRequest,
   CreateProjectRequest,
   Portfolio,
+  Profile,
   Project,
+  ProjectSubResource,
+  ProjectSubResourceCountItem,
   UpdateApplicationRequest,
   UpdateBranchRequest,
   UpdateProjectRequest,
@@ -262,4 +265,53 @@ export function getPortfolioBranches(
   options: GetPortfolioBranchesOptions,
 ): Promise<Branch[]> {
   return portfolioApi.getPortfolioBranches(options);
+}
+
+export interface GetProjectSubResourcesOptions {
+  portfolioId: string;
+  filter?: string;
+  sort?: string;
+  considerInheritedLabels?: boolean;
+}
+
+export function getProjectSubResources(
+  options: GetProjectSubResourcesOptions,
+): Promise<ProjectSubResource[]> {
+  return portfolioApi.getProjectSubResources(options);
+}
+
+export interface GetProjectSubResourceCountOptions {
+  portfolioId: string;
+  filter?: string;
+  sort?: string;
+  group?: string;
+}
+
+export function getProjectSubResourceCount(
+  options: GetProjectSubResourceCountOptions,
+): Promise<ProjectSubResourceCountItem[]> {
+  return portfolioApi.getProjectSubResourceCount(options);
+}
+
+export interface GetProfileOptions {
+  portfolioId: string;
+  applicationId: string;
+  projectId: string;
+  profileId: string;
+}
+
+export function getProfile(options: GetProfileOptions): Promise<Profile> {
+  return portfolioApi.getProfile(options);
+}
+
+export interface UpdateProfileOptions {
+  portfolioId: string;
+  applicationId: string;
+  projectId: string;
+  profileId: string;
+  body: Record<string, unknown>;
+}
+
+export function updateProfile(options: UpdateProfileOptions): Promise<Profile> {
+  return portfolioApi.updateProfile(options);
 }

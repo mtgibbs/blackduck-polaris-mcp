@@ -6,7 +6,10 @@ import type {
   CreateBranchRequest,
   CreateProjectRequest,
   Portfolio,
+  Profile,
   Project,
+  ProjectSubResource,
+  ProjectSubResourceCountItem,
   UpdateApplicationRequest,
   UpdateBranchRequest,
   UpdateProjectRequest,
@@ -173,6 +176,77 @@ export function deleteProject(params: {
   return client.fetch<void>(
     `/api/portfolios/${params.portfolioId}/applications/${params.applicationId}/projects/${params.projectId}`,
     { method: "DELETE", accept: ACCEPT_PROJECTS },
+  );
+}
+
+const ACCEPT_SUB_RESOURCES = "application/vnd.polaris.portfolios.project-sub-resources-1+json";
+const ACCEPT_PROFILES = "application/vnd.polaris.portfolios.profiles-1+json";
+
+// --- Project Sub-Resources ---
+
+export function getProjectSubResources(params: {
+  portfolioId: string;
+  filter?: string;
+  sort?: string;
+  considerInheritedLabels?: boolean;
+}): Promise<ProjectSubResource[]> {
+  const client = getClient();
+  const queryParams: Record<string, string | boolean | undefined> = {};
+  if (params.filter) queryParams._filter = params.filter;
+  if (params.sort) queryParams._sort = params.sort;
+  if (params.considerInheritedLabels !== undefined) {
+    queryParams._considerInheritedLabels = params.considerInheritedLabels;
+  }
+  return client.getAllOffset<ProjectSubResource>(
+    `/api/portfolios/${params.portfolioId}/project-sub-resources`,
+    queryParams,
+    ACCEPT_SUB_RESOURCES,
+  );
+}
+
+export function getProjectSubResourceCount(params: {
+  portfolioId: string;
+  filter?: string;
+  sort?: string;
+  group?: string;
+}): Promise<ProjectSubResourceCountItem[]> {
+  const client = getClient();
+  const queryParams: Record<string, string | undefined> = {};
+  if (params.filter) queryParams._filter = params.filter;
+  if (params.sort) queryParams._sort = params.sort;
+  if (params.group) queryParams._group = params.group;
+  return client.getAllOffset<ProjectSubResourceCountItem>(
+    `/api/portfolios/${params.portfolioId}/project-sub-resources/_actions/count`,
+    queryParams,
+    ACCEPT_SUB_RESOURCES,
+  );
+}
+
+export function getProfile(params: {
+  portfolioId: string;
+  applicationId: string;
+  projectId: string;
+  profileId: string;
+}): Promise<Profile> {
+  const client = getClient();
+  return client.get<Profile>(
+    `/api/portfolios/${params.portfolioId}/applications/${params.applicationId}/projects/${params.projectId}/profiles/${params.profileId}`,
+    undefined,
+    ACCEPT_PROFILES,
+  );
+}
+
+export function updateProfile(params: {
+  portfolioId: string;
+  applicationId: string;
+  projectId: string;
+  profileId: string;
+  body: Record<string, unknown>;
+}): Promise<Profile> {
+  const client = getClient();
+  return client.fetch<Profile>(
+    `/api/portfolios/${params.portfolioId}/applications/${params.applicationId}/projects/${params.projectId}/profiles/${params.profileId}`,
+    { method: "PUT", body: params.body, accept: ACCEPT_PROFILES, contentType: ACCEPT_PROFILES },
   );
 }
 
