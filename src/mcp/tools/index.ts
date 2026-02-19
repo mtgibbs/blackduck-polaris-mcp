@@ -49,6 +49,12 @@ import { getProjectTool } from "./get-project.ts";
 import { createProjectTool } from "./create-project.ts";
 import { updateProjectTool } from "./update-project.ts";
 import { deleteProjectTool } from "./delete-project.ts";
+import { getBranchTool } from "./get-branch.ts";
+import { createBranchTool } from "./create-branch.ts";
+import { updateBranchTool } from "./update-branch.ts";
+import { deleteBranchTool } from "./delete-branch.ts";
+import { getPortfolioProjectsTool } from "./get-portfolio-projects.ts";
+import { getPortfolioBranchesTool } from "./get-portfolio-branches.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -101,4 +107,10 @@ export const tools: AnyToolDefinition[] = [
   getComponentOriginsTool,
   getComponentOriginTool,
   getComponentOriginMatchesTool,
+  getBranchTool,
+  createBranchTool,
+  updateBranchTool,
+  deleteBranchTool,
+  getPortfolioProjectsTool,
+  getPortfolioBranchesTool,
 ];

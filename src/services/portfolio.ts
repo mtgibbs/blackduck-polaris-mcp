@@ -3,10 +3,12 @@ import type {
   Application,
   Branch,
   CreateApplicationRequest,
+  CreateBranchRequest,
   CreateProjectRequest,
   Portfolio,
   Project,
   UpdateApplicationRequest,
+  UpdateBranchRequest,
   UpdateProjectRequest,
 } from "../types/polaris.ts";
 
@@ -182,4 +184,82 @@ export function getBranches(
   options: GetBranchesOptions,
 ): Promise<Branch[]> {
   return portfolioApi.getBranches(options);
+}
+
+export interface GetBranchOptions {
+  portfolioId: string;
+  applicationId: string;
+  projectId: string;
+  branchId: string;
+}
+
+export function getBranch(options: GetBranchOptions): Promise<Branch> {
+  return portfolioApi.getBranch(options);
+}
+
+export interface CreateBranchOptions {
+  portfolioId: string;
+  applicationId: string;
+  projectId: string;
+  name: string;
+}
+
+export function createBranch(options: CreateBranchOptions): Promise<Branch> {
+  const body: CreateBranchRequest = { name: options.name };
+  return portfolioApi.createBranch({
+    portfolioId: options.portfolioId,
+    applicationId: options.applicationId,
+    projectId: options.projectId,
+    body,
+  });
+}
+
+export interface UpdateBranchOptions {
+  portfolioId: string;
+  applicationId: string;
+  projectId: string;
+  branchId: string;
+  name?: string;
+  isDefault?: boolean;
+}
+
+export function updateBranch(options: UpdateBranchOptions): Promise<Branch> {
+  const body: UpdateBranchRequest = {};
+  if (options.name !== undefined) body.name = options.name;
+  if (options.isDefault !== undefined) body.isDefault = options.isDefault;
+  return portfolioApi.updateBranch({
+    portfolioId: options.portfolioId,
+    applicationId: options.applicationId,
+    projectId: options.projectId,
+    branchId: options.branchId,
+    body,
+  });
+}
+
+export interface DeleteBranchOptions {
+  portfolioId: string;
+  applicationId: string;
+  projectId: string;
+  branchId: string;
+}
+
+export function deleteBranch(options: DeleteBranchOptions): Promise<void> {
+  return portfolioApi.deleteBranch({
+    portfolioId: options.portfolioId,
+    applicationId: options.applicationId,
+    projectId: options.projectId,
+    branchId: options.branchId,
+  });
+}
+
+export interface GetPortfolioBranchesOptions {
+  portfolioId: string;
+  filter?: string;
+  sort?: string;
+}
+
+export function getPortfolioBranches(
+  options: GetPortfolioBranchesOptions,
+): Promise<Branch[]> {
+  return portfolioApi.getPortfolioBranches(options);
 }

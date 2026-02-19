@@ -3,10 +3,12 @@ import type {
   Application,
   Branch,
   CreateApplicationRequest,
+  CreateBranchRequest,
   CreateProjectRequest,
   Portfolio,
   Project,
   UpdateApplicationRequest,
+  UpdateBranchRequest,
   UpdateProjectRequest,
 } from "../types/polaris.ts";
 
@@ -195,6 +197,76 @@ export function getBranches(
   if (params.includeLabelIds) queryParams._includeLabelIds = params.includeLabelIds;
   return client.getAllOffset<Branch>(
     `/api/portfolios/${params.portfolioId}/applications/${params.applicationId}/projects/${params.projectId}/branches`,
+    queryParams,
+    ACCEPT_BRANCHES,
+  );
+}
+
+export function getBranch(params: {
+  portfolioId: string;
+  applicationId: string;
+  projectId: string;
+  branchId: string;
+}): Promise<Branch> {
+  const client = getClient();
+  return client.get<Branch>(
+    `/api/portfolios/${params.portfolioId}/applications/${params.applicationId}/projects/${params.projectId}/branches/${params.branchId}`,
+    undefined,
+    ACCEPT_BRANCHES,
+  );
+}
+
+export function createBranch(params: {
+  portfolioId: string;
+  applicationId: string;
+  projectId: string;
+  body: CreateBranchRequest;
+}): Promise<Branch> {
+  const client = getClient();
+  return client.fetch<Branch>(
+    `/api/portfolios/${params.portfolioId}/applications/${params.applicationId}/projects/${params.projectId}/branches`,
+    { method: "POST", body: params.body, accept: ACCEPT_BRANCHES, contentType: ACCEPT_BRANCHES },
+  );
+}
+
+export function updateBranch(params: {
+  portfolioId: string;
+  applicationId: string;
+  projectId: string;
+  branchId: string;
+  body: UpdateBranchRequest;
+}): Promise<Branch> {
+  const client = getClient();
+  return client.fetch<Branch>(
+    `/api/portfolios/${params.portfolioId}/applications/${params.applicationId}/projects/${params.projectId}/branches/${params.branchId}`,
+    { method: "PATCH", body: params.body, accept: ACCEPT_BRANCHES, contentType: ACCEPT_BRANCHES },
+  );
+}
+
+export function deleteBranch(params: {
+  portfolioId: string;
+  applicationId: string;
+  projectId: string;
+  branchId: string;
+}): Promise<void> {
+  const client = getClient();
+  return client.fetch<void>(
+    `/api/portfolios/${params.portfolioId}/applications/${params.applicationId}/projects/${params.projectId}/branches/${params.branchId}`,
+    { method: "DELETE", accept: ACCEPT_BRANCHES },
+  );
+}
+
+export function getPortfolioBranches(params: {
+  portfolioId: string;
+  filter?: string;
+  sort?: string;
+}): Promise<Branch[]> {
+  const client = getClient();
+  const queryParams: Record<string, string | undefined> = {};
+  if (params.filter) queryParams._filter = params.filter;
+  if (params.sort) queryParams._sort = params.sort;
+  return client.getAllOffset<Branch>(
+    `/api/portfolios/${params.portfolioId}/branches`,
     queryParams,
     ACCEPT_BRANCHES,
   );
