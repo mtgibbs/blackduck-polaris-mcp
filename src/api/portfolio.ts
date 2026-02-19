@@ -8,11 +8,13 @@ import type {
   CreateProjectRequest,
   Label,
   MergeLabelRequest,
+  OrganizationSettings,
   Portfolio,
   Profile,
   Project,
   ProjectSubResource,
   ProjectSubResourceCountItem,
+  RiskScoringSettings,
   UpdateApplicationRequest,
   UpdateBranchRequest,
   UpdateProjectRequest,
@@ -411,5 +413,50 @@ export function mergeLabels(params: { body: MergeLabelRequest }): Promise<Label>
     body: params.body,
     accept: ACCEPT_LABELS,
     contentType: ACCEPT_LABELS,
+  });
+}
+
+const ACCEPT_SETTINGS = "application/vnd.polaris.portfolios.settings-1+json";
+const ACCEPT_RISK_SCORING = "application/vnd.polaris.portfolios.risk-scoring-settings-1+json";
+
+// --- Organization Settings ---
+
+export function getOrganizationSettings(): Promise<OrganizationSettings> {
+  const client = getClient();
+  return client.get<OrganizationSettings>("/api/portfolios/settings", undefined, ACCEPT_SETTINGS);
+}
+
+export function updateOrganizationSettings(params: {
+  body: Partial<OrganizationSettings>;
+}): Promise<OrganizationSettings> {
+  const client = getClient();
+  return client.fetch<OrganizationSettings>("/api/portfolios/settings", {
+    method: "PATCH",
+    body: params.body,
+    accept: ACCEPT_SETTINGS,
+    contentType: ACCEPT_SETTINGS,
+  });
+}
+
+// --- Risk Scoring Settings ---
+
+export function getRiskScoringSettings(): Promise<RiskScoringSettings> {
+  const client = getClient();
+  return client.get<RiskScoringSettings>(
+    "/api/portfolios/risk-scoring",
+    undefined,
+    ACCEPT_RISK_SCORING,
+  );
+}
+
+export function updateRiskScoringSettings(params: {
+  body: RiskScoringSettings;
+}): Promise<RiskScoringSettings> {
+  const client = getClient();
+  return client.fetch<RiskScoringSettings>("/api/portfolios/risk-scoring", {
+    method: "PUT",
+    body: params.body,
+    accept: ACCEPT_RISK_SCORING,
+    contentType: ACCEPT_RISK_SCORING,
   });
 }

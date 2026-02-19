@@ -8,11 +8,14 @@ import type {
   CreateProjectRequest,
   Label,
   MergeLabelRequest,
+  OrganizationSettings,
   Portfolio,
   Profile,
   Project,
   ProjectSubResource,
   ProjectSubResourceCountItem,
+  RiskFactor,
+  RiskScoringSettings,
   UpdateApplicationRequest,
   UpdateBranchRequest,
   UpdateProjectRequest,
@@ -386,4 +389,44 @@ export function mergeLabels(options: MergeLabelsOptions): Promise<Label> {
     body.targetLabel.description = options.targetDescription;
   }
   return portfolioApi.mergeLabels({ body });
+}
+
+// --- Organization Settings ---
+
+export function getOrganizationSettings(): Promise<OrganizationSettings> {
+  return portfolioApi.getOrganizationSettings();
+}
+
+export interface UpdateOrganizationSettingsOptions {
+  allowLabelCreationForApplicationRoleUser?: boolean;
+}
+
+export function updateOrganizationSettings(
+  options: UpdateOrganizationSettingsOptions,
+): Promise<OrganizationSettings> {
+  const body: Partial<OrganizationSettings> = {};
+  if (options.allowLabelCreationForApplicationRoleUser !== undefined) {
+    body.allowLabelCreationForApplicationRoleUser =
+      options.allowLabelCreationForApplicationRoleUser;
+  }
+  return portfolioApi.updateOrganizationSettings({ body });
+}
+
+// --- Risk Scoring Settings ---
+
+export function getRiskScoringSettings(): Promise<RiskScoringSettings> {
+  return portfolioApi.getRiskScoringSettings();
+}
+
+export interface UpdateRiskScoringSettingsOptions {
+  isEnabled: boolean;
+  riskFactors: RiskFactor[];
+}
+
+export function updateRiskScoringSettings(
+  options: UpdateRiskScoringSettingsOptions,
+): Promise<RiskScoringSettings> {
+  return portfolioApi.updateRiskScoringSettings({
+    body: { isEnabled: options.isEnabled, riskFactors: options.riskFactors },
+  });
 }

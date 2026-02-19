@@ -65,6 +65,10 @@ import { getLabelTool } from "./get-label.ts";
 import { updateLabelTool } from "./update-label.ts";
 import { deleteLabelTool } from "./delete-label.ts";
 import { mergeLabelsTool } from "./merge-labels.ts";
+import { getOrganizationSettingsTool } from "./get-organization-settings.ts";
+import { updateOrganizationSettingsTool } from "./update-organization-settings.ts";
+import { getRiskScoringSettingsTool } from "./get-risk-scoring-settings.ts";
+import { updateRiskScoringSettingsTool } from "./update-risk-scoring-settings.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -133,4 +137,8 @@ export const tools: AnyToolDefinition[] = [
   updateLabelTool,
   deleteLabelTool,
   mergeLabelsTool,
+  getOrganizationSettingsTool,
+  updateOrganizationSettingsTool,
+  getRiskScoringSettingsTool,
+  updateRiskScoringSettingsTool,
 ];
