@@ -247,3 +247,29 @@ export function getIssueCountOverTime(
 ): Promise<IssueCountOverTimeResponse> {
   return findingsApi.getIssueCountOverTime(options);
 }
+
+// --- Pending Approval ---
+
+export interface ChangePendingFixByOptions {
+  projectId: string;
+  branchId?: string;
+  ids: string[];
+  action: "approved" | "rejected";
+  comment?: string;
+}
+
+export function changePendingFixBy(options: ChangePendingFixByOptions): Promise<void> {
+  return findingsApi.changePendingFixBy(options);
+}
+
+export interface ChangePendingStatusOptions {
+  projectId: string;
+  branchId?: string;
+  ids: string[];
+  action: "approved" | "rejected";
+  comment?: string;
+}
+
+export function changePendingStatus(options: ChangePendingStatusOptions): Promise<void> {
+  return findingsApi.changePendingStatus(options);
+}

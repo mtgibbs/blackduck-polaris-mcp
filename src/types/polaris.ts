@@ -363,6 +363,16 @@ export interface IssueCountOverTimeResponse {
   _type?: string;
 }
 
+// --- Pending Approval ---
+
+export type PendingApprovalAction = "approved" | "rejected";
+
+export interface PendingApprovalRequest {
+  ids: string[];
+  action: PendingApprovalAction;
+  comment?: string;
+}
+
 // --- Tests ---
 
 export interface Test {

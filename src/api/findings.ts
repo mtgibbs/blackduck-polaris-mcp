@@ -8,6 +8,7 @@ import type {
   IssueCountOverTimeResponse,
   IssueExportItem,
   Occurrence,
+  PendingApprovalRequest,
   TriagePropertyInput,
   TriageRequest,
   TriageResult,
@@ -427,6 +428,73 @@ export function provideAssistFeedback(
       contentType: "application/json-patch+json",
     },
   );
+}
+
+// --- Pending Approval ---
+
+const CONTENT_TYPE_CHANGE_PENDING_FIX_BY =
+  "application/vnd.polaris.findings.issues-change-pending-fix-by-1+json";
+const CONTENT_TYPE_CHANGE_PENDING_STATUS =
+  "application/vnd.polaris.findings.issues-change-pending-status-1+json";
+
+export interface ChangePendingFixByParams {
+  projectId: string;
+  branchId?: string;
+  ids: string[];
+  action: "approved" | "rejected";
+  comment?: string;
+}
+
+export function changePendingFixBy(params: ChangePendingFixByParams): Promise<void> {
+  const client = getClient();
+  const queryParams: Record<string, string | undefined> = {
+    projectId: params.projectId,
+  };
+  if (params.branchId) queryParams.branchId = params.branchId;
+
+  const body: PendingApprovalRequest = {
+    ids: params.ids,
+    action: params.action,
+    ...(params.comment !== undefined ? { comment: params.comment } : {}),
+  };
+
+  return client.fetch<void>("/api/findings/issues/_actions/change-pending-fix-by", {
+    method: "POST",
+    params: queryParams,
+    body,
+    accept: ACCEPT_ISSUES,
+    contentType: CONTENT_TYPE_CHANGE_PENDING_FIX_BY,
+  });
+}
+
+export interface ChangePendingStatusParams {
+  projectId: string;
+  branchId?: string;
+  ids: string[];
+  action: "approved" | "rejected";
+  comment?: string;
+}
+
+export function changePendingStatus(params: ChangePendingStatusParams): Promise<void> {
+  const client = getClient();
+  const queryParams: Record<string, string | undefined> = {
+    projectId: params.projectId,
+  };
+  if (params.branchId) queryParams.branchId = params.branchId;
+
+  const body: PendingApprovalRequest = {
+    ids: params.ids,
+    action: params.action,
+    ...(params.comment !== undefined ? { comment: params.comment } : {}),
+  };
+
+  return client.fetch<void>("/api/findings/issues/_actions/change-pending-status", {
+    method: "POST",
+    params: queryParams,
+    body,
+    accept: ACCEPT_ISSUES,
+    contentType: CONTENT_TYPE_CHANGE_PENDING_STATUS,
+  });
 }
 
 // --- Artifacts ---

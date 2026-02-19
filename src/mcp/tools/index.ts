@@ -18,6 +18,8 @@ import { getExternalProjectsTool } from "./get-external-projects.ts";
 import { exportIssuesTool } from "./export-issues.ts";
 import { exportFindingsIssuesTool } from "./export-findings-issues.ts";
 import { getIssueCountOverTimeTool } from "./get-issue-count-over-time.ts";
+import { changePendingFixByTool } from "./change-pending-fix-by.ts";
+import { changePendingStatusTool } from "./change-pending-status.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -39,4 +41,6 @@ export const tools: AnyToolDefinition[] = [
   exportIssuesTool,
   exportFindingsIssuesTool,
   getIssueCountOverTimeTool,
+  changePendingFixByTool,
+  changePendingStatusTool,
 ];
