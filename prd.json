@@ -48,7 +48,9 @@
       ],
       "priority": 2,
       "passes": false,
-      "notes": "Depends on PRD-F1. TriageHistoryTransaction type is reused by PRD-F10 (component version triage history)."
+      "notes": "Depends on PRD-F1. TriageHistoryTransaction type is reused by PRD-F10 (component version triage history).",
+      "claimed_by": "agent-3",
+      "claimed_at": "2026-02-19T17:18:38Z"
     },
     {
       "id": "PRD-F3",
