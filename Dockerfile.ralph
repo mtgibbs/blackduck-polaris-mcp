@@ -1,0 +1,7 @@
+FROM ralph-agent:latest
+
+# Install Deno
+RUN curl -fsSL https://deno.land/install.sh | DENO_INSTALL=/usr/local sh
+
+# Verify Deno is available
+RUN deno --version
