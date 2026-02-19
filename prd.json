@@ -136,7 +136,9 @@
       ],
       "priority": 2,
       "passes": false,
-      "notes": "Can run in parallel with PRD-F2 through PRD-F5. Only touches occurrence files. Depends on PRD-F1 for AssistResponse optional field fixes."
+      "notes": "Can run in parallel with PRD-F2 through PRD-F5. Only touches occurrence files. Depends on PRD-F1 for AssistResponse optional field fixes.",
+      "claimed_by": "agent-4",
+      "claimed_at": "2026-02-19T17:18:38Z"
     },
     {
       "id": "PRD-F7",
