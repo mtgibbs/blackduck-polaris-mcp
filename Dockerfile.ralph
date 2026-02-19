@@ -1,6 +1,7 @@
 FROM ralph-agent:latest
 
-# Install Deno
+# Install unzip (required by Deno installer) and Deno
+RUN apt-get update && apt-get install -y --no-install-recommends unzip && rm -rf /var/lib/apt/lists/*
 RUN curl -fsSL https://deno.land/install.sh | DENO_INSTALL=/usr/local sh
 
 # Verify Deno is available
