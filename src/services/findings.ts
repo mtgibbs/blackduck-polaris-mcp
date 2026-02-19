@@ -9,6 +9,7 @@ import type {
   ComponentVersionCountItem,
   ComponentVersionModifyRequest,
   ComponentVersionModifyResponse,
+  DetectionHistory,
   Issue,
   IssueCountItem,
   IssueCountOverTimeResponse,
@@ -92,6 +93,46 @@ export function getIssue(options: GetIssueOptions): Promise<Issue> {
     includeContext: true,
     includeComponentLocations: true,
   });
+}
+
+// --- Issue Triage History ---
+
+export interface GetIssueTriageHistoryOptions {
+  issueId: string;
+  applicationId?: string;
+  projectId?: string;
+  branchId?: string;
+  testId?: string;
+  maxResults?: number;
+}
+
+export function getIssueTriageHistory(
+  options: GetIssueTriageHistoryOptions,
+): Promise<TriageHistoryTransaction[]> {
+  return findingsApi.getIssueTriageHistory({
+    issueId: options.issueId,
+    applicationId: options.applicationId,
+    projectId: options.projectId,
+    branchId: options.branchId,
+    testId: options.testId,
+    first: options.maxResults,
+  });
+}
+
+// --- Issue Detection History ---
+
+export interface GetIssueDetectionHistoryOptions {
+  issueId: string;
+  applicationId?: string;
+  projectId?: string;
+  branchId?: string;
+  testId?: string;
+}
+
+export function getIssueDetectionHistory(
+  options: GetIssueDetectionHistoryOptions,
+): Promise<DetectionHistory> {
+  return findingsApi.getIssueDetectionHistory(options);
 }
 
 // --- Occurrences ---

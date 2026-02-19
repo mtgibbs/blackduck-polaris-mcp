@@ -279,6 +279,19 @@ export interface Attack {
   target?: string;
 }
 
+// --- Detection History ---
+
+export type DetectionEventType = "FIRST_DETECTED" | "ABSENT" | "DETECTED_AGAIN";
+
+export interface DetectionHistoryEvent {
+  eventType: DetectionEventType;
+  date: string;
+}
+
+export interface DetectionHistory {
+  history: DetectionHistoryEvent[];
+}
+
 // --- Assist Feedback Request ---
 
 export interface AssistFeedbackPatch {

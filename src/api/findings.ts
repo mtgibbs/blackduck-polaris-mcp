@@ -10,6 +10,7 @@ import type {
   ComponentVersionCountItem,
   ComponentVersionModifyRequest,
   ComponentVersionModifyResponse,
+  DetectionHistory,
   Issue,
   IssueCountItem,
   IssueCountOverTimeResponse,
@@ -133,6 +134,65 @@ export function getIssue(params: GetIssueParams): Promise<Issue> {
 
   return client.get<Issue>(
     `/api/findings/issues/${params.issueId}`,
+    Object.keys(queryParams).length > 0 ? queryParams : undefined,
+    ACCEPT_ISSUES,
+  );
+}
+
+// --- Issue Triage History ---
+
+export interface GetIssueTriageHistoryParams {
+  issueId: string;
+  applicationId?: string;
+  projectId?: string;
+  branchId?: string;
+  testId?: string;
+  first?: number;
+}
+
+export function getIssueTriageHistory(
+  params: GetIssueTriageHistoryParams,
+): Promise<TriageHistoryTransaction[]> {
+  const client = getClient();
+  const queryParams: Record<string, string | number | boolean | undefined> = {
+    _first: params.first ?? 100,
+  };
+
+  if (params.applicationId) queryParams.applicationId = params.applicationId;
+  if (params.projectId) queryParams.projectId = params.projectId;
+  if (params.branchId) queryParams.branchId = params.branchId;
+  if (params.testId) queryParams.testId = params.testId;
+
+  return client.getAllCursor<TriageHistoryTransaction>(
+    `/api/findings/issues/${params.issueId}/triage-history`,
+    queryParams,
+    ACCEPT_ISSUES,
+  );
+}
+
+// --- Issue Detection History ---
+
+export interface GetIssueDetectionHistoryParams {
+  issueId: string;
+  applicationId?: string;
+  projectId?: string;
+  branchId?: string;
+  testId?: string;
+}
+
+export function getIssueDetectionHistory(
+  params: GetIssueDetectionHistoryParams,
+): Promise<DetectionHistory> {
+  const client = getClient();
+  const queryParams: Record<string, string | undefined> = {};
+
+  if (params.applicationId) queryParams.applicationId = params.applicationId;
+  if (params.projectId) queryParams.projectId = params.projectId;
+  if (params.branchId) queryParams.branchId = params.branchId;
+  if (params.testId) queryParams.testId = params.testId;
+
+  return client.get<DetectionHistory>(
+    `/api/findings/issues/${params.issueId}/detection-history`,
     Object.keys(queryParams).length > 0 ? queryParams : undefined,
     ACCEPT_ISSUES,
   );

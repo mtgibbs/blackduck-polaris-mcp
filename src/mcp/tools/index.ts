@@ -5,6 +5,8 @@ import { getProjectsTool } from "./get-projects.ts";
 import { getBranchesTool } from "./get-branches.ts";
 import { getIssuesTool } from "./get-issues.ts";
 import { getIssueTool } from "./get-issue.ts";
+import { getIssueTriageHistoryTool } from "./get-issue-triage-history.ts";
+import { getIssueDetectionHistoryTool } from "./get-issue-detection-history.ts";
 import { getOccurrencesTool } from "./get-occurrences.ts";
 import { getCodeSnippetTool } from "./get-code-snippet.ts";
 import { getRemediationAssistTool } from "./get-remediation-assist.ts";
@@ -47,6 +49,8 @@ export const tools: AnyToolDefinition[] = [
   getBranchesTool,
   getIssuesTool,
   getIssueTool,
+  getIssueTriageHistoryTool,
+  getIssueDetectionHistoryTool,
   getOccurrencesTool,
   getCodeSnippetTool,
   getRemediationAssistTool,
