@@ -59,6 +59,10 @@ import { bulkImportGroupsTool } from "./bulk-import-groups.ts";
 import { abortGroupImportJobTool } from "./abort-group-import-job.ts";
 import { getGroupImportJobStatusTool } from "./get-group-import-job-status.ts";
 import { getAllGroupImportStatusesTool } from "./get-all-group-import-statuses.ts";
+import { updateScmGroupSettingsTool } from "./update-scm-group-settings.ts";
+import { getScmGroupSettingsTool } from "./get-scm-group-settings.ts";
+import { testScmGroupConnectionTool } from "./test-scm-group-connection.ts";
+import { getScmGroupMappingStatusTool } from "./get-scm-group-mapping-status.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -121,4 +125,8 @@ export const tools: AnyToolDefinition[] = [
   abortGroupImportJobTool,
   getGroupImportJobStatusTool,
   getAllGroupImportStatusesTool,
+  updateScmGroupSettingsTool,
+  getScmGroupSettingsTool,
+  testScmGroupConnectionTool,
+  getScmGroupMappingStatusTool,
 ];

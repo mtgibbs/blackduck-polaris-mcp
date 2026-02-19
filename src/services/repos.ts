@@ -3,6 +3,8 @@ import type {
   BulkGroupImportJobStatus,
   BulkGroupImportUpdateResponse,
   BulkRepoImportGroupStatus,
+  GroupMappingStatus,
+  GroupsSettings,
   RepositoryBranch,
   ScmGroup,
   ScmProject,
@@ -274,4 +276,79 @@ export function getAllGroupImportStatuses(
   options?: GetAllGroupImportStatusesOptions,
 ): Promise<BulkGroupImportJobStatus[]> {
   return reposApi.getAllGroupImportStatuses(options);
+}
+
+// --- Groups Settings ---
+
+export interface UpdateScmGroupSettingsOptions {
+  applicationId: string;
+  importNewRepositories?: boolean;
+  syncReposAndBranches?: boolean;
+  automaticallyTestCodeChanges?: boolean;
+  importNewBranches?: boolean;
+  branchNameExpressions?: string[];
+}
+
+export function updateScmGroupSettings(options: UpdateScmGroupSettingsOptions): Promise<void> {
+  const repository: reposApi.RepositorySubSettings = {};
+  if (options.importNewRepositories !== undefined) {
+    repository.importNewRepositories = options.importNewRepositories;
+  }
+  if (options.syncReposAndBranches !== undefined) {
+    repository.syncReposAndBranches = options.syncReposAndBranches;
+  }
+  if (options.automaticallyTestCodeChanges !== undefined) {
+    repository.automaticallyTestCodeChanges = options.automaticallyTestCodeChanges;
+  }
+  const branch: reposApi.BranchSubSettings = {};
+  if (options.importNewBranches !== undefined) {
+    branch.importNewBranches = options.importNewBranches;
+  }
+  if (options.branchNameExpressions !== undefined) {
+    branch.branchNameExpressions = options.branchNameExpressions;
+  }
+  const hasRepository = Object.keys(repository).length > 0;
+  const hasBranch = Object.keys(branch).length > 0;
+  const settings = hasRepository || hasBranch
+    ? {
+      ...(hasRepository ? { repository } : {}),
+      ...(hasBranch ? { branch } : {}),
+    }
+    : undefined;
+  return reposApi.updateGroupSettings({
+    applicationId: options.applicationId,
+    settings,
+  });
+}
+
+export interface GetScmGroupSettingsOptions {
+  filter?: string;
+}
+
+export function getScmGroupSettings(
+  options?: GetScmGroupSettingsOptions,
+): Promise<GroupsSettings[]> {
+  return reposApi.getGroupSettings(options);
+}
+
+export interface TestScmGroupConnectionOptions {
+  repositoryUrl: string;
+  scmProvider: string;
+  scmPat: string;
+  email?: string;
+}
+
+export function testScmGroupConnection(options: TestScmGroupConnectionOptions): Promise<void> {
+  return reposApi.testGroupConnection(options);
+}
+
+export interface GetScmGroupMappingStatusOptions {
+  applicationId: string;
+  projectId?: string;
+}
+
+export function getScmGroupMappingStatus(
+  options: GetScmGroupMappingStatusOptions,
+): Promise<GroupMappingStatus[]> {
+  return reposApi.getGroupMappingStatus(options);
 }

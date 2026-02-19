@@ -3,6 +3,8 @@ import type {
   BulkGroupImportJobStatus,
   BulkGroupImportUpdateResponse,
   BulkRepoImportGroupStatus,
+  GroupMappingStatus,
+  GroupsSettings,
   RepositoryBranch,
   ScmGroup,
   ScmProject,
@@ -513,5 +515,99 @@ export function getAllGroupImportStatuses(
     "/api/integrations/repos/bulk-group-import/status",
     queryParams,
     ACCEPT_BULK_GROUP_IMPORT_STATUS,
+  );
+}
+
+// --- Groups Settings ---
+
+export interface RepositorySubSettings {
+  importNewRepositories?: boolean;
+  syncReposAndBranches?: boolean;
+  automaticallyTestCodeChanges?: boolean;
+}
+
+export interface BranchSubSettings {
+  importNewBranches?: boolean;
+  branchNameExpressions?: string[];
+}
+
+export interface UpdateGroupSettingsParams {
+  applicationId: string;
+  settings?: {
+    repository?: RepositorySubSettings;
+    branch?: BranchSubSettings;
+  };
+}
+
+export function updateGroupSettings(params: UpdateGroupSettingsParams): Promise<void> {
+  const client = getClient();
+  const body: Record<string, unknown> = {
+    applicationId: params.applicationId,
+  };
+  if (params.settings) body.settings = params.settings;
+  return client.fetch<void>("/api/integrations/repos/groups-settings", {
+    method: "PATCH",
+    body,
+    contentType: ACCEPT_GROUPS_SETTINGS_UPDATE,
+  });
+}
+
+export interface GetGroupSettingsParams {
+  filter?: string;
+}
+
+export function getGroupSettings(params?: GetGroupSettingsParams): Promise<GroupsSettings[]> {
+  const client = getClient();
+  const queryParams: Record<string, string | undefined> = {};
+  if (params?.filter) queryParams._filter = params.filter;
+  return client.getAllOffset<GroupsSettings>(
+    "/api/integrations/repos/groups-settings",
+    queryParams,
+    ACCEPT_GROUPS_SETTINGS,
+  );
+}
+
+export interface TestGroupConnectionParams {
+  repositoryUrl: string;
+  scmProvider: string;
+  scmPat: string;
+  email?: string;
+}
+
+export function testGroupConnection(params: TestGroupConnectionParams): Promise<void> {
+  const client = getClient();
+  const headers: Record<string, string> = {
+    "X-Polaris-SCM-PAT": params.scmPat,
+  };
+  const body: Record<string, unknown> = {
+    repositoryUrl: params.repositoryUrl,
+    scmProvider: params.scmProvider,
+  };
+  if (params.email) body.email = params.email;
+  return client.fetch<void>("/api/integrations/repos/groups-settings/connection", {
+    method: "POST",
+    body,
+    contentType: ACCEPT_GROUP_CONNECTION_REQUEST,
+    headers,
+  });
+}
+
+export interface GetGroupMappingStatusParams {
+  applicationId: string;
+  projectId?: string;
+}
+
+export function getGroupMappingStatus(
+  params: GetGroupMappingStatusParams,
+): Promise<GroupMappingStatus[]> {
+  const client = getClient();
+  const queryParams: Record<string, string | undefined> = {
+    applicationId: params.applicationId,
+  };
+  if (params.projectId) queryParams.projectId = params.projectId;
+  return client.getAllOffset<GroupMappingStatus>(
+    "/api/integrations/repos/group-mapping-status",
+    queryParams,
+    ACCEPT_GROUP_MAPPING_STATUS,
   );
 }
