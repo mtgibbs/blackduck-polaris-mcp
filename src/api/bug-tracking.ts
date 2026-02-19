@@ -1,10 +1,13 @@
 import { getClient } from "./client.ts";
 import type {
   BugTrackingConfiguration,
+  CreateBugTrackingConfigRequest,
   ExternalIssueType,
   ExternalProject,
   LinkedIssue,
   ProjectMapping,
+  TestConnectionResult,
+  UpdateBugTrackingConfigRequest,
 } from "../types/polaris.ts";
 
 const ACCEPT = "application/vnd.polaris.bugtracking.configuration-1+json";
@@ -34,6 +37,62 @@ export function getConfiguration(id: string): Promise<BugTrackingConfiguration> 
     `/api/integrations/bugtracking/configurations/${id}`,
     undefined,
     ACCEPT,
+  );
+}
+
+export function createConfiguration(
+  system: string,
+  body: CreateBugTrackingConfigRequest,
+): Promise<BugTrackingConfiguration> {
+  const client = getClient();
+  return client.fetch<BugTrackingConfiguration>(
+    "/api/integrations/bugtracking/configurations",
+    {
+      method: "POST",
+      params: { system },
+      body,
+      accept: ACCEPT,
+      contentType: ACCEPT,
+    },
+  );
+}
+
+export function updateConfiguration(
+  id: string,
+  body: UpdateBugTrackingConfigRequest,
+): Promise<BugTrackingConfiguration> {
+  const client = getClient();
+  return client.fetch<BugTrackingConfiguration>(
+    `/api/integrations/bugtracking/configurations/${id}`,
+    {
+      method: "PATCH",
+      body,
+      accept: ACCEPT,
+      contentType: ACCEPT,
+    },
+  );
+}
+
+export function deleteConfiguration(id: string): Promise<void> {
+  const client = getClient();
+  return client.fetch<void>(
+    `/api/integrations/bugtracking/configurations/${id}`,
+    {
+      method: "DELETE",
+      accept: ACCEPT,
+    },
+  );
+}
+
+export function testConnection(id: string): Promise<TestConnectionResult> {
+  const client = getClient();
+  return client.fetch<TestConnectionResult>(
+    `/api/integrations/bugtracking/configurations/${id}/connection`,
+    {
+      method: "POST",
+      accept: ACCEPT,
+      contentType: ACCEPT,
+    },
   );
 }
 

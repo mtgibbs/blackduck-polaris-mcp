@@ -1,10 +1,12 @@
 import * as bugTrackingApi from "../api/bug-tracking.ts";
 import type {
   BugTrackingConfiguration,
+  BugTrackingSystemType,
   ExternalIssueType,
   ExternalProject,
   LinkedIssue,
   ProjectMapping,
+  TestConnectionResult,
 } from "../types/polaris.ts";
 
 // --- Configurations ---
@@ -23,6 +25,70 @@ export function getBugTrackingConfiguration(
   id: string,
 ): Promise<BugTrackingConfiguration> {
   return bugTrackingApi.getConfiguration(id);
+}
+
+export interface CreateBugTrackingConfigurationOptions {
+  system: string;
+  url: string;
+  type: BugTrackingSystemType;
+  enabled: boolean;
+  details: {
+    deploymentType?: string;
+    accessToken?: string;
+  };
+}
+
+export function createBugTrackingConfiguration(
+  options: CreateBugTrackingConfigurationOptions,
+): Promise<BugTrackingConfiguration> {
+  return bugTrackingApi.createConfiguration(options.system, {
+    url: options.url,
+    type: options.type,
+    enabled: options.enabled,
+    details: options.details,
+  });
+}
+
+export interface UpdateBugTrackingConfigurationOptions {
+  id: string;
+  url?: string;
+  type?: BugTrackingSystemType;
+  enabled?: boolean;
+  details?: {
+    deploymentType?: string;
+    accessToken?: string;
+  };
+}
+
+export function updateBugTrackingConfiguration(
+  options: UpdateBugTrackingConfigurationOptions,
+): Promise<BugTrackingConfiguration> {
+  return bugTrackingApi.updateConfiguration(options.id, {
+    url: options.url,
+    type: options.type,
+    enabled: options.enabled,
+    details: options.details,
+  });
+}
+
+export interface DeleteBugTrackingConfigurationOptions {
+  id: string;
+}
+
+export function deleteBugTrackingConfiguration(
+  options: DeleteBugTrackingConfigurationOptions,
+): Promise<void> {
+  return bugTrackingApi.deleteConfiguration(options.id);
+}
+
+export interface TestBugTrackingConnectionOptions {
+  id: string;
+}
+
+export function testBugTrackingConnection(
+  options: TestBugTrackingConnectionOptions,
+): Promise<TestConnectionResult> {
+  return bugTrackingApi.testConnection(options.id);
 }
 
 // --- External Projects ---

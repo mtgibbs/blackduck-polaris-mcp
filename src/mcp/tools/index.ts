@@ -42,6 +42,10 @@ import { assignComponentVersionLicenseTool } from "./assign-component-version-li
 import { getComponentOriginsTool } from "./get-component-origins.ts";
 import { getComponentOriginTool } from "./get-component-origin.ts";
 import { getComponentOriginMatchesTool } from "./get-component-origin-matches.ts";
+import { createBugTrackingConfigTool } from "./create-bug-tracking-config.ts";
+import { updateBugTrackingConfigTool } from "./update-bug-tracking-config.ts";
+import { deleteBugTrackingConfigTool } from "./delete-bug-tracking-config.ts";
+import { testBugTrackingConnectionTool } from "./test-bug-tracking-connection.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -87,4 +91,8 @@ export const tools: AnyToolDefinition[] = [
   getComponentOriginsTool,
   getComponentOriginTool,
   getComponentOriginMatchesTool,
+  createBugTrackingConfigTool,
+  updateBugTrackingConfigTool,
+  deleteBugTrackingConfigTool,
+  testBugTrackingConnectionTool,
 ];

@@ -457,6 +457,48 @@ export interface LinkedIssue {
   _links?: LinkEntry[];
 }
 
+export interface CreateBugTrackingConfigRequest {
+  url: string;
+  type: BugTrackingSystemType;
+  enabled: boolean;
+  details: {
+    deploymentType?: string;
+    accessToken?: string;
+  };
+}
+
+export interface UpdateBugTrackingConfigRequest {
+  url?: string;
+  type?: BugTrackingSystemType;
+  enabled?: boolean;
+  details?: {
+    deploymentType?: string;
+    accessToken?: string;
+  };
+}
+
+export interface TestConnectionResult {
+  status: string;
+  message?: string;
+}
+
+export interface CreateProjectMappingRequest {
+  projectId: string;
+  btsProjectKey: string;
+  btsProjectId?: string;
+  btsIssueType: string;
+}
+
+export interface UpdateProjectMappingRequest {
+  btsProjectKey?: string;
+  btsProjectId?: string;
+  btsIssueType?: string;
+}
+
+export interface ExportCommentRequest {
+  comment: string;
+}
+
 // --- Taxonomy ---
 
 export interface TaxonLocalizedOtherDetail {
