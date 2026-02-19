@@ -196,6 +196,24 @@
   - getProjectSubResourceCount also uses getAllOffset with ACCEPT_SUB_RESOURCES (not a separate count media type)
 ---
 
+## 2026-02-19 - PRD-P8
+- Implemented Organization settings + risk scoring settings across all layers:
+  1. src/api/portfolio.ts: Added OrganizationSettings, RiskScoringSettings imports; added ACCEPT_SETTINGS and ACCEPT_RISK_SCORING constants; added getOrganizationSettings() (client.get, ACCEPT_SETTINGS), updateOrganizationSettings() (PATCH, ACCEPT_SETTINGS), getRiskScoringSettings() (client.get, ACCEPT_RISK_SCORING), updateRiskScoringSettings() (PUT, ACCEPT_RISK_SCORING)
+  2. src/services/portfolio.ts: Added OrganizationSettings, RiskFactor, RiskScoringSettings imports; added getOrganizationSettings(), UpdateOrganizationSettingsOptions interface and updateOrganizationSettings(), getRiskScoringSettings(), UpdateRiskScoringSettingsOptions interface and updateRiskScoringSettings()
+  3. src/mcp/tools/get-organization-settings.ts: Created get_organization_settings tool (readOnlyHint: true, _placeholder schema)
+  4. src/mcp/tools/update-organization-settings.ts: Created update_organization_settings tool (readOnlyHint: false, allow_label_creation param)
+  5. src/mcp/tools/get-risk-scoring-settings.ts: Created get_risk_scoring_settings tool (readOnlyHint: true, _placeholder schema)
+  6. src/mcp/tools/update-risk-scoring-settings.ts: Created update_risk_scoring_settings tool (readOnlyHint: false, is_enabled + risk_factors JSON string)
+  7. src/mcp/tools/index.ts: Registered all 4 new tools
+- Files changed: src/api/portfolio.ts, src/services/portfolio.ts, 4 new tool files, src/mcp/tools/index.ts, prd.json
+- **Learnings for future iterations:**
+  - ACCEPT_SETTINGS = "application/vnd.polaris.portfolios.settings-1+json", ACCEPT_RISK_SCORING = "application/vnd.polaris.portfolios.risk-scoring-settings-1+json"
+  - Settings paths are org-level: /api/portfolios/settings, /api/portfolios/risk-scoring (no portfolioId)
+  - updateRiskScoringSettings uses PUT (not PATCH) per spec
+  - Don't import types in the API layer if they're only used in the service layer (deno lint catches unused imports)
+  - Tools with no required params use `_placeholder: z.string().optional()` schema pattern
+---
+
 ## 2026-02-19 - PRD-P7
 - Implemented Labels CRUD + merge across all layers:
   1. src/api/portfolio.ts: Added CreateLabelRequest, Label, MergeLabelRequest imports; added ACCEPT_LABELS constant; added createLabel() (POST), getLabels() (getAllOffset), getLabel() (client.get), updateLabel() (PATCH), deleteLabel() (DELETE, void), mergeLabels() (POST to /labels/merge)
