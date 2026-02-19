@@ -30,3 +30,22 @@
   - New tool files follow exact same pattern as get-issue.ts: schema object + ToolDefinition export
   - npm package downloads may stall indefinitely in this sandbox (network restriction); deno lint/fmt work fine
 ---
+
+## 2026-02-19 - PRD-TL2
+
+- Implemented tool listing, detail, download descriptor, and license MCP tools
+- Files changed:
+  - `src/mcp/tools/get-tools.ts`: New tool get_tools (list tools with optional RSQL filter)
+  - `src/mcp/tools/get-tool.ts`: New tool get_tool (single tool by name:version ID)
+  - `src/mcp/tools/get-download-descriptor.ts`: New tool get_download_descriptor (signed download URL)
+  - `src/mcp/tools/get-tool-license.ts`: New tool get_tool_license (license file download)
+  - `src/mcp/tools/index.ts`: Registered all 4 new tools (with conflict resolution for agent-4's version mapping tools)
+  - `prd.json`: Set PRD-TL2 passes: true
+- `deno lint` passes, `deno fmt --check` passes
+- **Learnings for future iterations:**
+  - Agent-1 implemented the full PRD-TL1 foundation (types, API layer, service layer) before I started — check origin branch first
+  - Parallel agents often conflict on src/mcp/tools/index.ts — always merge both sides when resolving import/array conflicts
+  - The license endpoint uses `application/octet-stream` as Accept header (not a vendor media type)
+  - Service functions in agent-1's style use inline anonymous types `{ id: string }` rather than named exports for simple cases
+  - `src/services/index.ts` DOES need to be updated for new service modules (it was updated by agent-1 for tools.ts)
+---
