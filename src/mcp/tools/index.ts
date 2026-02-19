@@ -43,6 +43,10 @@ import { getComponentOriginTool } from "./get-component-origin.ts";
 import { getComponentOriginMatchesTool } from "./get-component-origin-matches.ts";
 import { getVersionMappingTool } from "./get-version-mapping.ts";
 import { getVersionMatrixTool } from "./get-version-matrix.ts";
+import { getToolsTool } from "./get-tools.ts";
+import { getToolTool } from "./get-tool.ts";
+import { getDownloadDescriptorTool } from "./get-download-descriptor.ts";
+import { getToolLicenseTool } from "./get-tool-license.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -89,4 +93,8 @@ export const tools: AnyToolDefinition[] = [
   getComponentOriginMatchesTool,
   getVersionMappingTool,
   getVersionMatrixTool,
+  getToolsTool,
+  getToolTool,
+  getDownloadDescriptorTool,
+  getToolLicenseTool,
 ];
