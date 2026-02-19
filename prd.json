@@ -19,7 +19,9 @@
       ],
       "priority": 1,
       "passes": false,
-      "notes": "Foundation story. All other stories depend on these types. Do not create separate type files; all portfolio types live in src/types/polaris.ts."
+      "notes": "Foundation story. All other stories depend on these types. Do not create separate type files; all portfolio types live in src/types/polaris.ts.",
+      "claimed_by": "agent-1",
+      "claimed_at": "2026-02-19T20:52:46Z"
     },
     {
       "id": "PRD-P2",
