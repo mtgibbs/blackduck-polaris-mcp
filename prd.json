@@ -26,7 +26,7 @@
         "`deno fmt --check` passes"
       ],
       "priority": 1,
-      "passes": false,
+      "passes": true,
       "notes": "Foundation story for the entire Tools API. All subsequent stories depend on this. No MCP tools are created here -- only the API layer, service layer scaffolding, type definitions, and media type constants. The CompatibleToolVersions sub-interface is needed because the version-matrix response nests tool+version arrays differently from version-mapping.",
       "claimed_by": "agent-1",
       "claimed_at": "2026-02-19T22:10:40Z"

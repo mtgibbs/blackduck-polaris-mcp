@@ -5,6 +5,7 @@
 - TriageAuthor.id: spec shows it as required but PRD requires making it optional
 - IssueContext.tenantId and _links ARE in the spec — keep them, don't remove
 - deno lint and deno fmt --check both work fine without network access
+- const declarations with long string values: deno fmt wraps at 100 chars; if a constant assignment fits on one line within 100 chars, do NOT split across two lines — deno fmt will collapse it back to one line anyway and fail the check
 
 ---
 
@@ -21,4 +22,18 @@
   - The API layer (src/api/findings.ts) already had all three include* params in IssueQueryParams and GetIssueParams — only service and tool layers needed updating
   - IssueContext spec includes tenantId and _links, so no cleanup was needed there
   - Both lint and fmt checks pass without network access
+---
+
+## 2026-02-19 - PRD-TL1
+- Implemented foundation for Tools API (no MCP tools, just API/service/types layer)
+- Files changed:
+  - `src/types/polaris.ts`: Added PolarisTool, DownloadDescriptor, MappedTool, ToolVersionMapping, CompatibleToolVersions, ToolVersionMatrix, ToolVersionSetting, CreateToolVersionSettingRequest interfaces
+  - `src/api/tools.ts`: Created with 8 media type constants and 9 API functions (getTools, getTool, getDownloadDescriptor, getToolLicense, getVersionMapping, getVersionMatrix, createVersionSetting, getVersionSettings, getVersionSettingsByContext, updateVersionSetting, deleteVersionSetting)
+  - `src/services/tools.ts`: Created service layer wrapping all API functions with typed options interfaces
+  - `src/services/index.ts`: Added `export * from './tools.ts'`
+  - `prd.json`: Set PRD-TL1 passes: true
+- `deno task check` passes, `deno task lint` passes, `deno fmt --check` passes
+- **Learnings for future iterations:**
+  - deno fmt collapses single-assignment const values to one line if they fit in 100 chars; don't manually break them or fmt --check will fail
+  - The Tools API service scaffolding is now available for PRD-TL2, TL3, TL4 to add MCP tools
 ---
