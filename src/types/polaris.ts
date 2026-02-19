@@ -568,6 +568,41 @@ export interface OperationStatus {
   _type?: string;
 }
 
+// --- Component Version Activity Log, Triage History, License Assignment ---
+
+export interface ActivityLogEntry {
+  actionType: string;
+  fromComponentId?: string;
+  fromComponent?: string;
+  fromComponentVersionId?: string;
+  fromComponentVersion?: string;
+  fromComponentOrigin?: number;
+  componentId?: string;
+  component?: string;
+  componentVersionId?: string;
+  componentVersion?: string;
+  componentOriginId?: string;
+  componentOrigin?: string;
+  timestamp: string;
+  comment?: string;
+  projectId?: string;
+  _links?: LinkEntry[];
+  _type?: string;
+}
+
+export interface LicenseDefinitionResponse {
+  licenseDefinition?: LicenseDefinition;
+}
+
+export interface TriageHistoryTransaction {
+  latestAuthor?: { id: string; _links?: LinkEntry[] } | null;
+  latestTimestamp: string;
+  triageProperties: TriageProperty[];
+  _cursor?: string;
+  _type?: string;
+  _links?: LinkEntry[];
+}
+
 // --- Common ---
 
 export interface LinkEntry {

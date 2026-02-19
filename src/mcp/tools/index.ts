@@ -32,6 +32,10 @@ import { editComponentVersionTool } from "./edit-component-version.ts";
 import { resetComponentVersionTool } from "./reset-component-version.ts";
 import { deleteComponentVersionTool } from "./delete-component-version.ts";
 import { getOperationStatusTool } from "./get-operation-status.ts";
+import { getComponentVersionActivityLogTool } from "./get-component-version-activity-log.ts";
+import { getComponentVersionTriageHistoryTool } from "./get-component-version-triage-history.ts";
+import { triageComponentVersionsTool } from "./triage-component-versions.ts";
+import { assignComponentVersionLicenseTool } from "./assign-component-version-license.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -67,4 +71,8 @@ export const tools: AnyToolDefinition[] = [
   resetComponentVersionTool,
   deleteComponentVersionTool,
   getOperationStatusTool,
+  getComponentVersionActivityLogTool,
+  getComponentVersionTriageHistoryTool,
+  triageComponentVersionsTool,
+  assignComponentVersionLicenseTool,
 ];

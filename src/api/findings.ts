@@ -1,5 +1,6 @@
 import { getClient } from "./client.ts";
 import type {
+  ActivityLogEntry,
   AssistFeedbackPatch,
   AssistResponse,
   CodeSnippet,
@@ -11,12 +12,15 @@ import type {
   IssueCountItem,
   IssueCountOverTimeResponse,
   IssueExportItem,
+  LicenseDefinition,
+  LicenseDefinitionResponse,
   Occurrence,
   OperationStatus,
   PendingApprovalRequest,
   Taxon,
   TaxonIssueType,
   Taxonomy,
+  TriageHistoryTransaction,
   TriagePropertyInput,
   TriageRequest,
   TriageResult,
@@ -821,5 +825,118 @@ export function getOperationStatus(id: string): Promise<OperationStatus> {
     `/api/findings/component-versions/_actions/operation-status/${id}`,
     {},
     ACCEPT_COMPONENT_VERSIONS,
+  );
+}
+
+export interface GetComponentVersionActivityLogParams {
+  id: string;
+  projectId: string;
+  first?: number;
+}
+
+export function getComponentVersionActivityLog(
+  params: GetComponentVersionActivityLogParams,
+): Promise<ActivityLogEntry[]> {
+  const client = getClient();
+  const queryParams: Record<string, string | number | undefined> = {
+    projectId: params.projectId,
+  };
+  if (params.first !== undefined) queryParams._first = params.first;
+
+  return client.getAllCursor<ActivityLogEntry>(
+    `/api/findings/component-versions/${params.id}/activity-log`,
+    queryParams,
+    ACCEPT_COMPONENT_VERSIONS,
+  );
+}
+
+export interface GetComponentVersionTriageHistoryParams {
+  id: string;
+  projectId?: string;
+  applicationId?: string;
+  branchId?: string;
+  testId?: string;
+  first?: number;
+}
+
+export function getComponentVersionTriageHistory(
+  params: GetComponentVersionTriageHistoryParams,
+): Promise<TriageHistoryTransaction[]> {
+  const client = getClient();
+  const queryParams: Record<string, string | number | undefined> = {};
+  if (params.projectId) queryParams.projectId = params.projectId;
+  if (params.applicationId) queryParams.applicationId = params.applicationId;
+  if (params.branchId) queryParams.branchId = params.branchId;
+  if (params.testId) queryParams.testId = params.testId;
+  if (params.first !== undefined) queryParams._first = params.first;
+
+  return client.getAllCursor<TriageHistoryTransaction>(
+    `/api/findings/component-versions/${params.id}/triage-history`,
+    queryParams,
+    ACCEPT_COMPONENT_VERSIONS,
+  );
+}
+
+export interface TriageComponentVersionsParams {
+  projectId?: string;
+  applicationId?: string;
+  filter?: string;
+  triageProperties: Array<{ key: string; value: string | boolean }>;
+}
+
+export function triageComponentVersions(
+  params: TriageComponentVersionsParams,
+): Promise<TriageResult> {
+  const client = getClient();
+  validateScope(params.applicationId, params.projectId);
+
+  const queryParams: Record<string, string | undefined> = {};
+  if (params.projectId) queryParams.projectId = params.projectId;
+  if (params.applicationId) queryParams.applicationId = params.applicationId;
+
+  const body: {
+    filter?: string;
+    triageProperties: Array<{ key: string; value: string | boolean }>;
+  } = {
+    triageProperties: params.triageProperties,
+  };
+  if (params.filter) body.filter = params.filter;
+
+  return client.fetch<TriageResult>(
+    "/api/findings/component-versions/_actions/triage",
+    {
+      method: "PATCH",
+      params: queryParams,
+      body,
+      accept: ACCEPT_COMPONENT_VERSIONS,
+      contentType: ACCEPT_COMPONENT_VERSIONS,
+    },
+  );
+}
+
+export interface AssignComponentVersionLicenseParams {
+  id: string;
+  projectId?: string;
+  applicationId?: string;
+  body: LicenseDefinition;
+}
+
+export function assignComponentVersionLicense(
+  params: AssignComponentVersionLicenseParams,
+): Promise<LicenseDefinitionResponse> {
+  const client = getClient();
+  const queryParams: Record<string, string | undefined> = {};
+  if (params.projectId) queryParams.projectId = params.projectId;
+  if (params.applicationId) queryParams.applicationId = params.applicationId;
+
+  return client.fetch<LicenseDefinitionResponse>(
+    `/api/findings/component-versions/${params.id}/license-definition`,
+    {
+      method: "POST",
+      params: queryParams,
+      body: params.body,
+      accept: ACCEPT_COMPONENT_VERSIONS,
+      contentType: ACCEPT_COMPONENT_VERSIONS,
+    },
   );
 }

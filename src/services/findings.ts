@@ -1,5 +1,6 @@
 import * as findingsApi from "../api/findings.ts";
 import type {
+  ActivityLogEntry,
   AssistResponse,
   CodeSnippet,
   ComponentVersion,
@@ -10,11 +11,14 @@ import type {
   IssueCountItem,
   IssueCountOverTimeResponse,
   IssueExportItem,
+  LicenseDefinition,
+  LicenseDefinitionResponse,
   Occurrence,
   OperationStatus,
   Taxon,
   TaxonIssueType,
   Taxonomy,
+  TriageHistoryTransaction,
   TriagePropertyInput,
   TriageResult,
 } from "../types/polaris.ts";
@@ -416,4 +420,57 @@ export function deleteComponentVersion(
 
 export function getOperationStatus(id: string): Promise<OperationStatus> {
   return findingsApi.getOperationStatus(id);
+}
+
+export interface GetComponentVersionActivityLogOptions {
+  id: string;
+  projectId: string;
+  first?: number;
+}
+
+export function getComponentVersionActivityLog(
+  options: GetComponentVersionActivityLogOptions,
+): Promise<ActivityLogEntry[]> {
+  return findingsApi.getComponentVersionActivityLog(options);
+}
+
+export interface GetComponentVersionTriageHistoryOptions {
+  id: string;
+  projectId?: string;
+  applicationId?: string;
+  branchId?: string;
+  testId?: string;
+  first?: number;
+}
+
+export function getComponentVersionTriageHistory(
+  options: GetComponentVersionTriageHistoryOptions,
+): Promise<TriageHistoryTransaction[]> {
+  return findingsApi.getComponentVersionTriageHistory(options);
+}
+
+export interface TriageComponentVersionsOptions {
+  projectId?: string;
+  applicationId?: string;
+  filter?: string;
+  triageProperties: Array<{ key: string; value: string | boolean }>;
+}
+
+export function triageComponentVersions(
+  options: TriageComponentVersionsOptions,
+): Promise<TriageResult> {
+  return findingsApi.triageComponentVersions(options);
+}
+
+export interface AssignComponentVersionLicenseOptions {
+  id: string;
+  projectId?: string;
+  applicationId?: string;
+  body: LicenseDefinition;
+}
+
+export function assignComponentVersionLicense(
+  options: AssignComponentVersionLicenseOptions,
+): Promise<LicenseDefinitionResponse> {
+  return findingsApi.assignComponentVersionLicense(options);
 }
