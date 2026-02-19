@@ -66,11 +66,15 @@ export function getProjects(
   const queryParams: Record<string, string | boolean | undefined> = {};
   if (params.filter) queryParams._filter = params.filter;
   if (params.sort) queryParams._sort = params.sort;
-  if (params.includeLabelIds) queryParams._includeLabelIds = params.includeLabelIds;
 
   const path = params.applicationId
     ? `/api/portfolios/${params.portfolioId}/applications/${params.applicationId}/projects`
     : `/api/portfolios/${params.portfolioId}/projects`;
+
+  // _includeLabelIds is only supported on the app-scoped projects path
+  if (params.applicationId && params.includeLabelIds) {
+    queryParams._includeLabelIds = params.includeLabelIds;
+  }
 
   return client.getAllOffset<Project>(path, queryParams, ACCEPT_PROJECTS);
 }
@@ -96,15 +100,17 @@ export interface GetBranchesParams {
   projectId: string;
   filter?: string;
   sort?: string;
+  includeLabelIds?: boolean;
 }
 
 export function getBranches(
   params: GetBranchesParams,
 ): Promise<Branch[]> {
   const client = getClient();
-  const queryParams: Record<string, string | undefined> = {};
+  const queryParams: Record<string, string | boolean | undefined> = {};
   if (params.filter) queryParams._filter = params.filter;
   if (params.sort) queryParams._sort = params.sort;
+  if (params.includeLabelIds) queryParams._includeLabelIds = params.includeLabelIds;
   return client.getAllOffset<Branch>(
     `/api/portfolios/${params.portfolioId}/applications/${params.applicationId}/projects/${params.projectId}/branches`,
     queryParams,

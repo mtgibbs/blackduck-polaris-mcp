@@ -53,6 +53,7 @@ export interface GetBranchesOptions {
   projectId: string;
   filter?: string;
   sort?: string;
+  includeLabelIds?: boolean;
 }
 
 export function getBranches(
