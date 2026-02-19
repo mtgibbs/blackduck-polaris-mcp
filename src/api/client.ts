@@ -49,11 +49,44 @@ export class PolarisClient {
   private baseUrl: string;
   private apiToken: string;
   private organizationId?: string;
+  private orgIdPromise: Promise<void> | null = null;
 
   constructor(config: PolarisConfig) {
     this.baseUrl = config.baseUrl;
     this.apiToken = config.apiToken;
     this.organizationId = config.organizationId;
+  }
+
+  /**
+   * Lazily resolve the organization ID from the portfolio API if not
+   * provided via config. Skipped for portfolio calls to avoid recursion.
+   */
+  private async resolveOrganizationId(): Promise<void> {
+    if (this.organizationId) return;
+    if (!this.orgIdPromise) {
+      this.orgIdPromise = this.fetchOrganizationId();
+    }
+    await this.orgIdPromise;
+  }
+
+  private async fetchOrganizationId(): Promise<void> {
+    try {
+      const url = this.buildUrl("/api/portfolios/", { _offset: 0, _limit: 1 });
+      const headers = this.buildHeaders(
+        "application/vnd.polaris.portfolios-1+json",
+      );
+      const response = await globalThis.fetch(url, { headers });
+      if (response.ok) {
+        const data = await response.json() as PaginatedResponse<
+          { organizationId?: string }
+        >;
+        if (data._items?.length > 0 && data._items[0].organizationId) {
+          this.organizationId = data._items[0].organizationId;
+        }
+      }
+    } catch {
+      // Silently continue — org ID is only needed for bug tracking APIs
+    }
   }
 
   private buildUrl(
@@ -88,6 +121,10 @@ export class PolarisClient {
   }
 
   async fetch<T>(path: string, options: RequestOptions = {}): Promise<T> {
+    if (!this.organizationId && !path.startsWith("/api/portfolios")) {
+      await this.resolveOrganizationId();
+    }
+
     const url = this.buildUrl(path, options.params);
     const headers = this.buildHeaders(options.accept, options.contentType);
 
