@@ -88,7 +88,9 @@
       ],
       "priority": 2,
       "passes": false,
-      "notes": "Depends on PRD-BT1 for CreateProjectMappingRequest and UpdateProjectMappingRequest types. These config-scoped project mappings are distinct from the tenant-level /project-mappings endpoint that already exists. DELETE cascades to linked issues under the mapping."
+      "notes": "Depends on PRD-BT1 for CreateProjectMappingRequest and UpdateProjectMappingRequest types. These config-scoped project mappings are distinct from the tenant-level /project-mappings endpoint that already exists. DELETE cascades to linked issues under the mapping.",
+      "claimed_by": "agent-4",
+      "claimed_at": "2026-02-19T22:00:18Z"
     },
     {
       "id": "PRD-BT4",
