@@ -544,6 +544,30 @@ export interface ComponentVersionCountItem {
   _type?: string;
 }
 
+export interface ComponentVersionModifyRequest {
+  componentId?: string;
+  componentVersionId?: string;
+  componentOriginId?: string;
+  comment?: string;
+}
+
+export interface ComponentVersionModifyResponse {
+  componentVersionId: string;
+  operationId: string;
+  actionType: string;
+  _type?: string;
+}
+
+export type OperationStatusType = "PROCESSING" | "COMPLETED" | "ERROR";
+export type OperationActionType = "ADD" | "EDIT" | "DELETE";
+
+export interface OperationStatus {
+  status: OperationStatusType;
+  actionType: OperationActionType;
+  timestamp: string;
+  _type?: string;
+}
+
 // --- Common ---
 
 export interface LinkEntry {

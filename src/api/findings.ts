@@ -5,11 +5,14 @@ import type {
   CodeSnippet,
   ComponentVersion,
   ComponentVersionCountItem,
+  ComponentVersionModifyRequest,
+  ComponentVersionModifyResponse,
   Issue,
   IssueCountItem,
   IssueCountOverTimeResponse,
   IssueExportItem,
   Occurrence,
+  OperationStatus,
   PendingApprovalRequest,
   Taxon,
   TaxonIssueType,
@@ -695,6 +698,128 @@ export function getComponentVersionCount(
   return client.getAllCursor<ComponentVersionCountItem>(
     "/api/findings/component-versions/_actions/count",
     queryParams,
+    ACCEPT_COMPONENT_VERSIONS,
+  );
+}
+
+export interface AddComponentVersionParams {
+  projectId: string;
+  branchId?: string;
+  body: ComponentVersionModifyRequest;
+}
+
+export function addComponentVersion(
+  params: AddComponentVersionParams,
+): Promise<ComponentVersionModifyResponse> {
+  const client = getClient();
+  const queryParams: Record<string, string | undefined> = {
+    projectId: params.projectId,
+  };
+  if (params.branchId) queryParams.branchId = params.branchId;
+
+  return client.fetch<ComponentVersionModifyResponse>(
+    "/api/findings/component-versions/_actions/add",
+    {
+      method: "POST",
+      params: queryParams,
+      body: params.body,
+      accept: ACCEPT_COMPONENT_VERSIONS,
+      contentType: ACCEPT_COMPONENT_VERSIONS,
+    },
+  );
+}
+
+export interface EditComponentVersionParams {
+  id: string;
+  projectId: string;
+  branchId?: string;
+  applyOnProjectLevel?: boolean;
+  body: ComponentVersionModifyRequest;
+}
+
+export function editComponentVersion(
+  params: EditComponentVersionParams,
+): Promise<ComponentVersionModifyResponse> {
+  const client = getClient();
+  const queryParams: Record<string, string | boolean | undefined> = {
+    projectId: params.projectId,
+  };
+  if (params.branchId) queryParams.branchId = params.branchId;
+  if (params.applyOnProjectLevel !== undefined) {
+    queryParams._applyOnProjectLevel = params.applyOnProjectLevel;
+  }
+
+  return client.fetch<ComponentVersionModifyResponse>(
+    `/api/findings/component-versions/${params.id}/_actions/edit`,
+    {
+      method: "POST",
+      params: queryParams,
+      body: params.body,
+      accept: ACCEPT_COMPONENT_VERSIONS,
+      contentType: ACCEPT_COMPONENT_VERSIONS,
+    },
+  );
+}
+
+export interface ResetComponentVersionParams {
+  id: string;
+  projectId: string;
+  branchId?: string;
+  comment?: string;
+}
+
+export function resetComponentVersion(params: ResetComponentVersionParams): Promise<void> {
+  const client = getClient();
+  const queryParams: Record<string, string | undefined> = {
+    projectId: params.projectId,
+  };
+  if (params.branchId) queryParams.branchId = params.branchId;
+
+  const body: Record<string, string> = {};
+  if (params.comment) body.comment = params.comment;
+
+  return client.fetch<void>(
+    `/api/findings/component-versions/${params.id}/_actions/reset`,
+    {
+      method: "POST",
+      params: queryParams,
+      body,
+      accept: ACCEPT_COMPONENT_VERSIONS,
+      contentType: ACCEPT_COMPONENT_VERSIONS,
+    },
+  );
+}
+
+export interface DeleteComponentVersionParams {
+  id: string;
+  projectId: string;
+  branchId?: string;
+}
+
+export function deleteComponentVersion(
+  params: DeleteComponentVersionParams,
+): Promise<ComponentVersionModifyResponse> {
+  const client = getClient();
+  const queryParams: Record<string, string | undefined> = {
+    projectId: params.projectId,
+  };
+  if (params.branchId) queryParams.branchId = params.branchId;
+
+  return client.fetch<ComponentVersionModifyResponse>(
+    `/api/findings/component-versions/${params.id}`,
+    {
+      method: "DELETE",
+      params: queryParams,
+      accept: ACCEPT_COMPONENT_VERSIONS,
+    },
+  );
+}
+
+export function getOperationStatus(id: string): Promise<OperationStatus> {
+  const client = getClient();
+  return client.get<OperationStatus>(
+    `/api/findings/component-versions/_actions/operation-status/${id}`,
+    {},
     ACCEPT_COMPONENT_VERSIONS,
   );
 }

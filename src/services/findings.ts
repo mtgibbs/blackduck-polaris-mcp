@@ -4,11 +4,14 @@ import type {
   CodeSnippet,
   ComponentVersion,
   ComponentVersionCountItem,
+  ComponentVersionModifyRequest,
+  ComponentVersionModifyResponse,
   Issue,
   IssueCountItem,
   IssueCountOverTimeResponse,
   IssueExportItem,
   Occurrence,
+  OperationStatus,
   Taxon,
   TaxonIssueType,
   Taxonomy,
@@ -360,4 +363,57 @@ export function getComponentVersionCount(
   options: GetComponentVersionCountOptions,
 ): Promise<ComponentVersionCountItem[]> {
   return findingsApi.getComponentVersionCount(options);
+}
+
+export interface AddComponentVersionOptions {
+  projectId: string;
+  branchId?: string;
+  body: ComponentVersionModifyRequest;
+}
+
+export function addComponentVersion(
+  options: AddComponentVersionOptions,
+): Promise<ComponentVersionModifyResponse> {
+  return findingsApi.addComponentVersion(options);
+}
+
+export interface EditComponentVersionOptions {
+  id: string;
+  projectId: string;
+  branchId?: string;
+  applyOnProjectLevel?: boolean;
+  body: ComponentVersionModifyRequest;
+}
+
+export function editComponentVersion(
+  options: EditComponentVersionOptions,
+): Promise<ComponentVersionModifyResponse> {
+  return findingsApi.editComponentVersion(options);
+}
+
+export interface ResetComponentVersionOptions {
+  id: string;
+  projectId: string;
+  branchId?: string;
+  comment?: string;
+}
+
+export function resetComponentVersion(options: ResetComponentVersionOptions): Promise<void> {
+  return findingsApi.resetComponentVersion(options);
+}
+
+export interface DeleteComponentVersionOptions {
+  id: string;
+  projectId: string;
+  branchId?: string;
+}
+
+export function deleteComponentVersion(
+  options: DeleteComponentVersionOptions,
+): Promise<ComponentVersionModifyResponse> {
+  return findingsApi.deleteComponentVersion(options);
+}
+
+export function getOperationStatus(id: string): Promise<OperationStatus> {
+  return findingsApi.getOperationStatus(id);
 }

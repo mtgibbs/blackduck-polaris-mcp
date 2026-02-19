@@ -27,6 +27,11 @@ import { getTaxonIssueTypesTool } from "./get-taxon-issue-types.ts";
 import { getComponentVersionsTool } from "./get-component-versions.ts";
 import { getComponentVersionTool } from "./get-component-version.ts";
 import { getComponentVersionCountTool } from "./get-component-version-count.ts";
+import { addComponentVersionTool } from "./add-component-version.ts";
+import { editComponentVersionTool } from "./edit-component-version.ts";
+import { resetComponentVersionTool } from "./reset-component-version.ts";
+import { deleteComponentVersionTool } from "./delete-component-version.ts";
+import { getOperationStatusTool } from "./get-operation-status.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -57,4 +62,9 @@ export const tools: AnyToolDefinition[] = [
   getComponentVersionsTool,
   getComponentVersionTool,
   getComponentVersionCountTool,
+  addComponentVersionTool,
+  editComponentVersionTool,
+  resetComponentVersionTool,
+  deleteComponentVersionTool,
+  getOperationStatusTool,
 ];
