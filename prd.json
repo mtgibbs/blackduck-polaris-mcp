@@ -16,7 +16,9 @@
       ],
       "priority": 1,
       "passes": false,
-      "notes": "Greenfield story. No existing files to modify except src/services/index.ts (add export) and src/types/polaris.ts (add types). Follow the exact import and export patterns from src/api/bug-tracking.ts and src/services/bug-tracking.ts. Media type constants should be defined at the top of src/api/repos.ts using const declarations. The ScmRepositoryWithBranch response is wrapped in a `body` property per the spec (line 3089-3094). Two Accept headers notably lack the ;charset=UTF-8 suffix: group-mapping-status (line 2361) and test-settings (line 2486)."
+      "notes": "Greenfield story. No existing files to modify except src/services/index.ts (add export) and src/types/polaris.ts (add types). Follow the exact import and export patterns from src/api/bug-tracking.ts and src/services/bug-tracking.ts. Media type constants should be defined at the top of src/api/repos.ts using const declarations. The ScmRepositoryWithBranch response is wrapped in a `body` property per the spec (line 3089-3094). Two Accept headers notably lack the ;charset=UTF-8 suffix: group-mapping-status (line 2361) and test-settings (line 2486).",
+      "claimed_by": "agent-2",
+      "claimed_at": "2026-02-19T21:32:52Z"
     },
     {
       "id": "PRD-R2",
