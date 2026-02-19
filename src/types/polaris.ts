@@ -461,7 +461,7 @@ export interface CreateBugTrackingConfigRequest {
   url: string;
   type: BugTrackingSystemType;
   enabled: boolean;
-  details: {
+  details?: {
     deploymentType?: string;
     accessToken?: string;
   };

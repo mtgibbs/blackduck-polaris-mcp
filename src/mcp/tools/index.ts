@@ -18,6 +18,9 @@ import { getTestMetricsTool } from "./get-test-metrics.ts";
 import { getBugTrackingConfigsTool } from "./get-bug-tracking-configs.ts";
 import { getExternalProjectsTool } from "./get-external-projects.ts";
 import { getExternalProjectByKeyTool } from "./get-external-project-by-key.ts";
+import { getExternalIssueTypesTool } from "./get-external-issue-types.ts";
+import { getLinkedIssuesTool } from "./get-linked-issues.ts";
+import { getLinkedIssueTool } from "./get-linked-issue.ts";
 import { exportIssuesTool } from "./export-issues.ts";
 import { exportFindingsIssuesTool } from "./export-findings-issues.ts";
 import { getIssueCountOverTimeTool } from "./get-issue-count-over-time.ts";
@@ -67,6 +70,9 @@ export const tools: AnyToolDefinition[] = [
   getBugTrackingConfigsTool,
   getExternalProjectsTool,
   getExternalProjectByKeyTool,
+  getExternalIssueTypesTool,
+  getLinkedIssuesTool,
+  getLinkedIssueTool,
   exportIssuesTool,
   exportFindingsIssuesTool,
   getIssueCountOverTimeTool,

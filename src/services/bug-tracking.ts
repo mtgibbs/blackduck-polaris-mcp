@@ -157,15 +157,23 @@ export function exportIssue(
   return bugTrackingApi.exportIssue(options);
 }
 
+export interface GetLinkedIssuesOptions {
+  configurationId: string;
+}
+
 export function getLinkedIssues(
-  configurationId: string,
+  options: GetLinkedIssuesOptions,
 ): Promise<LinkedIssue[]> {
-  return bugTrackingApi.getLinkedIssues(configurationId);
+  return bugTrackingApi.getLinkedIssues(options.configurationId);
+}
+
+export interface GetLinkedIssueOptions {
+  configurationId: string;
+  issueId: string;
 }
 
 export function getLinkedIssue(
-  configurationId: string,
-  issueId: string,
+  options: GetLinkedIssueOptions,
 ): Promise<LinkedIssue> {
-  return bugTrackingApi.getLinkedIssue(configurationId, issueId);
+  return bugTrackingApi.getLinkedIssue(options.configurationId, options.issueId);
 }

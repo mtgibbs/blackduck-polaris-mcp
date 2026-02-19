@@ -26,7 +26,7 @@
         "`deno fmt --check` passes"
       ],
       "priority": 1,
-      "passes": false,
+      "passes": true,
       "notes": "Foundation story. Must complete before PRD-BT2 through PRD-BT5. The getExternalIssueTypes service function already exists but has no tool file. The getLinkedIssues and getLinkedIssue API functions exist but need service wrappers and tool files. All new types are needed by subsequent stories.",
       "claimed_by": "agent-1",
       "claimed_at": "2026-02-19T22:00:18Z"
