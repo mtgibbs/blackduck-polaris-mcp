@@ -1,0 +1,26 @@
+## Codebase Patterns
+
+- `import { getClient }` in API files must be aliased as `_getClient` if not used in that file, or deno lint will fail with no-unused-vars
+- `deno lint` and `deno fmt --check` work without network; `deno task lint` downloads npm packages on first run
+- Services scaffold: use `import * as _reposApi from "../api/repos.ts"` with underscore prefix when no functions are exported yet
+- ScmRepositoryWithBranch: spec wraps response in a `body` property but the TypeScript interface captures the fields directly
+- Two Accept media type constants lack `;charset=UTF-8` suffix: ACCEPT_GROUP_MAPPING_STATUS and ACCEPT_TEST_SETTINGS
+
+---
+
+## 2026-02-19T21:45:00Z - PRD-R1
+- Implemented Foundation: API client, service layer, and types for Repos Integration
+- Files changed:
+  - `src/api/repos.ts` (new): Media type constants for all 23 Repos Integration Accept/Content-Type headers
+  - `src/services/repos.ts` (new): Minimal scaffold with import ready for functions in subsequent stories
+  - `src/services/index.ts`: Added `export * from "./repos.ts";` after bug-tracking export
+  - `src/types/polaris.ts`: Added `// --- Repos Integration ---` section with 18 TypeScript interfaces/types
+  - `prd.json`: Set PRD-R1 passes: true
+- `deno task lint` passes, `deno fmt --check` passes
+- **Learnings for future iterations:**
+  - The `_getClient` alias (underscore prefix) satisfies deno's no-unused-vars lint rule for the required getClient import
+  - The ScmRepositoryWithBranch type has `defaultBranchName` as optional field (not a separate `body` wrapper)
+  - ACCEPT_GROUP_MAPPING_STATUS and ACCEPT_TEST_SETTINGS intentionally lack `;charset=UTF-8` per spec
+  - All 23 media type constants are exported from src/api/repos.ts for use by subsequent stories
+  - GroupsSettings.settings has nested repository and branch sub-objects per spec 3339-3376
+---

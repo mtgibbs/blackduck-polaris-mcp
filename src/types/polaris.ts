@@ -457,6 +457,224 @@ export interface LinkedIssue {
   _links?: LinkEntry[];
 }
 
+// --- Repos Integration ---
+
+export type ScmProvider =
+  | "GITHUB_STANDARD"
+  | "GITHUB_ENTERPRISE_CLOUD"
+  | "GITLAB_SAAS"
+  | "BITBUCKET_CLOUD"
+  | "AZURE_CLOUD"
+  | "GITHUB_ENTERPRISE_SERVER"
+  | "GITHUB_SELF_MANAGED"
+  | "BITBUCKET_DATA_CENTER";
+
+export type ScmHostingType = "CLOUD_HOSTED" | "SELF_HOSTED";
+
+export type ScmAuthenticationMode = "PAT" | "OAUTH_2";
+
+export interface ScmRepository {
+  id: string;
+  organizationId: string;
+  repositoryUrl: string;
+  scmProvider: ScmProvider;
+  applicationId: string;
+  projectId: string;
+  createdAt: string;
+  updatedAt: string;
+  createdBy: string;
+  updatedBy: string;
+  _links?: LinkEntry[];
+}
+
+export interface ScmRepositoryWithBranch {
+  id: string;
+  organizationId: string;
+  repositoryUrl: string;
+  scmProvider: ScmProvider;
+  applicationId: string;
+  projectId: string;
+  createdAt: string;
+  updatedAt: string;
+  createdBy: string;
+  updatedBy: string;
+  defaultBranchName?: string;
+  _links?: LinkEntry[];
+}
+
+export interface ScmRepositoryCreateResponse {
+  id: string;
+  organizationId: string;
+  repositoryUrl: string;
+  scmProvider: ScmProvider;
+  applicationId: string;
+  projectId: string;
+  createdAt: string;
+  updatedAt: string;
+  createdBy: string;
+  updatedBy: string;
+  _links?: LinkEntry[];
+}
+
+export interface ScmRepositoryPatchResponse {
+  id: string;
+  organizationId: string;
+  repositoryUrl: string;
+  scmProvider: ScmProvider;
+  applicationId: string;
+  projectId: string;
+  createdAt: string;
+  updatedAt: string;
+  createdBy: string;
+  updatedBy: string;
+  _links?: LinkEntry[];
+}
+
+export interface ScmRepositoryTestConnectionResponse {
+  object: boolean;
+  _links?: LinkEntry[];
+}
+
+export interface RepositoryBranch {
+  name: string;
+  sha: string;
+  isDefault: boolean;
+  isSynchronisedWithScm?: boolean;
+}
+
+export interface ScmProviderInfo {
+  scmProvider: ScmProvider;
+  scmHostingType: ScmHostingType;
+  minVersion?: string;
+  maxVersion?: string;
+}
+
+export interface ScmGroup {
+  id: string;
+  name: string;
+}
+
+export interface ScmRemoteRepository {
+  id: string;
+  organizationId?: string;
+  repositoryUrl: string;
+  scmProvider: ScmProvider;
+  applicationId?: string;
+  projectId?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  createdBy?: string;
+  updatedBy?: string;
+}
+
+export interface ScmProject {
+  id: string;
+  name: string;
+  url?: string;
+  groupName?: string;
+}
+
+export interface GroupsSettings {
+  email?: string;
+  applicationId?: string;
+  groupUrl?: string;
+  scmProvider?: ScmProvider;
+  settings?: {
+    repository?: {
+      importNewRepositories?: boolean;
+      syncReposAndBranches?: boolean;
+      automaticallyTestCodeChanges?: boolean;
+    };
+    branch?: {
+      importNewBranches?: boolean;
+      branchNameExpressions?: string[];
+    };
+  };
+}
+
+export interface GroupMappingStatus {
+  projectId: string;
+  repoUrl?: string;
+  isValidMapping: boolean;
+}
+
+export interface BulkRepoImportGroupStatus {
+  id: string;
+  portfolioItemId?: string;
+  progressPercentage?: number;
+  state?: string;
+  stateInfo?: string;
+  repositoriesImportStats?: {
+    notStarted?: number;
+    inProgress?: number;
+    completed?: number;
+    failed?: number;
+    total?: number;
+  };
+  importJob?: {
+    id?: string;
+    createdAt?: string;
+  };
+}
+
+export interface BulkGroupImportJobStatus {
+  id: string;
+  progressPercentage?: number;
+  state?: string;
+  stateInfo?: string;
+  groupsImportStats?: {
+    notStarted?: number;
+    inProgress?: number;
+    completed?: number;
+    failed?: number;
+    total?: number;
+  };
+  _links?: LinkEntry[];
+}
+
+export interface BulkGroupImportUpdateResponse {
+  id: string;
+  progress?: number;
+  state?: string;
+  info?: Array<{
+    group?: string;
+    state?: string;
+    info?: string;
+  }>;
+  createdAt?: string;
+  updatedAt?: string;
+  createdBy?: string;
+  updatedBy?: string;
+  _links?: LinkEntry[];
+}
+
+export interface DefaultBranchSyncSettings {
+  pullRequestMerged?: boolean;
+  assessmentTypes?: string[];
+}
+
+export interface NonDefaultBranchSyncSettings {
+  pullRequestMerged?: boolean;
+  assessmentTypes?: string[];
+}
+
+export interface BranchTestSyncSettings {
+  default?: DefaultBranchSyncSettings;
+  nonDefault?: NonDefaultBranchSyncSettings;
+}
+
+export interface TestSyncSettings {
+  branch?: BranchTestSyncSettings;
+}
+
+export interface TestSettingsResponse {
+  scope: string;
+  scopeId: string;
+  inherited?: boolean;
+  testSyncSettings?: TestSyncSettings;
+  _links?: LinkEntry[];
+}
+
 // --- Taxonomy ---
 
 export interface TaxonLocalizedOtherDetail {
