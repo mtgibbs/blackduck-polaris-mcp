@@ -1,3 +1,20 @@
+## 2026-02-19 - PRD-F7
+- Implemented taxonomy endpoints across all layers:
+  1. src/types/polaris.ts: Added TaxonLocalizedOtherDetail, TaxonLocalized, Taxon, Taxonomy, TaxonIssueTypeLocalized, TaxonIssueType interfaces
+  2. src/api/findings.ts: Added ACCEPT_TAXONOMIES and ACCEPT_TAXA constants; added getTaxonomies() (cursor-paginated), getTaxon() (single GET), getTaxonSubtaxa() (cursor-paginated), getTaxonIssueTypes() (cursor-paginated)
+  3. src/services/findings.ts: Added getTaxonomies(), getTaxon(), getTaxonSubtaxa(), getTaxonIssueTypes() service functions
+  4. src/mcp/tools/get-taxonomies.ts: Created get_taxonomies tool with include_descendants, include_only_standards, max_results
+  5. src/mcp/tools/get-taxon.ts: Created get_taxon tool with required taxon_id
+  6. src/mcp/tools/get-taxon-subtaxa.ts: Created get_taxon_subtaxa tool with taxon_id and max_results
+  7. src/mcp/tools/get-taxon-issue-types.ts: Created get_taxon_issue_types tool with taxon_id and max_results
+  8. src/mcp/tools/index.ts: Registered all four new tools
+- Files changed: src/types/polaris.ts, src/api/findings.ts, src/services/findings.ts, src/mcp/tools/get-taxonomies.ts (new), src/mcp/tools/get-taxon.ts (new), src/mcp/tools/get-taxon-subtaxa.ts (new), src/mcp/tools/get-taxon-issue-types.ts (new), src/mcp/tools/index.ts, prd.json
+- **Learnings for future iterations:**
+  - Taxonomy types: TaxonLocalized has optional `name` and `issueTypeNames` but required `otherDetails`; TaxonIssueType _localized also has optional name
+  - ACCEPT_TAXONOMIES = "application/vnd.polaris.findings.taxonomies-1+json", ACCEPT_TAXA = "application/vnd.polaris.findings.taxa-1+json"
+  - getTaxon is a single-item GET (not paginated); getTaxonomies/getTaxonSubtaxa/getTaxonIssueTypes use cursor pagination
+---
+
 ## Codebase Patterns
 - Tool definitions: schema is plain object of Zod types (NOT z.object()), handler destructures args, return jsonResponse(data) or errorResponse(msg)
 - API layer uses client.fetch<T>() for non-GET requests with {method, params, body, accept, contentType}

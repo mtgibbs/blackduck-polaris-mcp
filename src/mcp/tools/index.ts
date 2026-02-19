@@ -20,6 +20,10 @@ import { exportFindingsIssuesTool } from "./export-findings-issues.ts";
 import { getIssueCountOverTimeTool } from "./get-issue-count-over-time.ts";
 import { changePendingFixByTool } from "./change-pending-fix-by.ts";
 import { changePendingStatusTool } from "./change-pending-status.ts";
+import { getTaxonomiesTool } from "./get-taxonomies.ts";
+import { getTaxonTool } from "./get-taxon.ts";
+import { getTaxonSubtaxaTool } from "./get-taxon-subtaxa.ts";
+import { getTaxonIssueTypesTool } from "./get-taxon-issue-types.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -43,4 +47,8 @@ export const tools: AnyToolDefinition[] = [
   getIssueCountOverTimeTool,
   changePendingFixByTool,
   changePendingStatusTool,
+  getTaxonomiesTool,
+  getTaxonTool,
+  getTaxonSubtaxaTool,
+  getTaxonIssueTypesTool,
 ];

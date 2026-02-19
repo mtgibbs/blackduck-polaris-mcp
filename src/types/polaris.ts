@@ -444,6 +444,42 @@ export interface LinkedIssue {
   _links?: LinkEntry[];
 }
 
+// --- Taxonomy ---
+
+export interface TaxonLocalizedOtherDetail {
+  key: string;
+  value: string;
+}
+
+export interface TaxonLocalized {
+  name?: string;
+  issueTypeNames?: string[];
+  otherDetails: TaxonLocalizedOtherDetail[];
+}
+
+export interface Taxon {
+  id: string;
+  subtaxa: string[];
+  isRoot: boolean;
+  _localized: TaxonLocalized;
+}
+
+export interface Taxonomy {
+  id: string;
+  subtaxa: string[];
+  _localized: TaxonLocalized;
+}
+
+export interface TaxonIssueTypeLocalized {
+  name?: string;
+  otherDetails: TaxonLocalizedOtherDetail[];
+}
+
+export interface TaxonIssueType {
+  id: string;
+  _localized: TaxonIssueTypeLocalized;
+}
+
 // --- Common ---
 
 export interface LinkEntry {

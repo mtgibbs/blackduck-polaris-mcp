@@ -7,6 +7,9 @@ import type {
   IssueCountOverTimeResponse,
   IssueExportItem,
   Occurrence,
+  Taxon,
+  TaxonIssueType,
+  Taxonomy,
   TriagePropertyInput,
   TriageResult,
 } from "../types/polaris.ts";
@@ -272,4 +275,38 @@ export interface ChangePendingStatusOptions {
 
 export function changePendingStatus(options: ChangePendingStatusOptions): Promise<void> {
   return findingsApi.changePendingStatus(options);
+}
+
+// --- Taxonomy ---
+
+export interface GetTaxonomiesOptions {
+  includeDescendants?: boolean;
+  includeOnlyStandards?: boolean;
+  first?: number;
+}
+
+export function getTaxonomies(options: GetTaxonomiesOptions): Promise<Taxonomy[]> {
+  return findingsApi.getTaxonomies(options);
+}
+
+export function getTaxon(taxonId: string): Promise<Taxon> {
+  return findingsApi.getTaxon({ taxonId });
+}
+
+export interface GetTaxonSubtaxaOptions {
+  taxonId: string;
+  first?: number;
+}
+
+export function getTaxonSubtaxa(options: GetTaxonSubtaxaOptions): Promise<Taxon[]> {
+  return findingsApi.getTaxonSubtaxa(options);
+}
+
+export interface GetTaxonIssueTypesOptions {
+  taxonId: string;
+  first?: number;
+}
+
+export function getTaxonIssueTypes(options: GetTaxonIssueTypesOptions): Promise<TaxonIssueType[]> {
+  return findingsApi.getTaxonIssueTypes(options);
 }

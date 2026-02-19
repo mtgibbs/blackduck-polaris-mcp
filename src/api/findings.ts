@@ -9,6 +9,9 @@ import type {
   IssueExportItem,
   Occurrence,
   PendingApprovalRequest,
+  Taxon,
+  TaxonIssueType,
+  Taxonomy,
   TriagePropertyInput,
   TriageRequest,
   TriageResult,
@@ -523,5 +526,75 @@ export function getArtifact(params: GetArtifactParams): Promise<string> {
       params: Object.keys(queryParams).length > 0 ? queryParams : undefined,
       accept: "text/plain",
     },
+  );
+}
+
+// --- Taxonomy ---
+
+const ACCEPT_TAXONOMIES = "application/vnd.polaris.findings.taxonomies-1+json";
+const ACCEPT_TAXA = "application/vnd.polaris.findings.taxa-1+json";
+
+export interface GetTaxonomiesParams {
+  includeDescendants?: boolean;
+  includeOnlyStandards?: boolean;
+  first?: number;
+}
+
+export function getTaxonomies(params: GetTaxonomiesParams): Promise<Taxonomy[]> {
+  const client = getClient();
+  const queryParams: Record<string, string | boolean | number | undefined> = {};
+
+  if (params.includeDescendants !== undefined) {
+    queryParams._includeDescendants = params.includeDescendants;
+  }
+  if (params.includeOnlyStandards !== undefined) {
+    queryParams._includeOnlyStandards = params.includeOnlyStandards;
+  }
+
+  return client.getAllCursor<Taxonomy>("/api/findings/taxonomies", queryParams, ACCEPT_TAXONOMIES);
+}
+
+export interface GetTaxonParams {
+  taxonId: string;
+}
+
+export function getTaxon(params: GetTaxonParams): Promise<Taxon> {
+  const client = getClient();
+  return client.get<Taxon>(`/api/findings/taxa/${params.taxonId}`, undefined, ACCEPT_TAXA);
+}
+
+export interface GetTaxonSubtaxaParams {
+  taxonId: string;
+  first?: number;
+}
+
+export function getTaxonSubtaxa(params: GetTaxonSubtaxaParams): Promise<Taxon[]> {
+  const client = getClient();
+  const queryParams: Record<string, number | undefined> = {};
+
+  if (params.first !== undefined) queryParams._first = params.first;
+
+  return client.getAllCursor<Taxon>(
+    `/api/findings/taxa/${params.taxonId}/subtaxa`,
+    Object.keys(queryParams).length > 0 ? queryParams : undefined,
+    ACCEPT_TAXA,
+  );
+}
+
+export interface GetTaxonIssueTypesParams {
+  taxonId: string;
+  first?: number;
+}
+
+export function getTaxonIssueTypes(params: GetTaxonIssueTypesParams): Promise<TaxonIssueType[]> {
+  const client = getClient();
+  const queryParams: Record<string, number | undefined> = {};
+
+  if (params.first !== undefined) queryParams._first = params.first;
+
+  return client.getAllCursor<TaxonIssueType>(
+    `/api/findings/taxa/${params.taxonId}/issue-types`,
+    Object.keys(queryParams).length > 0 ? queryParams : undefined,
+    ACCEPT_TAXA,
   );
 }
