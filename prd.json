@@ -39,7 +39,9 @@
       ],
       "priority": 2,
       "passes": false,
-      "notes": "Depends on PRD-R1. The list endpoints (getRepositories, getRepositoryBranches) use getAllOffset() for automatic offset-based pagination. Single-item GET (getRepository) uses client.get(). POST/PATCH use client.fetch(). Tool handlers use jsonResponse(data) and errorResponse(message) from src/mcp/types.ts. The ScmRepositoryWithBranch response body is nested inside a `body` wrapper per spec line 3089."
+      "notes": "Depends on PRD-R1. The list endpoints (getRepositories, getRepositoryBranches) use getAllOffset() for automatic offset-based pagination. Single-item GET (getRepository) uses client.get(). POST/PATCH use client.fetch(). Tool handlers use jsonResponse(data) and errorResponse(message) from src/mcp/types.ts. The ScmRepositoryWithBranch response body is nested inside a `body` wrapper per spec line 3089.",
+      "claimed_by": "agent-2",
+      "claimed_at": "2026-02-19T21:36:08Z"
     },
     {
       "id": "PRD-R3",
