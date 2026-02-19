@@ -121,3 +121,22 @@
   - Tool name collision: avoid export_issues (reserved for bug tracking); use export_findings_issues for the Findings API export
   - Mutual exclusivity validation in tool handlers should use errorResponse() and return early before calling service
 ---
+
+## 2026-02-19 - PRD-F10
+- Implemented component version licenses, activity-log, triage-history, and triage endpoints:
+  1. src/types/polaris.ts: Added ActivityLogEntry, LicenseDefinitionResponse, TriageHistoryTransaction interfaces (TriageHistoryTransaction defined here since PRD-F2 not yet completed)
+  2. src/api/findings.ts: Added imports for new types; added getComponentVersionActivityLog() (cursor-paginated, requires projectId), getComponentVersionTriageHistory() (cursor-paginated), triageComponentVersions() (PATCH, uses validateScope), assignComponentVersionLicense() (POST)
+  3. src/services/findings.ts: Added imports and 4 service functions matching API layer
+  4. src/mcp/tools/get-component-version-activity-log.ts: Created get_component_version_activity_log tool (project_id required)
+  5. src/mcp/tools/get-component-version-triage-history.ts: Created get_component_version_triage_history tool
+  6. src/mcp/tools/triage-component-versions.ts: Created triage_component_versions tool (readOnlyHint: false, keys: comment/ignored only)
+  7. src/mcp/tools/assign-component-version-license.ts: Created assign_component_version_license tool with license_hrefs and license_type
+  8. src/mcp/tools/index.ts: Registered all 4 new tools
+- Files changed: src/types/polaris.ts, src/api/findings.ts, src/services/findings.ts, 4 new tool files, src/mcp/tools/index.ts, prd.json
+- **Learnings for future iterations:**
+  - Component version triage uses PATCH (not POST) to /component-versions/_actions/triage; keys are 'comment' and 'ignored' only (not status/dismissal-reason like issues)
+  - Activity log endpoint requires projectId (not optional), uses GET + cursor pagination
+  - TriageHistoryTransaction needed to be defined here since PRD-F2 (issue triage history) was not yet completed
+  - LicenseDefinition.license is LicenseEntry[] (array), not LicenseEntry (single object) per existing type definition
+  - assignComponentVersionLicense uses same ACCEPT_COMPONENT_VERSIONS media type for both accept and contentType
+---
