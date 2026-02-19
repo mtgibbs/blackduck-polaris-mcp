@@ -219,7 +219,9 @@
       ],
       "priority": 4,
       "passes": false,
-      "notes": "Depends on PRD-P1 for OrganizationSettings, RiskScoringSettings, RiskFactor, RiskCategory types. Settings paths are /api/portfolios/settings and /api/portfolios/risk-scoring (org-level, no portfolioId). Risk scoring update uses PUT (not PATCH) per the spec. The risk factors array is complex so we accept it as a JSON string in the tool."
+      "notes": "Depends on PRD-P1 for OrganizationSettings, RiskScoringSettings, RiskFactor, RiskCategory types. Settings paths are /api/portfolios/settings and /api/portfolios/risk-scoring (org-level, no portfolioId). Risk scoring update uses PUT (not PATCH) per the spec. The risk factors array is complex so we accept it as a JSON string in the tool.",
+      "claimed_by": "agent-4",
+      "claimed_at": "2026-02-19T21:07:20Z"
     },
     {
       "id": "PRD-P9",
