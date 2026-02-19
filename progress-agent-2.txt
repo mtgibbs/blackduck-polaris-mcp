@@ -1,3 +1,22 @@
+## 2026-02-19T23:15:00Z - PRD-R6
+- Implemented Groups settings, connection testing, and mapping status
+- Files changed:
+  - `src/api/repos.ts`: Added type imports for GroupMappingStatus, GroupsSettings; added `updateGroupSettings()`, `getGroupSettings()`, `testGroupConnection()`, `getGroupMappingStatus()` API functions with interfaces (RepositorySubSettings, BranchSubSettings, UpdateGroupSettingsParams, GetGroupSettingsParams, TestGroupConnectionParams, GetGroupMappingStatusParams)
+  - `src/services/repos.ts`: Added type imports for GroupMappingStatus, GroupsSettings; added `updateScmGroupSettings()`, `getScmGroupSettings()`, `testScmGroupConnection()`, `getScmGroupMappingStatus()` service functions with Options interfaces
+  - `src/mcp/tools/update-scm-group-settings.ts` (new): Write tool for updating group sync settings; splits branch_name_expressions by comma
+  - `src/mcp/tools/get-scm-group-settings.ts` (new): Read tool for listing group settings with optional filter
+  - `src/mcp/tools/test-scm-group-connection.ts` (new): Write tool for testing group connection with X-Polaris-SCM-PAT header
+  - `src/mcp/tools/get-scm-group-mapping-status.ts` (new): Read tool for getting group mapping status by applicationId
+  - `src/mcp/tools/index.ts`: Registered all 4 new tools
+  - `prd.json`: Set PRD-R6 passes: true
+- All checks pass: `deno task check`, `deno lint`, `deno fmt --check`
+- **Learnings for future iterations:**
+  - `updateGroupSettings` PATCH uses only contentType (no accept) per spec; returns void (202)
+  - `testGroupConnection` POST uses only contentType (no accept) and requires X-Polaris-SCM-PAT custom header in client.fetch() headers option
+  - `getGroupMappingStatus` uses ACCEPT_GROUP_MAPPING_STATUS which lacks ;charset=UTF-8 suffix
+  - When tools return void (no body), handler returns `jsonResponse({ success: true })` as confirmation
+---
+
 ## 2026-02-19T23:00:00Z - PRD-R5
 - Implemented Bulk group import and job management
 - Files changed:
