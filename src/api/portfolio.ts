@@ -1,5 +1,12 @@
 import { getClient } from "./client.ts";
-import type { Application, Branch, Portfolio, Project } from "../types/polaris.ts";
+import type {
+  Application,
+  Branch,
+  CreateProjectRequest,
+  Portfolio,
+  Project,
+  UpdateProjectRequest,
+} from "../types/polaris.ts";
 
 const ACCEPT = "application/vnd.polaris.portfolios-1+json";
 const ACCEPT_APPS = "application/vnd.polaris.portfolios.applications-1+json";
@@ -79,16 +86,53 @@ export function getProjects(
   return client.getAllOffset<Project>(path, queryParams, ACCEPT_PROJECTS);
 }
 
-export function getProject(
-  portfolioId: string,
-  applicationId: string,
-  projectId: string,
-): Promise<Project> {
+export function getProject(params: {
+  portfolioId: string;
+  applicationId: string;
+  projectId: string;
+}): Promise<Project> {
   const client = getClient();
   return client.get<Project>(
-    `/api/portfolios/${portfolioId}/applications/${applicationId}/projects/${projectId}`,
+    `/api/portfolios/${params.portfolioId}/applications/${params.applicationId}/projects/${params.projectId}`,
     undefined,
     ACCEPT_PROJECTS,
+  );
+}
+
+export function createProject(params: {
+  portfolioId: string;
+  applicationId: string;
+  body: CreateProjectRequest;
+}): Promise<Project> {
+  const client = getClient();
+  return client.fetch<Project>(
+    `/api/portfolios/${params.portfolioId}/applications/${params.applicationId}/projects`,
+    { method: "POST", body: params.body, accept: ACCEPT_PROJECTS, contentType: ACCEPT_PROJECTS },
+  );
+}
+
+export function updateProject(params: {
+  portfolioId: string;
+  applicationId: string;
+  projectId: string;
+  body: UpdateProjectRequest;
+}): Promise<Project> {
+  const client = getClient();
+  return client.fetch<Project>(
+    `/api/portfolios/${params.portfolioId}/applications/${params.applicationId}/projects/${params.projectId}`,
+    { method: "PATCH", body: params.body, accept: ACCEPT_PROJECTS, contentType: ACCEPT_PROJECTS },
+  );
+}
+
+export function deleteProject(params: {
+  portfolioId: string;
+  applicationId: string;
+  projectId: string;
+}): Promise<void> {
+  const client = getClient();
+  return client.fetch<void>(
+    `/api/portfolios/${params.portfolioId}/applications/${params.applicationId}/projects/${params.projectId}`,
+    { method: "DELETE", accept: ACCEPT_PROJECTS },
   );
 }
 

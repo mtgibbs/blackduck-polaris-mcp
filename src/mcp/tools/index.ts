@@ -41,11 +41,19 @@ import { assignComponentVersionLicenseTool } from "./assign-component-version-li
 import { getComponentOriginsTool } from "./get-component-origins.ts";
 import { getComponentOriginTool } from "./get-component-origin.ts";
 import { getComponentOriginMatchesTool } from "./get-component-origin-matches.ts";
+import { getProjectTool } from "./get-project.ts";
+import { createProjectTool } from "./create-project.ts";
+import { updateProjectTool } from "./update-project.ts";
+import { deleteProjectTool } from "./delete-project.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
   getApplicationsTool,
   getProjectsTool,
+  getProjectTool,
+  createProjectTool,
+  updateProjectTool,
+  deleteProjectTool,
   getBranchesTool,
   getIssuesTool,
   getIssueTool,
