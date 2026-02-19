@@ -47,7 +47,9 @@
       ],
       "priority": 2,
       "passes": false,
-      "notes": "Depends on PRD-P1 for CreateApplicationRequest, UpdateApplicationRequest types. The existing getApplication function uses positional args; refactor it to options object for consistency."
+      "notes": "Depends on PRD-P1 for CreateApplicationRequest, UpdateApplicationRequest types. The existing getApplication function uses positional args; refactor it to options object for consistency.",
+      "claimed_by": "agent-4",
+      "claimed_at": "2026-02-19T20:52:46Z"
     },
     {
       "id": "PRD-P3",
