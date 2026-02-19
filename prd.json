@@ -81,7 +81,9 @@
       ],
       "priority": 2,
       "passes": false,
-      "notes": "Depends on PRD-R1. The POST /bulk-repo-import returns HTTP 202 with a Location header (not a JSON body). The API function must extract the Location header from the response. This may require using client.fetch() in a way that provides access to response headers. The repositories param in the MCP tool is a JSON string that gets parsed to the complex nested structure in the handler. Policy IDs are comma-separated strings that get split into arrays."
+      "notes": "Depends on PRD-R1. The POST /bulk-repo-import returns HTTP 202 with a Location header (not a JSON body). The API function must extract the Location header from the response. This may require using client.fetch() in a way that provides access to response headers. The repositories param in the MCP tool is a JSON string that gets parsed to the complex nested structure in the handler. Policy IDs are comma-separated strings that get split into arrays.",
+      "claimed_by": "agent-2",
+      "claimed_at": "2026-02-19T21:44:30Z"
     },
     {
       "id": "PRD-R5",
