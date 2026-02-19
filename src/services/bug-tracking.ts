@@ -177,3 +177,24 @@ export function getLinkedIssue(
 ): Promise<LinkedIssue> {
   return bugTrackingApi.getLinkedIssue(options.configurationId, options.issueId);
 }
+
+export interface DeleteIssueExportOptions {
+  configurationId: string;
+  issueId: string;
+}
+
+export function deleteIssueExport(options: DeleteIssueExportOptions): Promise<void> {
+  return bugTrackingApi.deleteIssueExport(options.configurationId, options.issueId);
+}
+
+export interface AddIssueExportCommentOptions {
+  configurationId: string;
+  issueId: string;
+  comment: string;
+}
+
+export function addIssueExportComment(options: AddIssueExportCommentOptions): Promise<unknown> {
+  return bugTrackingApi.addIssueExportComment(options.configurationId, options.issueId, {
+    comment: options.comment,
+  });
+}

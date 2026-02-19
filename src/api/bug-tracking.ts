@@ -2,6 +2,7 @@ import { getClient } from "./client.ts";
 import type {
   BugTrackingConfiguration,
   CreateBugTrackingConfigRequest,
+  ExportCommentRequest,
   ExternalIssueType,
   ExternalProject,
   LinkedIssue,
@@ -221,5 +222,33 @@ export function getLinkedIssue(
     `/api/integrations/bugtracking/configurations/${configurationId}/issues-export/${issueId}`,
     undefined,
     ACCEPT,
+  );
+}
+
+export function deleteIssueExport(configurationId: string, issueId: string): Promise<void> {
+  const client = getClient();
+  return client.fetch<void>(
+    `/api/integrations/bugtracking/configurations/${configurationId}/issues-export/${issueId}`,
+    {
+      method: "DELETE",
+      accept: ACCEPT,
+    },
+  );
+}
+
+export function addIssueExportComment(
+  configurationId: string,
+  issueId: string,
+  body: ExportCommentRequest,
+): Promise<unknown> {
+  const client = getClient();
+  return client.fetch<unknown>(
+    `/api/integrations/bugtracking/configurations/${configurationId}/issues-export/${issueId}/comments`,
+    {
+      method: "POST",
+      body,
+      accept: ACCEPT,
+      contentType: ACCEPT,
+    },
   );
 }

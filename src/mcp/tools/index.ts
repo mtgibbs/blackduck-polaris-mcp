@@ -49,6 +49,8 @@ import { createBugTrackingConfigTool } from "./create-bug-tracking-config.ts";
 import { updateBugTrackingConfigTool } from "./update-bug-tracking-config.ts";
 import { deleteBugTrackingConfigTool } from "./delete-bug-tracking-config.ts";
 import { testBugTrackingConnectionTool } from "./test-bug-tracking-connection.ts";
+import { deleteIssueExportTool } from "./delete-issue-export.ts";
+import { addIssueExportCommentTool } from "./add-issue-export-comment.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -101,4 +103,6 @@ export const tools: AnyToolDefinition[] = [
   updateBugTrackingConfigTool,
   deleteBugTrackingConfigTool,
   testBugTrackingConnectionTool,
+  deleteIssueExportTool,
+  addIssueExportCommentTool,
 ];
