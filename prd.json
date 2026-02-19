@@ -243,7 +243,9 @@
       ],
       "priority": 4,
       "passes": false,
-      "notes": "Depends on PRD-P1 for DashboardItem type. The spec shows the legacy media type application/vnd.pm.portfolio-dashboard-1+json but we should try the new polaris-namespaced convention first: application/vnd.polaris.portfolios.dashboard-1+json. The API path requires careful construction: the spec shows /portfolios/{portfolioId}/dashboard relative to the server base https://polaris.blackduck.com/api/portfolios, so the full path from code is /api/portfolios/portfolios/{portfolioId}/dashboard."
+      "notes": "Depends on PRD-P1 for DashboardItem type. The spec shows the legacy media type application/vnd.pm.portfolio-dashboard-1+json but we should try the new polaris-namespaced convention first: application/vnd.polaris.portfolios.dashboard-1+json. The API path requires careful construction: the spec shows /portfolios/{portfolioId}/dashboard relative to the server base https://polaris.blackduck.com/api/portfolios, so the full path from code is /api/portfolios/portfolios/{portfolioId}/dashboard.",
+      "claimed_by": "agent-4",
+      "claimed_at": "2026-02-19T21:10:09Z"
     }
   ]
 }
