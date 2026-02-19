@@ -24,3 +24,24 @@
   - All 23 media type constants are exported from src/api/repos.ts for use by subsequent stories
   - GroupsSettings.settings has nested repository and branch sub-objects per spec 3339-3376
 ---
+
+## 2026-02-19T22:00:00Z - PRD-R2
+- Implemented Core repository CRUD and connection testing
+- Files changed:
+  - `src/api/repos.ts`: Added 6 API functions (getRepositories, createRepository, getRepository, updateRepository, testRepoConnection, getRepositoryBranches) with param interfaces; changed import from `_getClient` alias to `getClient` since it's now used
+  - `src/services/repos.ts`: Added 6 service functions with Options interfaces (getScmRepositories, createScmRepository, getScmRepository, updateScmRepository, testScmRepoConnection, getScmRepositoryBranches)
+  - `src/mcp/tools/get-scm-repositories.ts` (new): Read tool for listing repos with optional filter
+  - `src/mcp/tools/get-scm-repository.ts` (new): Read tool for single repo by ID with optional include
+  - `src/mcp/tools/get-scm-repository-branches.ts` (new): Read tool for listing repo branches
+  - `src/mcp/tools/create-scm-repository.ts` (new): Write tool for creating a repo
+  - `src/mcp/tools/update-scm-repository.ts` (new): Write tool for updating a repo (PATCH)
+  - `src/mcp/tools/test-scm-repo-connection.ts` (new): Write tool for testing connection
+  - `src/mcp/tools/index.ts`: Registered all 6 new tools
+  - `prd.json`: Set PRD-R2 passes: true
+- All checks pass: `deno task check`, `deno task lint`, `deno fmt --check`
+- **Learnings for future iterations:**
+  - When `getClient` is actually used in functions, remove the `_getClient` alias and use `getClient` directly
+  - `deno fmt` auto-fixes line length issues; always run after writing long lines
+  - Service layer for auth params: construct `scmAuthentication` object conditionally only if any auth fields provided
+  - ScmAuthentication is a reusable interface defined in api/repos.ts that other stories can import
+---
