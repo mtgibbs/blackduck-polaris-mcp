@@ -1,0 +1,20 @@
+## Codebase Patterns
+- Tool definitions: schema is plain object of Zod types (NOT z.object()), handler destructures args, return jsonResponse(data) or errorResponse(msg)
+- API layer uses client.fetch<T>() for non-GET requests with {method, params, body, accept, contentType}
+- Format check includes YAML files in specs/ — run `deno fmt` on that directory if needed
+- `deno task lint` lints only .ts files (33 files); `deno fmt --check` checks all 50 files including YAMLs
+
+---
+
+## 2026-02-19 - PRD-F6
+- Fixed provideAssistFeedback across 3 layers:
+  1. src/api/findings.ts: return type Promise<void> → Promise<AssistResponse>, Content-Type changed from ACCEPT_OCCURRENCES to 'application/json-patch+json', removed async/await (now directly returns client.fetch promise)
+  2. src/services/findings.ts: return type Promise<void> → Promise<AssistResponse>
+  3. src/mcp/tools/provide-assist-feedback.ts: handler now captures result and returns jsonResponse(result) instead of jsonResponse({success: true})
+- Also formatted pre-existing YAML spec files (specs/*.yaml) that were failing deno fmt --check
+- Files changed: src/api/findings.ts, src/services/findings.ts, src/mcp/tools/provide-assist-feedback.ts, specs/*.yaml
+- **Learnings for future iterations:**
+  - The `deno fmt --check` covers YAML files in specs/ too — 6 YAML files had single-quote vs double-quote issues; run `deno fmt specs/` to fix
+  - client.fetch<T>() is the low-level method for non-GET; GET uses client.get<T>()
+  - prd.json already has passes: false; update it to passes: true (don't duplicate the field)
+---
