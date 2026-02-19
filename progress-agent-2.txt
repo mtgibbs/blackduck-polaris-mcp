@@ -1,0 +1,25 @@
+## Codebase Patterns
+- Tool definition pattern: plain object of Zod types (NOT wrapped in z.object()), exported as `schema`
+- Service wrappers use an `Options` interface with camelCase fields, destructure and call the API layer
+- API layer functions use positional parameters (e.g., `getExternalProjectByKey(configurationId, projectKey)`)
+- All bug tracking endpoints use `ACCEPT = "application/vnd.polaris.bugtracking.configuration-1+json"`
+- `client.get<T>(path, params, accept)` for single resource GET endpoints
+- `client.getAllOffset<T>(path, params, accept)` for list GET endpoints
+- Tools import from `../../services/index.ts` (re-exports all services)
+- All tools re-exported from `src/mcp/tools/index.ts` flat array
+- Format: 100 char width, 2 spaces, double quotes (`deno fmt --check` to validate)
+
+---
+
+## 2026-02-19 - PRD-BT4
+- Implemented external project by key lookup (GET /configurations/{id}/projects/{projectKey})
+- Files changed:
+  - src/api/bug-tracking.ts: Added `getExternalProjectByKey(configurationId, projectKey)` function using `client.get()`
+  - src/services/bug-tracking.ts: Added `GetExternalProjectByKeyOptions` interface and `getExternalProjectByKey(options)` service wrapper
+  - src/mcp/tools/get-external-project-by-key.ts: Created new tool `get_external_project_by_key` with `config_id` and `project_key` params
+  - src/mcp/tools/index.ts: Registered `getExternalProjectByKeyTool`
+- **Learnings for future iterations:**
+  - PRD-BT4 is a simple single-endpoint story with no dependencies on other stories' new types (uses existing `ExternalProject` type)
+  - The service layer for bug-tracking.ts already had some inconsistency: `getLinkedIssues` and `getLinkedIssue` in services used positional params (not the options pattern), but for new functions we follow the options pattern
+  - Quality checks run cleanly: `deno task check`, `deno task lint`, `deno fmt --check` all pass
+---
