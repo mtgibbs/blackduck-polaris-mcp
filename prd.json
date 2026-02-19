@@ -111,7 +111,9 @@
       ],
       "priority": 2,
       "passes": false,
-      "notes": "Depends on PRD-TL1. Version settings allow pinning tool versions at different scoping levels: tenant (org-wide), application, project, or branch. The update endpoint uses PUT (full replacement), not PATCH. Context values include 'tenant', 'application', 'project', 'branch'. The create and update endpoints use a different Content-Type (version-settings-request-1) than the Accept header (version-settings-1)."
+      "notes": "Depends on PRD-TL1. Version settings allow pinning tool versions at different scoping levels: tenant (org-wide), application, project, or branch. The update endpoint uses PUT (full replacement), not PATCH. Context values include 'tenant', 'application', 'project', 'branch'. The create and update endpoints use a different Content-Type (version-settings-request-1) than the Accept header (version-settings-1).",
+      "claimed_by": "agent-2",
+      "claimed_at": "2026-02-19T22:10:42Z"
     }
   ]
 }
