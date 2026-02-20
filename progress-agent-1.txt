@@ -60,3 +60,23 @@
   - Only SCREENSHOT artifact type is supported for download and listing in getTestArtifacts
 ---
 
+## 2026-02-20 - PRD-T2
+- Implemented all acceptance criteria for PRD-T2 (Implement create test and update test endpoints)
+- Files changed:
+  - `src/api/tests.ts`: Added CONTENT_TYPE_CREATE, CONTENT_TYPE_UPDATE, ACCEPT_TEST constants; added createTest() (POST with 207 Multi-Status response) and updateTest() (PATCH with test-actions media type)
+  - `src/services/tests.ts`: Added CreateTestOptions and UpdateTestOptions interfaces; added createTest() and updateTest() service wrappers
+  - `src/mcp/tools/create-test.ts`: Created create_test tool (readOnlyHint: false) with project_id, assessment_types (array), and optional fields for test_mode, scan_mode, artifacts, notes, triage, profile_details
+  - `src/mcp/tools/update-test.ts`: Created update_test tool (readOnlyHint: false) with test_id, action enum (RESUME|CANCEL|FAILED), optional artifacts, tool_id, notes
+  - `src/mcp/tools/index.ts`: Registered both new tools in imports and tools array
+  - `prd.json`: Set PRD-T2 passes: true
+- Also fixed lint error from PRD-T3: removed unused `client` variable in getTestArtifact()
+- `deno task check` passes, `deno lint` passes, `deno fmt --check` passes
+- **Learnings for future iterations:**
+  - createTest returns 207 Multi-Status with CreateTestResponse containing _items array of individual test results (each with status, headers, body)
+  - updateTest uses PATCH (not POST) and returns a single Test object
+  - RESUME action requires artifacts and toolId for CI workflows with SAST/SCA; CANCEL works on non-terminal tests; FAILED is for CI WAITING_FOR_CAPTURE state
+  - Tool definitions use z.enum() for action parameter to enforce RESUME|CANCEL|FAILED values
+  - The create endpoint uses unique Content-Type: application/vnd.polaris.tests.tests-bulk-create-1+json and accepts application/vnd.polaris.tests.tests-bulk-1+json
+  - The update endpoint uses Content-Type: application/vnd.polaris.tests.test-actions-1+json and accepts application/vnd.polaris.tests.test-1+json
+---
+
