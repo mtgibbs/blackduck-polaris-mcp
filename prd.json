@@ -26,7 +26,7 @@
         "`deno fmt --check` passes"
       ],
       "priority": 1,
-      "passes": false,
+      "passes": true,
       "notes": "Foundation story. Must complete before PRD-T2 through PRD-T4. The refactor of getTests to options objects is a breaking internal change to the service layer but the MCP tool interface (snake_case params) stays the same for external consumers. The API layer (src/api/tests.ts) already uses an options object (TestQueryParams) so only the service layer needs refactoring.",
       "claimed_by": "agent-1",
       "claimed_at": "2026-02-20T03:12:55Z"

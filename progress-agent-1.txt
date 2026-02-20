@@ -22,3 +22,18 @@
   - IssueContext spec includes tenantId and _links, so no cleanup was needed there
   - Both lint and fmt checks pass without network access
 ---
+
+## 2026-02-20 - PRD-T1
+- Implemented all acceptance criteria for PRD-T1 (Add missing types and refactor existing service to options objects)
+- Files changed:
+  - `src/types/polaris.ts`: Added CreateTestRequest, TestAction, UpdateTestRequest, TestComment, TestArtifactMetadata, TestProfile, SubscriptionMetrics interfaces
+  - `src/services/tests.ts`: Added GetTestsOptions interface; refactored getTests(projectId?, branchId?, status?) to getTests(options?: GetTestsOptions)
+  - `src/mcp/tools/get-tests.ts`: Updated handler to use options object pattern { projectId: project_id, branchId: branch_id, status, filter }; added filter field to schema
+  - `prd.json`: Set PRD-T1 passes: true
+- `deno task lint` passes, `deno fmt --check` passes
+- **Learnings for future iterations:**
+  - The API layer (src/api/tests.ts) already had filter field in TestQueryParams and was wiring it properly with RSQL concatenation
+  - Service layer needed GetTestsOptions interface to match the options object pattern used in bug-tracking and findings services
+  - Tool handler continues to use snake_case params externally but now maps them to an options object internally
+  - All new types for Tests API (comments, artifacts, profiles, subscriptions, create/update requests) added in one go to avoid multiple edits
+---
