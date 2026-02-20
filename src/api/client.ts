@@ -30,6 +30,7 @@ export interface RequestOptions {
   params?: Record<string, string | number | boolean | undefined>;
   accept?: string;
   contentType?: string;
+  headers?: Record<string, string>;
 }
 
 let client: PolarisClient | null = null;
@@ -120,13 +121,19 @@ export class PolarisClient {
     return headers;
   }
 
-  async fetch<T>(path: string, options: RequestOptions = {}): Promise<T> {
+  private async sendRequest(path: string, options: RequestOptions = {}): Promise<Response> {
     if (!this.organizationId && !path.startsWith("/api/portfolios")) {
       await this.resolveOrganizationId();
     }
 
     const url = this.buildUrl(path, options.params);
     const headers = this.buildHeaders(options.accept, options.contentType);
+
+    if (options.headers) {
+      for (const [key, value] of Object.entries(options.headers)) {
+        headers.set(key, value);
+      }
+    }
 
     const fetchOptions: globalThis.RequestInit = {
       method: options.method ?? "GET",
@@ -153,6 +160,12 @@ export class PolarisClient {
       throw new Error(`Polaris API error ${response.status}: ${detail}`);
     }
 
+    return response;
+  }
+
+  async fetch<T>(path: string, options: RequestOptions = {}): Promise<T> {
+    const response = await this.sendRequest(path, options);
+
     if (response.status === 204) {
       return undefined as T;
     }
@@ -166,6 +179,18 @@ export class PolarisClient {
     accept?: string,
   ): Promise<T> {
     return this.fetch<T>(path, { params, accept });
+  }
+
+  /**
+   * Make a request and return the Location header from the response.
+   * Used for endpoints that return 202 with a Location header and no body.
+   */
+  async fetchLocation(path: string, options: RequestOptions = {}): Promise<string> {
+    const response = await this.sendRequest(path, {
+      method: "POST",
+      ...options,
+    });
+    return response.headers.get("Location") ?? "";
   }
 
   /**

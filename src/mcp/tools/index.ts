@@ -1,6 +1,10 @@
 import type { AnyToolDefinition } from "../types.ts";
 import { getPortfoliosTool } from "./get-portfolios.ts";
 import { getApplicationsTool } from "./get-applications.ts";
+import { getApplicationTool } from "./get-application.ts";
+import { createApplicationTool } from "./create-application.ts";
+import { updateApplicationTool } from "./update-application.ts";
+import { deleteApplicationTool } from "./delete-application.ts";
 import { getProjectsTool } from "./get-projects.ts";
 import { getBranchesTool } from "./get-branches.ts";
 import { getIssuesTool } from "./get-issues.ts";
@@ -25,6 +29,10 @@ import { getSubscriptionMetricsTool } from "./get-subscription-metrics.ts";
 import { getLastRunTestsTool } from "./get-last-run-tests.ts";
 import { getBugTrackingConfigsTool } from "./get-bug-tracking-configs.ts";
 import { getExternalProjectsTool } from "./get-external-projects.ts";
+import { getExternalProjectByKeyTool } from "./get-external-project-by-key.ts";
+import { getExternalIssueTypesTool } from "./get-external-issue-types.ts";
+import { getLinkedIssuesTool } from "./get-linked-issues.ts";
+import { getLinkedIssueTool } from "./get-linked-issue.ts";
 import { exportIssuesTool } from "./export-issues.ts";
 import { exportFindingsIssuesTool } from "./export-findings-issues.ts";
 import { getIssueCountOverTimeTool } from "./get-issue-count-over-time.ts";
@@ -49,11 +57,96 @@ import { assignComponentVersionLicenseTool } from "./assign-component-version-li
 import { getComponentOriginsTool } from "./get-component-origins.ts";
 import { getComponentOriginTool } from "./get-component-origin.ts";
 import { getComponentOriginMatchesTool } from "./get-component-origin-matches.ts";
+import { getProjectTool } from "./get-project.ts";
+import { createProjectTool } from "./create-project.ts";
+import { updateProjectTool } from "./update-project.ts";
+import { deleteProjectTool } from "./delete-project.ts";
+import { getBranchTool } from "./get-branch.ts";
+import { createBranchTool } from "./create-branch.ts";
+import { updateBranchTool } from "./update-branch.ts";
+import { deleteBranchTool } from "./delete-branch.ts";
+import { getPortfolioProjectsTool } from "./get-portfolio-projects.ts";
+import { getPortfolioBranchesTool } from "./get-portfolio-branches.ts";
+import { getProjectSubResourcesTool } from "./get-project-sub-resources.ts";
+import { getProjectSubResourceCountTool } from "./get-project-sub-resource-count.ts";
+import { getProfileTool } from "./get-profile.ts";
+import { updateProfileTool } from "./update-profile.ts";
+import { createLabelTool } from "./create-label.ts";
+import { getLabelsTool } from "./get-labels.ts";
+import { getLabelTool } from "./get-label.ts";
+import { updateLabelTool } from "./update-label.ts";
+import { deleteLabelTool } from "./delete-label.ts";
+import { mergeLabelsTool } from "./merge-labels.ts";
+import { getOrganizationSettingsTool } from "./get-organization-settings.ts";
+import { updateOrganizationSettingsTool } from "./update-organization-settings.ts";
+import { getRiskScoringSettingsTool } from "./get-risk-scoring-settings.ts";
+import { updateRiskScoringSettingsTool } from "./update-risk-scoring-settings.ts";
+import { createArtifactTool } from "./create-artifact.ts";
+import { getArtifactTool } from "./get-artifact.ts";
+import { getApplicationEntitlementsTool } from "./get-application-entitlements.ts";
+import { updateEntitlementQuantityTool } from "./update-entitlement-quantity.ts";
+import { getPortfolioEntitlementsTool } from "./get-portfolio-entitlements.ts";
+import { getDashboardTool } from "./get-dashboard.ts";
+import { getScmRepositoriesTool } from "./get-scm-repositories.ts";
+import { getScmRepositoryTool } from "./get-scm-repository.ts";
+import { getScmRepositoryBranchesTool } from "./get-scm-repository-branches.ts";
+import { createScmRepositoryTool } from "./create-scm-repository.ts";
+import { updateScmRepositoryTool } from "./update-scm-repository.ts";
+import { testScmRepoConnectionTool } from "./test-scm-repo-connection.ts";
+import { getScmProvidersTool } from "./get-scm-providers.ts";
+import { getScmGroupsTool } from "./get-scm-groups.ts";
+import { getScmRemoteReposTool } from "./get-scm-remote-repos.ts";
+import { getScmProjectsTool } from "./get-scm-projects.ts";
+import { testScmProviderConnectionTool } from "./test-scm-provider-connection.ts";
+import { createScmGroupAuthTool } from "./create-scm-group-auth.ts";
+import { bulkImportReposTool } from "./bulk-import-repos.ts";
+import { getBulkRepoImportGroupsStatusTool } from "./get-bulk-repo-import-groups-status.ts";
+import { bulkImportGroupsTool } from "./bulk-import-groups.ts";
+import { abortGroupImportJobTool } from "./abort-group-import-job.ts";
+import { getGroupImportJobStatusTool } from "./get-group-import-job-status.ts";
+import { getAllGroupImportStatusesTool } from "./get-all-group-import-statuses.ts";
+import { updateScmGroupSettingsTool } from "./update-scm-group-settings.ts";
+import { getScmGroupSettingsTool } from "./get-scm-group-settings.ts";
+import { testScmGroupConnectionTool } from "./test-scm-group-connection.ts";
+import { getScmGroupMappingStatusTool } from "./get-scm-group-mapping-status.ts";
+import { createScmTestSettingsTool } from "./create-scm-test-settings.ts";
+import { getScmTestSettingsTool } from "./get-scm-test-settings.ts";
+import { deleteScmTestSettingsTool } from "./delete-scm-test-settings.ts";
+import { createBugTrackingConfigTool } from "./create-bug-tracking-config.ts";
+import { updateBugTrackingConfigTool } from "./update-bug-tracking-config.ts";
+import { deleteBugTrackingConfigTool } from "./delete-bug-tracking-config.ts";
+import { testBugTrackingConnectionTool } from "./test-bug-tracking-connection.ts";
+import { deleteIssueExportTool } from "./delete-issue-export.ts";
+import { addIssueExportCommentTool } from "./add-issue-export-comment.ts";
+import { createProjectMappingTool } from "./create-project-mapping.ts";
+import { getConfigProjectMappingsTool } from "./get-config-project-mappings.ts";
+import { getConfigProjectMappingTool } from "./get-config-project-mapping.ts";
+import { updateProjectMappingTool } from "./update-project-mapping.ts";
+import { deleteProjectMappingTool } from "./delete-project-mapping.ts";
+import { getVersionMappingTool } from "./get-version-mapping.ts";
+import { getVersionMatrixTool } from "./get-version-matrix.ts";
+import { getToolsTool } from "./get-tools.ts";
+import { getToolTool } from "./get-tool.ts";
+import { getDownloadDescriptorTool } from "./get-download-descriptor.ts";
+import { getToolLicenseTool } from "./get-tool-license.ts";
+import { createVersionSettingTool } from "./create-version-setting.ts";
+import { getVersionSettingsTool } from "./get-version-settings.ts";
+import { getVersionSettingsByContextTool } from "./get-version-settings-by-context.ts";
+import { updateVersionSettingTool } from "./update-version-setting.ts";
+import { deleteVersionSettingTool } from "./delete-version-setting.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
   getApplicationsTool,
+  getApplicationTool,
+  createApplicationTool,
+  updateApplicationTool,
+  deleteApplicationTool,
   getProjectsTool,
+  getProjectTool,
+  createProjectTool,
+  updateProjectTool,
+  deleteProjectTool,
   getBranchesTool,
   getIssuesTool,
   getIssueTool,
@@ -77,6 +170,10 @@ export const tools: AnyToolDefinition[] = [
   getLastRunTestsTool,
   getBugTrackingConfigsTool,
   getExternalProjectsTool,
+  getExternalProjectByKeyTool,
+  getExternalIssueTypesTool,
+  getLinkedIssuesTool,
+  getLinkedIssueTool,
   exportIssuesTool,
   exportFindingsIssuesTool,
   getIssueCountOverTimeTool,
@@ -101,4 +198,77 @@ export const tools: AnyToolDefinition[] = [
   getComponentOriginsTool,
   getComponentOriginTool,
   getComponentOriginMatchesTool,
+  getBranchTool,
+  createBranchTool,
+  updateBranchTool,
+  deleteBranchTool,
+  getPortfolioProjectsTool,
+  getPortfolioBranchesTool,
+  getProjectSubResourcesTool,
+  getProjectSubResourceCountTool,
+  getProfileTool,
+  updateProfileTool,
+  createLabelTool,
+  getLabelsTool,
+  getLabelTool,
+  updateLabelTool,
+  deleteLabelTool,
+  mergeLabelsTool,
+  getOrganizationSettingsTool,
+  updateOrganizationSettingsTool,
+  getRiskScoringSettingsTool,
+  updateRiskScoringSettingsTool,
+  createArtifactTool,
+  getArtifactTool,
+  getApplicationEntitlementsTool,
+  updateEntitlementQuantityTool,
+  getPortfolioEntitlementsTool,
+  getDashboardTool,
+  getScmRepositoriesTool,
+  getScmRepositoryTool,
+  getScmRepositoryBranchesTool,
+  createScmRepositoryTool,
+  updateScmRepositoryTool,
+  testScmRepoConnectionTool,
+  getScmProvidersTool,
+  getScmGroupsTool,
+  getScmRemoteReposTool,
+  getScmProjectsTool,
+  testScmProviderConnectionTool,
+  createScmGroupAuthTool,
+  bulkImportReposTool,
+  getBulkRepoImportGroupsStatusTool,
+  bulkImportGroupsTool,
+  abortGroupImportJobTool,
+  getGroupImportJobStatusTool,
+  getAllGroupImportStatusesTool,
+  updateScmGroupSettingsTool,
+  getScmGroupSettingsTool,
+  testScmGroupConnectionTool,
+  getScmGroupMappingStatusTool,
+  createScmTestSettingsTool,
+  getScmTestSettingsTool,
+  deleteScmTestSettingsTool,
+  createBugTrackingConfigTool,
+  updateBugTrackingConfigTool,
+  deleteBugTrackingConfigTool,
+  testBugTrackingConnectionTool,
+  deleteIssueExportTool,
+  addIssueExportCommentTool,
+  createProjectMappingTool,
+  getConfigProjectMappingsTool,
+  getConfigProjectMappingTool,
+  updateProjectMappingTool,
+  deleteProjectMappingTool,
+  getVersionMappingTool,
+  getVersionMatrixTool,
+  getToolsTool,
+  getToolTool,
+  getDownloadDescriptorTool,
+  getToolLicenseTool,
+  createVersionSettingTool,
+  getVersionSettingsTool,
+  getVersionSettingsByContextTool,
+  updateVersionSettingTool,
+  deleteVersionSettingTool,
 ];
