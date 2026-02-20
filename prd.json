@@ -85,8 +85,8 @@
       "priority": 2,
       "passes": false,
       "notes": "Depends on PRD-T1 for TestComment, TestArtifactMetadata, and TestProfile types. The createTestArtifact endpoint does NOT upload file contents -- it returns a signedUrl for a subsequent PUT upload. The getTestArtifact endpoint returns binary (application/octet-stream) -- only SCREENSHOT artifact type is supported for download. Profiles endpoint is DAST-specific.",
-      "claimed_by": null,
-      "claimed_at": null
+      "claimed_by": "agent-4",
+      "claimed_at": "2026-02-20T03:14:35Z"
     },
     {
       "id": "PRD-T4",
