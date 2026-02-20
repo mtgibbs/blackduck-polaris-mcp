@@ -52,8 +52,8 @@
       "priority": 2,
       "passes": false,
       "notes": "Depends on PRD-T1 for CreateTestRequest, UpdateTestRequest, and TestAction types. POST /api/tests returns 207 Multi-Status (not 200) with per-test results. The create endpoint uses a unique Content-Type (tests-bulk-create-1+json). The update endpoint supports RESUME (to continue paused tests), CANCEL, and FAILED actions.",
-      "claimed_by": "agent-2",
-      "claimed_at": "2026-02-20T03:28:01Z"
+      "claimed_by": null,
+      "claimed_at": null
     },
     {
       "id": "PRD-T3",
