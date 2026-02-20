@@ -100,6 +100,191 @@ export interface Branch {
   _links?: LinkEntry[];
 }
 
+// --- Portfolio Request/Response Types ---
+
+export interface CreateApplicationRequest {
+  name: string;
+  description?: string;
+}
+
+export interface UpdateApplicationRequest {
+  name?: string;
+  description?: string;
+  inTrash?: boolean;
+  autoDeleteSetting?: boolean;
+  branchRetentionPeriodSetting?: number;
+}
+
+export interface CreateProjectRequest {
+  name: string;
+  description?: string;
+}
+
+export interface UpdateProjectRequest {
+  name?: string;
+  description?: string;
+  inTrash?: boolean;
+  autoDeleteSetting?: boolean;
+  branchRetentionPeriodSetting?: number;
+}
+
+export interface CreateBranchRequest {
+  name: string;
+}
+
+export interface UpdateBranchRequest {
+  name?: string;
+  isDefault?: boolean;
+}
+
+export interface ProjectSubResource {
+  id: string;
+  name: string;
+  projectSubResourceType: "BRANCH" | "PROFILE";
+  default?: boolean;
+  additionalProperties?: Array<{ key: string; value: string }>;
+  project?: { id: string; name: string };
+  application?: { id: string; name: string };
+  _type?: string;
+}
+
+export interface ProjectSubResourceCountItem {
+  group: { key: string; value: string };
+  count: number;
+  _type?: string;
+}
+
+export interface Profile {
+  id: string;
+  name: string;
+  organizationId?: string;
+  projectId?: string;
+  performActiveAttack?: boolean;
+  default?: boolean;
+  importSettings?: Record<string, unknown>;
+  manualSettings?: Record<string, unknown>;
+  _links?: LinkEntry[];
+}
+
+export interface ProfileArtifact {
+  id: string;
+  fileName?: string;
+  fileHash?: string;
+  fileSize?: string;
+  artifactType?: string;
+  signedUrl?: string;
+  createdAt?: string;
+}
+
+export interface CreateProfileArtifactRequest {
+  fileName: string;
+  fileHash: string;
+  fileSize: string;
+  artifactType: string;
+}
+
+export interface Label {
+  id: string;
+  name: string;
+  description?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  _links?: LinkEntry[];
+  _type?: string;
+}
+
+export interface CreateLabelRequest {
+  name: string;
+  description?: string;
+}
+
+export interface UpdateLabelRequest {
+  name?: string;
+  description?: string;
+}
+
+export interface MergeLabelRequest {
+  labelsToMerge: string[];
+  targetLabel: { name: string; description?: string };
+}
+
+export interface ApplicationEntitlementItem {
+  entitlementId: string;
+  type?: string;
+  executionMode?: string;
+  quantityUsed?: number;
+}
+
+export interface ApplicationEntitlementsResponse {
+  applicationId: string;
+  entitlements: ApplicationEntitlementItem[];
+  _links?: LinkEntry[];
+}
+
+export interface EntitlementQuantityUpdateRequest {
+  entitlementIds: string[];
+  quantity: number;
+}
+
+export interface EntitlementQuantityUpdateResponse {
+  entitlementIds: string[];
+  quantity: number;
+  _links?: LinkEntry[];
+}
+
+export interface PortfolioEntitlement {
+  entitlementId: string;
+  applicationCount?: number;
+}
+
+export interface OrganizationSettings {
+  allowLabelCreationForApplicationRoleUser: boolean;
+  autoDeleteSetting?: boolean;
+  branchRetentionPeriodSetting?: number;
+}
+
+export interface RiskCategory {
+  id?: string;
+  name: string;
+  impact: number;
+}
+
+export interface RiskFactor {
+  id?: string;
+  name: string;
+  weight: number;
+  description?: string;
+  defaultCategory?: string | number;
+  categories: RiskCategory[];
+}
+
+export interface RiskScoringSettings {
+  isEnabled: boolean;
+  riskFactors: RiskFactor[];
+}
+
+export interface DashboardItem {
+  id: string;
+  tenantId?: string;
+  portfolioId?: string;
+  portfolioItemId: string;
+  portfolioItemName?: string;
+  portfolioItemDescription?: string;
+  criticalIssueCount?: number;
+  highIssueCount?: number;
+  mediumIssueCount?: number;
+  lowIssueCount?: number;
+  informationalIssueCount?: number;
+  totalIssueCount?: number;
+  portfolioSubItemCount?: number;
+  lastScanTime?: string;
+  scanTypes?: string;
+  totalActivePolicyViolation?: number;
+  subscriptionTypes?: string;
+  labelIds?: string[];
+  riskScore?: number;
+}
+
 // --- Findings ---
 
 export type ToolType = "dast" | "sast" | "sca";
