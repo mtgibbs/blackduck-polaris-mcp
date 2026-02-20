@@ -1,0 +1,18 @@
+import { z } from "zod";
+import { abortGroupImportJob } from "../../services/index.ts";
+import { jsonResponse, type ToolDefinition } from "../types.ts";
+
+export const schema = {
+  job_id: z.string().describe("The ID of the bulk group import job to abort"),
+};
+
+export const abortGroupImportJobTool: ToolDefinition<typeof schema> = {
+  name: "abort_group_import_job",
+  description: "Abort a running bulk group import job by its ID.",
+  schema,
+  annotations: { readOnlyHint: false, openWorldHint: true },
+  handler: async ({ job_id }) => {
+    const result = await abortGroupImportJob({ jobId: job_id });
+    return jsonResponse(result);
+  },
+};

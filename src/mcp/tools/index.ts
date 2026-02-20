@@ -75,6 +75,31 @@ import { getApplicationEntitlementsTool } from "./get-application-entitlements.t
 import { updateEntitlementQuantityTool } from "./update-entitlement-quantity.ts";
 import { getPortfolioEntitlementsTool } from "./get-portfolio-entitlements.ts";
 import { getDashboardTool } from "./get-dashboard.ts";
+import { getScmRepositoriesTool } from "./get-scm-repositories.ts";
+import { getScmRepositoryTool } from "./get-scm-repository.ts";
+import { getScmRepositoryBranchesTool } from "./get-scm-repository-branches.ts";
+import { createScmRepositoryTool } from "./create-scm-repository.ts";
+import { updateScmRepositoryTool } from "./update-scm-repository.ts";
+import { testScmRepoConnectionTool } from "./test-scm-repo-connection.ts";
+import { getScmProvidersTool } from "./get-scm-providers.ts";
+import { getScmGroupsTool } from "./get-scm-groups.ts";
+import { getScmRemoteReposTool } from "./get-scm-remote-repos.ts";
+import { getScmProjectsTool } from "./get-scm-projects.ts";
+import { testScmProviderConnectionTool } from "./test-scm-provider-connection.ts";
+import { createScmGroupAuthTool } from "./create-scm-group-auth.ts";
+import { bulkImportReposTool } from "./bulk-import-repos.ts";
+import { getBulkRepoImportGroupsStatusTool } from "./get-bulk-repo-import-groups-status.ts";
+import { bulkImportGroupsTool } from "./bulk-import-groups.ts";
+import { abortGroupImportJobTool } from "./abort-group-import-job.ts";
+import { getGroupImportJobStatusTool } from "./get-group-import-job-status.ts";
+import { getAllGroupImportStatusesTool } from "./get-all-group-import-statuses.ts";
+import { updateScmGroupSettingsTool } from "./update-scm-group-settings.ts";
+import { getScmGroupSettingsTool } from "./get-scm-group-settings.ts";
+import { testScmGroupConnectionTool } from "./test-scm-group-connection.ts";
+import { getScmGroupMappingStatusTool } from "./get-scm-group-mapping-status.ts";
+import { createScmTestSettingsTool } from "./create-scm-test-settings.ts";
+import { getScmTestSettingsTool } from "./get-scm-test-settings.ts";
+import { deleteScmTestSettingsTool } from "./delete-scm-test-settings.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -153,4 +178,29 @@ export const tools: AnyToolDefinition[] = [
   updateEntitlementQuantityTool,
   getPortfolioEntitlementsTool,
   getDashboardTool,
+  getScmRepositoriesTool,
+  getScmRepositoryTool,
+  getScmRepositoryBranchesTool,
+  createScmRepositoryTool,
+  updateScmRepositoryTool,
+  testScmRepoConnectionTool,
+  getScmProvidersTool,
+  getScmGroupsTool,
+  getScmRemoteReposTool,
+  getScmProjectsTool,
+  testScmProviderConnectionTool,
+  createScmGroupAuthTool,
+  bulkImportReposTool,
+  getBulkRepoImportGroupsStatusTool,
+  bulkImportGroupsTool,
+  abortGroupImportJobTool,
+  getGroupImportJobStatusTool,
+  getAllGroupImportStatusesTool,
+  updateScmGroupSettingsTool,
+  getScmGroupSettingsTool,
+  testScmGroupConnectionTool,
+  getScmGroupMappingStatusTool,
+  createScmTestSettingsTool,
+  getScmTestSettingsTool,
+  deleteScmTestSettingsTool,
 ];
