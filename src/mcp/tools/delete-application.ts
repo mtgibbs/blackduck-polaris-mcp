@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { deleteApplication } from "../../services/index.ts";
-import { errorResponse, jsonResponse, type ToolDefinition } from "../types.ts";
+import { jsonResponse, type ToolDefinition } from "../types.ts";
 
 export const schema = {
   portfolio_id: z.string().describe("Portfolio ID (get from get_portfolios)"),
@@ -13,14 +13,10 @@ export const deleteApplicationTool: ToolDefinition<typeof schema> = {
   schema,
   annotations: { readOnlyHint: false, destructiveHint: true, openWorldHint: true },
   handler: async ({ portfolio_id, application_id }) => {
-    try {
-      await deleteApplication({
-        portfolioId: portfolio_id,
-        applicationId: application_id,
-      });
-      return jsonResponse({ success: true });
-    } catch (err) {
-      return errorResponse(err instanceof Error ? err.message : String(err));
-    }
+    await deleteApplication({
+      portfolioId: portfolio_id,
+      applicationId: application_id,
+    });
+    return jsonResponse({ success: true });
   },
 };

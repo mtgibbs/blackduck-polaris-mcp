@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { updateLabel } from "../../services/index.ts";
-import { errorResponse, jsonResponse, type ToolDefinition } from "../types.ts";
+import { jsonResponse, type ToolDefinition } from "../types.ts";
 
 export const schema = {
   label_id: z.string().describe("Label ID to update"),
@@ -14,11 +14,7 @@ export const updateLabelTool: ToolDefinition<typeof schema> = {
   schema,
   annotations: { readOnlyHint: false, openWorldHint: true },
   handler: async ({ label_id, name, description }) => {
-    try {
-      const label = await updateLabel({ labelId: label_id, name, description });
-      return jsonResponse(label);
-    } catch (err) {
-      return errorResponse(err instanceof Error ? err.message : String(err));
-    }
+    const label = await updateLabel({ labelId: label_id, name, description });
+    return jsonResponse(label);
   },
 };

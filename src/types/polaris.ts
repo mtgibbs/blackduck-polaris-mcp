@@ -198,6 +198,11 @@ export interface CreateLabelRequest {
   description?: string;
 }
 
+export interface UpdateLabelRequest {
+  name?: string;
+  description?: string;
+}
+
 export interface MergeLabelRequest {
   labelsToMerge: string[];
   targetLabel: { name: string; description?: string };

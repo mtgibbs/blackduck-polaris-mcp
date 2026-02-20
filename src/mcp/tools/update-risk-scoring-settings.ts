@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { updateRiskScoringSettings } from "../../services/index.ts";
-import { errorResponse, jsonResponse, type ToolDefinition } from "../types.ts";
+import { jsonResponse, type ToolDefinition } from "../types.ts";
 
 export const schema = {
   is_enabled: z.boolean().describe("Enable or disable risk scoring for the organization"),
@@ -15,15 +15,11 @@ export const updateRiskScoringSettingsTool: ToolDefinition<typeof schema> = {
   schema,
   annotations: { readOnlyHint: false, openWorldHint: true },
   handler: async ({ is_enabled, risk_factors }) => {
-    try {
-      const riskFactors = JSON.parse(risk_factors);
-      const settings = await updateRiskScoringSettings({
-        isEnabled: is_enabled,
-        riskFactors,
-      });
-      return jsonResponse(settings);
-    } catch (err) {
-      return errorResponse(err instanceof Error ? err.message : String(err));
-    }
+    const riskFactors = JSON.parse(risk_factors);
+    const settings = await updateRiskScoringSettings({
+      isEnabled: is_enabled,
+      riskFactors,
+    });
+    return jsonResponse(settings);
   },
 };

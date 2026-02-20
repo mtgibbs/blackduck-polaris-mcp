@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { updateApplication } from "../../services/index.ts";
-import { errorResponse, jsonResponse, type ToolDefinition } from "../types.ts";
+import { jsonResponse, type ToolDefinition } from "../types.ts";
 
 export const schema = {
   portfolio_id: z.string().describe("Portfolio ID (get from get_portfolios)"),
@@ -15,16 +15,12 @@ export const updateApplicationTool: ToolDefinition<typeof schema> = {
   schema,
   annotations: { readOnlyHint: false, openWorldHint: true },
   handler: async ({ portfolio_id, application_id, name, description }) => {
-    try {
-      const app = await updateApplication({
-        portfolioId: portfolio_id,
-        applicationId: application_id,
-        name,
-        description,
-      });
-      return jsonResponse(app);
-    } catch (err) {
-      return errorResponse(err instanceof Error ? err.message : String(err));
-    }
+    const app = await updateApplication({
+      portfolioId: portfolio_id,
+      applicationId: application_id,
+      name,
+      description,
+    });
+    return jsonResponse(app);
   },
 };

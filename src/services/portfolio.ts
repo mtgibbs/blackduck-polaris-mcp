@@ -25,6 +25,7 @@ import type {
   RiskScoringSettings,
   UpdateApplicationRequest,
   UpdateBranchRequest,
+  UpdateLabelRequest,
   UpdateProjectRequest,
 } from "../types/polaris.ts";
 
@@ -367,7 +368,7 @@ export interface UpdateLabelOptions {
 }
 
 export function updateLabel(options: UpdateLabelOptions): Promise<Label> {
-  const body: CreateLabelRequest = { name: options.name ?? "" };
+  const body: UpdateLabelRequest = {};
   if (options.name !== undefined) body.name = options.name;
   if (options.description !== undefined) body.description = options.description;
   return portfolioApi.updateLabel({ labelId: options.labelId, body });

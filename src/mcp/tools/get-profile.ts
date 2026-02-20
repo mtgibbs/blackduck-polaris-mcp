@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { getProfile } from "../../services/index.ts";
-import { errorResponse, jsonResponse, type ToolDefinition } from "../types.ts";
+import { jsonResponse, type ToolDefinition } from "../types.ts";
 
 export const schema = {
   portfolio_id: z.string().describe("Portfolio ID (get from get_portfolios)"),
@@ -15,16 +15,12 @@ export const getProfileTool: ToolDefinition<typeof schema> = {
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
   handler: async ({ portfolio_id, application_id, project_id, profile_id }) => {
-    try {
-      const profile = await getProfile({
-        portfolioId: portfolio_id,
-        applicationId: application_id,
-        projectId: project_id,
-        profileId: profile_id,
-      });
-      return jsonResponse(profile);
-    } catch (err) {
-      return errorResponse(err instanceof Error ? err.message : String(err));
-    }
+    const profile = await getProfile({
+      portfolioId: portfolio_id,
+      applicationId: application_id,
+      projectId: project_id,
+      profileId: profile_id,
+    });
+    return jsonResponse(profile);
   },
 };

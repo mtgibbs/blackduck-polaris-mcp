@@ -24,6 +24,7 @@ import type {
   RiskScoringSettings,
   UpdateApplicationRequest,
   UpdateBranchRequest,
+  UpdateLabelRequest,
   UpdateProjectRequest,
 } from "../types/polaris.ts";
 
@@ -38,6 +39,12 @@ const ACCEPT_ENTITLEMENT_QTY =
   "application/vnd.polaris.portfolios.application-entitlements-quantity-1+json";
 const ACCEPT_PORTFOLIO_ENTITLEMENTS =
   "application/vnd.polaris.portfolios.portfolio-entitlements-1+json";
+const ACCEPT_SUB_RESOURCES = "application/vnd.polaris.portfolios.project-sub-resources-1+json";
+const ACCEPT_PROFILES = "application/vnd.polaris.portfolios.profiles-1+json";
+const ACCEPT_LABELS = "application/vnd.polaris.portfolios.labels-1+json";
+const ACCEPT_SETTINGS = "application/vnd.polaris.portfolios.settings-1+json";
+const ACCEPT_RISK_SCORING = "application/vnd.polaris.portfolios.risk-scoring-settings-1+json";
+const ACCEPT_DASHBOARD = "application/vnd.polaris.portfolios.dashboard-1+json";
 
 // --- Portfolios ---
 
@@ -197,9 +204,6 @@ export function deleteProject(params: {
     { method: "DELETE", accept: ACCEPT_PROJECTS },
   );
 }
-
-const ACCEPT_SUB_RESOURCES = "application/vnd.polaris.portfolios.project-sub-resources-1+json";
-const ACCEPT_PROFILES = "application/vnd.polaris.portfolios.profiles-1+json";
 
 // --- Project Sub-Resources ---
 
@@ -365,8 +369,6 @@ export function getPortfolioBranches(params: {
   );
 }
 
-const ACCEPT_LABELS = "application/vnd.polaris.portfolios.labels-1+json";
-
 // --- Labels ---
 
 export function createLabel(params: { body: CreateLabelRequest }): Promise<Label> {
@@ -401,7 +403,7 @@ export function getLabel(params: {
 
 export function updateLabel(params: {
   labelId: string;
-  body: CreateLabelRequest;
+  body: UpdateLabelRequest;
 }): Promise<Label> {
   const client = getClient();
   return client.fetch<Label>(`/api/portfolios/labels/${params.labelId}`, {
@@ -429,9 +431,6 @@ export function mergeLabels(params: { body: MergeLabelRequest }): Promise<Label>
     contentType: ACCEPT_LABELS,
   });
 }
-
-const ACCEPT_SETTINGS = "application/vnd.polaris.portfolios.settings-1+json";
-const ACCEPT_RISK_SCORING = "application/vnd.polaris.portfolios.risk-scoring-settings-1+json";
 
 // --- Organization Settings ---
 
@@ -497,6 +496,8 @@ export function getArtifact(params: {
   const client = getClient();
   return client.get<ProfileArtifact>(
     `/api/portfolios/${params.portfolioId}/applications/${params.applicationId}/artifacts/${params.artifactId}`,
+    undefined,
+    ACCEPT_ARTIFACTS,
   );
 }
 
@@ -543,8 +544,6 @@ export function getPortfolioEntitlements(params: {
 }
 
 // --- Dashboard ---
-
-const ACCEPT_DASHBOARD = "application/vnd.polaris.portfolios.dashboard-1+json";
 
 export function getDashboard(params: {
   portfolioId: string;
