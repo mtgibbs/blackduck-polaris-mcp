@@ -27,7 +27,9 @@
       ],
       "priority": 1,
       "passes": false,
-      "notes": "Foundation story. Must complete before PRD-T2 through PRD-T4. The refactor of getTests to options objects is a breaking internal change to the service layer but the MCP tool interface (snake_case params) stays the same for external consumers. The API layer (src/api/tests.ts) already uses an options object (TestQueryParams) so only the service layer needs refactoring."
+      "notes": "Foundation story. Must complete before PRD-T2 through PRD-T4. The refactor of getTests to options objects is a breaking internal change to the service layer but the MCP tool interface (snake_case params) stays the same for external consumers. The API layer (src/api/tests.ts) already uses an options object (TestQueryParams) so only the service layer needs refactoring.",
+      "claimed_by": "agent-1",
+      "claimed_at": "2026-02-20T03:12:55Z"
     },
     {
       "id": "PRD-T2",
@@ -35,8 +37,8 @@
       "description": "Add two endpoints: (1) POST /api/tests to create new security scan tests with Content-Type application/vnd.polaris.tests.tests-bulk-create-1+json. The response is multi-status (207) containing individual test creation results. (2) PATCH /api/tests/{testId} to update a test (RESUME, CANCEL, or FAILED actions) with Content-Type application/vnd.polaris.tests.test-actions-1+json.",
       "acceptanceCriteria": [
         "In src/api/tests.ts: Add CONTENT_TYPE_CREATE = 'application/vnd.polaris.tests.tests-bulk-create-1+json' and CONTENT_TYPE_UPDATE = 'application/vnd.polaris.tests.test-actions-1+json' and ACCEPT_TEST = 'application/vnd.polaris.tests.test-1+json' constants",
-        "In src/api/tests.ts: Add createTest(body: CreateTestRequest) \u2014 POST /api/tests using client.fetch() with contentType CONTENT_TYPE_CREATE, accept 'application/vnd.polaris.tests.tests-bulk-1+json', returns the creation response",
-        "In src/api/tests.ts: Add updateTest(testId: string, body: UpdateTestRequest) \u2014 PATCH /api/tests/{testId} using client.fetch() with contentType CONTENT_TYPE_UPDATE, accept ACCEPT_TEST, returns Test",
+        "In src/api/tests.ts: Add createTest(body: CreateTestRequest) — POST /api/tests using client.fetch() with contentType CONTENT_TYPE_CREATE, accept 'application/vnd.polaris.tests.tests-bulk-1+json', returns the creation response",
+        "In src/api/tests.ts: Add updateTest(testId: string, body: UpdateTestRequest) — PATCH /api/tests/{testId} using client.fetch() with contentType CONTENT_TYPE_UPDATE, accept ACCEPT_TEST, returns Test",
         "In src/services/tests.ts: Add createTest(options: CreateTestOptions) service wrapper with fields matching CreateTestRequest: projectId, branchId?, assessmentTypes, testMode?, scanMode?, artifacts?, notes?, triage?, profileDetails?",
         "In src/services/tests.ts: Add updateTest(options: UpdateTestOptions) service wrapper with fields: testId (string), action (TestAction), artifacts? (string[]), toolId? (string), notes? (string)",
         "Create src/mcp/tools/create-test.ts: Tool create_test with schema project_id (required), branch_id (optional), assessment_types (required string array description), test_mode (optional), scan_mode (optional), artifacts (optional array), notes (optional), triage (optional). Annotations: { readOnlyHint: false, openWorldHint: true }",
@@ -57,11 +59,11 @@
       "description": "Add five endpoints: (1) GET /api/tests/{testId}/comments to fetch comments for a test (max 500 entries, sorted by created date descending). (2) POST /api/tests/artifacts to create a test artifact metadata entry and get a signed upload URL. (3) GET /api/tests/{testId}/artifacts to list artifact metadata for a test. (4) GET /api/tests/{testId}/artifacts/{artifactId} to download a specific artifact (binary). (5) GET /api/tests/{testId}/profiles to fetch DAST profile details for a test.",
       "acceptanceCriteria": [
         "In src/api/tests.ts: Add ACCEPT_COMMENTS = 'application/vnd.polaris.tests.tests-comments-1+json', ACCEPT_ARTIFACTS = 'application/vnd.polaris.tests.test-artifacts-1+json', ACCEPT_ARTIFACTS_LIST = 'application/vnd.polaris.tests.test-artifacts-list-1+json', ACCEPT_PROFILES = 'application/vnd.polaris.tests.test-profiles-1+json' constants",
-        "In src/api/tests.ts: Add getTestComments(testId) \u2014 GET /api/tests/{testId}/comments using client.getAllOffset<TestComment>(), accepts ACCEPT_COMMENTS",
-        "In src/api/tests.ts: Add createTestArtifact(body) \u2014 POST /api/tests/artifacts using client.fetch() with contentType and accept ACCEPT_ARTIFACTS, returns TestArtifactMetadata",
-        "In src/api/tests.ts: Add getTestArtifacts(testId) \u2014 GET /api/tests/{testId}/artifacts using client.getAllOffset<TestArtifactMetadata>(), accepts ACCEPT_ARTIFACTS_LIST",
-        "In src/api/tests.ts: Add getTestArtifact(testId, artifactId) \u2014 GET /api/tests/{testId}/artifacts/{artifactId} using client.get() for binary download",
-        "In src/api/tests.ts: Add getTestProfiles(testId) \u2014 GET /api/tests/{testId}/profiles using client.get<TestProfile>(), accepts ACCEPT_PROFILES",
+        "In src/api/tests.ts: Add getTestComments(testId) — GET /api/tests/{testId}/comments using client.getAllOffset<TestComment>(), accepts ACCEPT_COMMENTS",
+        "In src/api/tests.ts: Add createTestArtifact(body) — POST /api/tests/artifacts using client.fetch() with contentType and accept ACCEPT_ARTIFACTS, returns TestArtifactMetadata",
+        "In src/api/tests.ts: Add getTestArtifacts(testId) — GET /api/tests/{testId}/artifacts using client.getAllOffset<TestArtifactMetadata>(), accepts ACCEPT_ARTIFACTS_LIST",
+        "In src/api/tests.ts: Add getTestArtifact(testId, artifactId) — GET /api/tests/{testId}/artifacts/{artifactId} using client.get() for binary download",
+        "In src/api/tests.ts: Add getTestProfiles(testId) — GET /api/tests/{testId}/profiles using client.get<TestProfile>(), accepts ACCEPT_PROFILES",
         "In src/services/tests.ts: Add getTestComments(options: { testId: string }) service wrapper",
         "In src/services/tests.ts: Add createTestArtifact(options) service wrapper with artifact creation fields",
         "In src/services/tests.ts: Add getTestArtifacts(options: { testId: string }) service wrapper",
@@ -88,8 +90,8 @@
       "description": "Add two read-only endpoints: (1) GET /api/tests/metrics to fetch test metrics grouped per subscription with RSQL filter (currently only subscriptionId filter key supported). Uses Accept: application/vnd.polaris.tests.metrics-1+json. (2) GET /api/tests/last-run to retrieve the most recent completed test(s) for a specified assessment type and project, returning one entry per tool type. Requires assessmentType and projectId query params; branchId required for SAST/SCA/EA, profileId required for DAST.",
       "acceptanceCriteria": [
         "In src/api/tests.ts: Add ACCEPT_METRICS = 'application/vnd.polaris.tests.metrics-1+json' constant",
-        "In src/api/tests.ts: Add getSubscriptionMetrics(params) \u2014 GET /api/tests/metrics using client.getAllOffset<SubscriptionMetrics>() with optional _filter param, accepts ACCEPT_METRICS",
-        "In src/api/tests.ts: Add getLastRunTests(params) \u2014 GET /api/tests/last-run using client.getAllOffset<Test>() with required assessmentType and projectId query params plus optional branchId and profileId, accepts ACCEPT_TESTS (the existing tests list media type)",
+        "In src/api/tests.ts: Add getSubscriptionMetrics(params) — GET /api/tests/metrics using client.getAllOffset<SubscriptionMetrics>() with optional _filter param, accepts ACCEPT_METRICS",
+        "In src/api/tests.ts: Add getLastRunTests(params) — GET /api/tests/last-run using client.getAllOffset<Test>() with required assessmentType and projectId query params plus optional branchId and profileId, accepts ACCEPT_TESTS (the existing tests list media type)",
         "In src/services/tests.ts: Add getSubscriptionMetrics(options?: { filter?: string }) service wrapper",
         "In src/services/tests.ts: Add getLastRunTests(options: GetLastRunTestsOptions) service wrapper with fields: assessmentType (required string), projectId (required string), branchId (optional string), profileId (optional string)",
         "Create src/mcp/tools/get-subscription-metrics.ts: Tool get_subscription_metrics with schema filter (optional string, described as 'RSQL filter, e.g. subscriptionId==\"{id}\"'). Annotations: { readOnlyHint: true, openWorldHint: true }",
