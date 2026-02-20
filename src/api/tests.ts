@@ -1,6 +1,7 @@
 import { getClient } from "./client.ts";
 import type {
   CreateTestRequest,
+  SubscriptionMetrics,
   Test,
   TestArtifactMetadata,
   TestComment,
@@ -15,6 +16,7 @@ const ACCEPT_COMMENTS = "application/vnd.polaris.tests.tests-comments-1+json";
 const ACCEPT_ARTIFACTS = "application/vnd.polaris.tests.test-artifacts-1+json";
 const ACCEPT_ARTIFACTS_LIST = "application/vnd.polaris.tests.test-artifacts-list-1+json";
 const ACCEPT_PROFILES = "application/vnd.polaris.tests.test-profiles-1+json";
+const ACCEPT_METRICS = "application/vnd.polaris.tests.metrics-1+json";
 const CONTENT_TYPE_CREATE = "application/vnd.polaris.tests.tests-bulk-create-1+json";
 const CONTENT_TYPE_UPDATE = "application/vnd.polaris.tests.test-actions-1+json";
 
@@ -164,4 +166,51 @@ export function updateTest(
     accept: ACCEPT_TEST,
     contentType: CONTENT_TYPE_UPDATE,
   });
+}
+
+export interface SubscriptionMetricsQueryParams {
+  filter?: string;
+}
+
+export function getSubscriptionMetrics(
+  params: SubscriptionMetricsQueryParams = {},
+): Promise<SubscriptionMetrics[]> {
+  const client = getClient();
+  const queryParams: Record<string, string | undefined> = {};
+
+  if (params.filter) {
+    queryParams._filter = params.filter;
+  }
+
+  return client.getAllOffset<SubscriptionMetrics>(
+    "/api/tests/metrics",
+    queryParams,
+    ACCEPT_METRICS,
+  );
+}
+
+export interface LastRunTestsQueryParams {
+  assessmentType: string;
+  projectId: string;
+  branchId?: string;
+  profileId?: string;
+}
+
+export function getLastRunTests(
+  params: LastRunTestsQueryParams,
+): Promise<Test[]> {
+  const client = getClient();
+  const queryParams: Record<string, string | undefined> = {
+    assessmentType: params.assessmentType,
+    projectId: params.projectId,
+  };
+
+  if (params.branchId) {
+    queryParams.branchId = params.branchId;
+  }
+  if (params.profileId) {
+    queryParams.profileId = params.profileId;
+  }
+
+  return client.getAllOffset<Test>("/api/tests/last-run", queryParams, ACCEPT_TESTS);
 }

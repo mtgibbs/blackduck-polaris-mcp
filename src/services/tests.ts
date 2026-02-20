@@ -1,6 +1,7 @@
 import * as testsApi from "../api/tests.ts";
 import type {
   CreateTestRequest,
+  SubscriptionMetrics,
   Test,
   TestAction,
   TestArtifactMetadata,
@@ -117,4 +118,23 @@ export function updateTest(options: UpdateTestOptions): Promise<Test> {
     notes: options.notes,
   };
   return testsApi.updateTest(options.testId, body);
+}
+
+export function getSubscriptionMetrics(
+  options?: { filter?: string },
+): Promise<SubscriptionMetrics[]> {
+  return testsApi.getSubscriptionMetrics(options || {});
+}
+
+export interface GetLastRunTestsOptions {
+  assessmentType: string;
+  projectId: string;
+  branchId?: string;
+  profileId?: string;
+}
+
+export function getLastRunTests(
+  options: GetLastRunTestsOptions,
+): Promise<Test[]> {
+  return testsApi.getLastRunTests(options);
 }

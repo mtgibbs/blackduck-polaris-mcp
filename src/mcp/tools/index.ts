@@ -22,6 +22,8 @@ import { createTestArtifactTool } from "./create-test-artifact.ts";
 import { getTestArtifactsTool } from "./get-test-artifacts.ts";
 import { getTestArtifactTool } from "./get-test-artifact.ts";
 import { getTestProfilesTool } from "./get-test-profiles.ts";
+import { getSubscriptionMetricsTool } from "./get-subscription-metrics.ts";
+import { getLastRunTestsTool } from "./get-last-run-tests.ts";
 import { getBugTrackingConfigsTool } from "./get-bug-tracking-configs.ts";
 import { getExternalProjectsTool } from "./get-external-projects.ts";
 import { exportIssuesTool } from "./export-issues.ts";
@@ -73,6 +75,8 @@ export const tools: AnyToolDefinition[] = [
   getTestArtifactsTool,
   getTestArtifactTool,
   getTestProfilesTool,
+  getSubscriptionMetricsTool,
+  getLastRunTestsTool,
   getBugTrackingConfigsTool,
   getExternalProjectsTool,
   exportIssuesTool,
