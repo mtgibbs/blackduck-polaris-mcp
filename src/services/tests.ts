@@ -1,12 +1,15 @@
 import * as testsApi from "../api/tests.ts";
 import type { Test, TestMetrics } from "../types/polaris.ts";
 
-export function getTests(
-  projectId?: string,
-  branchId?: string,
-  status?: string,
-): Promise<Test[]> {
-  return testsApi.getTests({ projectId, branchId, status });
+export interface GetTestsOptions {
+  projectId?: string;
+  branchId?: string;
+  status?: string;
+  filter?: string;
+}
+
+export function getTests(options?: GetTestsOptions): Promise<Test[]> {
+  return testsApi.getTests(options || {});
 }
 
 export function getTest(testId: string): Promise<Test> {
