@@ -100,6 +100,191 @@ export interface Branch {
   _links?: LinkEntry[];
 }
 
+// --- Portfolio Request/Response Types ---
+
+export interface CreateApplicationRequest {
+  name: string;
+  description?: string;
+}
+
+export interface UpdateApplicationRequest {
+  name?: string;
+  description?: string;
+  inTrash?: boolean;
+  autoDeleteSetting?: boolean;
+  branchRetentionPeriodSetting?: number;
+}
+
+export interface CreateProjectRequest {
+  name: string;
+  description?: string;
+}
+
+export interface UpdateProjectRequest {
+  name?: string;
+  description?: string;
+  inTrash?: boolean;
+  autoDeleteSetting?: boolean;
+  branchRetentionPeriodSetting?: number;
+}
+
+export interface CreateBranchRequest {
+  name: string;
+}
+
+export interface UpdateBranchRequest {
+  name?: string;
+  isDefault?: boolean;
+}
+
+export interface ProjectSubResource {
+  id: string;
+  name: string;
+  projectSubResourceType: "BRANCH" | "PROFILE";
+  default?: boolean;
+  additionalProperties?: Array<{ key: string; value: string }>;
+  project?: { id: string; name: string };
+  application?: { id: string; name: string };
+  _type?: string;
+}
+
+export interface ProjectSubResourceCountItem {
+  group: { key: string; value: string };
+  count: number;
+  _type?: string;
+}
+
+export interface Profile {
+  id: string;
+  name: string;
+  organizationId?: string;
+  projectId?: string;
+  performActiveAttack?: boolean;
+  default?: boolean;
+  importSettings?: Record<string, unknown>;
+  manualSettings?: Record<string, unknown>;
+  _links?: LinkEntry[];
+}
+
+export interface ProfileArtifact {
+  id: string;
+  fileName?: string;
+  fileHash?: string;
+  fileSize?: string;
+  artifactType?: string;
+  signedUrl?: string;
+  createdAt?: string;
+}
+
+export interface CreateProfileArtifactRequest {
+  fileName: string;
+  fileHash: string;
+  fileSize: string;
+  artifactType: string;
+}
+
+export interface Label {
+  id: string;
+  name: string;
+  description?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  _links?: LinkEntry[];
+  _type?: string;
+}
+
+export interface CreateLabelRequest {
+  name: string;
+  description?: string;
+}
+
+export interface UpdateLabelRequest {
+  name?: string;
+  description?: string;
+}
+
+export interface MergeLabelRequest {
+  labelsToMerge: string[];
+  targetLabel: { name: string; description?: string };
+}
+
+export interface ApplicationEntitlementItem {
+  entitlementId: string;
+  type?: string;
+  executionMode?: string;
+  quantityUsed?: number;
+}
+
+export interface ApplicationEntitlementsResponse {
+  applicationId: string;
+  entitlements: ApplicationEntitlementItem[];
+  _links?: LinkEntry[];
+}
+
+export interface EntitlementQuantityUpdateRequest {
+  entitlementIds: string[];
+  quantity: number;
+}
+
+export interface EntitlementQuantityUpdateResponse {
+  entitlementIds: string[];
+  quantity: number;
+  _links?: LinkEntry[];
+}
+
+export interface PortfolioEntitlement {
+  entitlementId: string;
+  applicationCount?: number;
+}
+
+export interface OrganizationSettings {
+  allowLabelCreationForApplicationRoleUser: boolean;
+  autoDeleteSetting?: boolean;
+  branchRetentionPeriodSetting?: number;
+}
+
+export interface RiskCategory {
+  id?: string;
+  name: string;
+  impact: number;
+}
+
+export interface RiskFactor {
+  id?: string;
+  name: string;
+  weight: number;
+  description?: string;
+  defaultCategory?: string | number;
+  categories: RiskCategory[];
+}
+
+export interface RiskScoringSettings {
+  isEnabled: boolean;
+  riskFactors: RiskFactor[];
+}
+
+export interface DashboardItem {
+  id: string;
+  tenantId?: string;
+  portfolioId?: string;
+  portfolioItemId: string;
+  portfolioItemName?: string;
+  portfolioItemDescription?: string;
+  criticalIssueCount?: number;
+  highIssueCount?: number;
+  mediumIssueCount?: number;
+  lowIssueCount?: number;
+  informationalIssueCount?: number;
+  totalIssueCount?: number;
+  portfolioSubItemCount?: number;
+  lastScanTime?: string;
+  scanTypes?: string;
+  totalActivePolicyViolation?: number;
+  subscriptionTypes?: string;
+  labelIds?: string[];
+  riskScore?: number;
+}
+
 // --- Findings ---
 
 export type ToolType = "dast" | "sast" | "sca";
@@ -454,6 +639,231 @@ export interface LinkedIssue {
   issueKey?: string;
   issueLink?: string;
   createdAt?: string;
+  _links?: LinkEntry[];
+}
+
+export interface CreateBugTrackingConfigRequest {
+  url: string;
+  type: BugTrackingSystemType;
+  enabled: boolean;
+  details?: {
+    deploymentType?: string;
+    accessToken?: string;
+  };
+}
+
+export interface UpdateBugTrackingConfigRequest {
+  url?: string;
+  type?: BugTrackingSystemType;
+  enabled?: boolean;
+  details?: {
+    deploymentType?: string;
+    accessToken?: string;
+  };
+}
+
+export interface TestConnectionResult {
+  success: boolean;
+  message?: string;
+}
+
+export interface CreateProjectMappingRequest {
+  projectId: string;
+  btsProjectKey: string;
+  btsProjectId?: string;
+  btsIssueType: string;
+}
+
+export interface UpdateProjectMappingRequest {
+  btsProjectKey?: string;
+  btsProjectId?: string;
+  btsIssueType?: string;
+}
+
+export interface ExportCommentRequest {
+  comment: string;
+}
+
+// --- Repos Integration ---
+
+export type ScmProvider =
+  | "GITHUB_STANDARD"
+  | "GITHUB_ENTERPRISE_CLOUD"
+  | "GITLAB_SAAS"
+  | "BITBUCKET_CLOUD"
+  | "AZURE_CLOUD"
+  | "GITHUB_ENTERPRISE_SERVER"
+  | "GITHUB_SELF_MANAGED"
+  | "BITBUCKET_DATA_CENTER";
+
+export type ScmHostingType = "CLOUD_HOSTED" | "SELF_HOSTED";
+
+export type ScmAuthenticationMode = "PAT" | "OAUTH_2";
+
+export interface ScmRepository {
+  id: string;
+  organizationId: string;
+  repositoryUrl: string;
+  scmProvider: ScmProvider;
+  applicationId: string;
+  projectId: string;
+  createdAt: string;
+  updatedAt: string;
+  createdBy: string;
+  updatedBy: string;
+  _links?: LinkEntry[];
+}
+
+export interface ScmRepositoryWithBranch extends ScmRepository {
+  defaultBranchName?: string;
+}
+
+export interface ScmRepositoryCreateResponse extends ScmRepository {}
+
+export interface ScmRepositoryPatchResponse extends ScmRepository {}
+
+export interface ScmRepositoryTestConnectionResponse {
+  object: boolean;
+  _links?: LinkEntry[];
+}
+
+export interface RepositoryBranch {
+  name: string;
+  sha: string;
+  isDefault: boolean;
+  isSynchronisedWithScm?: boolean;
+}
+
+export interface ScmProviderInfo {
+  scmProvider: ScmProvider;
+  scmHostingType: ScmHostingType;
+  minVersion?: string;
+  maxVersion?: string;
+}
+
+export interface ScmGroup {
+  id: string;
+  name: string;
+}
+
+export interface ScmRemoteRepository {
+  id: string;
+  organizationId?: string;
+  repositoryUrl: string;
+  scmProvider: ScmProvider;
+  applicationId?: string;
+  projectId?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  createdBy?: string;
+  updatedBy?: string;
+}
+
+export interface ScmProject {
+  id: string;
+  name: string;
+  url?: string;
+  groupName?: string;
+}
+
+export interface GroupsSettings {
+  email?: string;
+  applicationId?: string;
+  groupUrl?: string;
+  scmProvider?: ScmProvider;
+  settings?: {
+    repository?: {
+      importNewRepositories?: boolean;
+      syncReposAndBranches?: boolean;
+      automaticallyTestCodeChanges?: boolean;
+    };
+    branch?: {
+      importNewBranches?: boolean;
+      branchNameExpressions?: string[];
+    };
+  };
+}
+
+export interface GroupMappingStatus {
+  projectId: string;
+  repoUrl?: string;
+  isValidMapping: boolean;
+}
+
+export interface BulkRepoImportGroupStatus {
+  id: string;
+  portfolioItemId?: string;
+  progressPercentage?: number;
+  state?: string;
+  stateInfo?: string;
+  repositoriesImportStats?: {
+    notStarted?: number;
+    inProgress?: number;
+    completed?: number;
+    failed?: number;
+    total?: number;
+  };
+  importJob?: {
+    id?: string;
+    createdAt?: string;
+  };
+}
+
+export interface BulkGroupImportJobStatus {
+  id: string;
+  progressPercentage?: number;
+  state?: string;
+  stateInfo?: string;
+  groupsImportStats?: {
+    notStarted?: number;
+    inProgress?: number;
+    completed?: number;
+    failed?: number;
+    total?: number;
+  };
+  _links?: LinkEntry[];
+}
+
+export interface BulkGroupImportUpdateResponse {
+  id: string;
+  progress?: number;
+  state?: string;
+  info?: Array<{
+    group?: string;
+    state?: string;
+    info?: string;
+  }>;
+  createdAt?: string;
+  updatedAt?: string;
+  createdBy?: string;
+  updatedBy?: string;
+  _links?: LinkEntry[];
+}
+
+export interface DefaultBranchSyncSettings {
+  pullRequestMerged?: boolean;
+  assessmentTypes?: string[];
+}
+
+export interface NonDefaultBranchSyncSettings {
+  pullRequestMerged?: boolean;
+  assessmentTypes?: string[];
+}
+
+export interface BranchTestSyncSettings {
+  default?: DefaultBranchSyncSettings;
+  nonDefault?: NonDefaultBranchSyncSettings;
+}
+
+export interface TestSyncSettings {
+  branch?: BranchTestSyncSettings;
+}
+
+export interface TestSettingsResponse {
+  scope: string;
+  scopeId: string;
+  inherited?: boolean;
+  testSyncSettings?: TestSyncSettings;
   _links?: LinkEntry[];
 }
 
