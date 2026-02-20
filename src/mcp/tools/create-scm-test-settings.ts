@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { createScmTestSettings } from "../../services/index.ts";
-import { errorResponse, jsonResponse, type ToolDefinition } from "../types.ts";
+import { jsonResponse, type ToolDefinition } from "../types.ts";
 
 export const schema = {
   scope: z
@@ -41,24 +41,20 @@ export const createScmTestSettingsTool: ToolDefinition<typeof schema> = {
     pull_request_merged_non_default,
     assessment_types_non_default,
   }) => {
-    try {
-      const assessmentTypesDefault = assessment_types_default
-        ? assessment_types_default.split(",").map((s) => s.trim())
-        : undefined;
-      const assessmentTypesNonDefault = assessment_types_non_default
-        ? assessment_types_non_default.split(",").map((s) => s.trim())
-        : undefined;
-      await createScmTestSettings({
-        scope,
-        scopeId: scope_id,
-        pullRequestMergedDefault: pull_request_merged_default,
-        assessmentTypesDefault,
-        pullRequestMergedNonDefault: pull_request_merged_non_default,
-        assessmentTypesNonDefault,
-      });
-      return jsonResponse({ success: true });
-    } catch (err) {
-      return errorResponse(err instanceof Error ? err.message : String(err));
-    }
+    const assessmentTypesDefault = assessment_types_default
+      ? assessment_types_default.split(",").map((s) => s.trim())
+      : undefined;
+    const assessmentTypesNonDefault = assessment_types_non_default
+      ? assessment_types_non_default.split(",").map((s) => s.trim())
+      : undefined;
+    await createScmTestSettings({
+      scope,
+      scopeId: scope_id,
+      pullRequestMergedDefault: pull_request_merged_default,
+      assessmentTypesDefault,
+      pullRequestMergedNonDefault: pull_request_merged_non_default,
+      assessmentTypesNonDefault,
+    });
+    return jsonResponse({ success: true });
   },
 };

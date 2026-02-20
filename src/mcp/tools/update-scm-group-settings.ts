@@ -1,13 +1,15 @@
 import { z } from "zod";
 import { updateScmGroupSettings } from "../../services/index.ts";
-import { errorResponse, jsonResponse, type ToolDefinition } from "../types.ts";
+import { jsonResponse, type ToolDefinition } from "../types.ts";
 
 export const schema = {
-  application_id: z.string(),
-  import_new_repositories: z.boolean().optional(),
-  sync_repos_and_branches: z.boolean().optional(),
-  automatically_test_code_changes: z.boolean().optional(),
-  import_new_branches: z.boolean().optional(),
+  application_id: z.string().describe("Polaris application ID"),
+  import_new_repositories: z.boolean().optional().describe("Auto-import new repositories from SCM"),
+  sync_repos_and_branches: z.boolean().optional().describe("Sync repos and branches with SCM"),
+  automatically_test_code_changes: z.boolean().optional().describe(
+    "Auto-trigger tests on code changes",
+  ),
+  import_new_branches: z.boolean().optional().describe("Auto-import new branches from SCM"),
   branch_name_expressions: z
     .string()
     .optional()
@@ -28,21 +30,17 @@ export const updateScmGroupSettingsTool: ToolDefinition<typeof schema> = {
     import_new_branches,
     branch_name_expressions,
   }) => {
-    try {
-      const branchNameExpressions = branch_name_expressions
-        ? branch_name_expressions.split(",").map((s) => s.trim())
-        : undefined;
-      await updateScmGroupSettings({
-        applicationId: application_id,
-        importNewRepositories: import_new_repositories,
-        syncReposAndBranches: sync_repos_and_branches,
-        automaticallyTestCodeChanges: automatically_test_code_changes,
-        importNewBranches: import_new_branches,
-        branchNameExpressions,
-      });
-      return jsonResponse({ success: true });
-    } catch (err) {
-      return errorResponse(err instanceof Error ? err.message : String(err));
-    }
+    const branchNameExpressions = branch_name_expressions
+      ? branch_name_expressions.split(",").map((s) => s.trim())
+      : undefined;
+    await updateScmGroupSettings({
+      applicationId: application_id,
+      importNewRepositories: import_new_repositories,
+      syncReposAndBranches: sync_repos_and_branches,
+      automaticallyTestCodeChanges: automatically_test_code_changes,
+      importNewBranches: import_new_branches,
+      branchNameExpressions,
+    });
+    return jsonResponse({ success: true });
   },
 };

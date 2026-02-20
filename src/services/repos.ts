@@ -125,7 +125,7 @@ export interface TestScmProviderConnectionOptions {
 
 export function testScmProviderConnection(
   options: TestScmProviderConnectionOptions,
-): Promise<unknown> {
+): Promise<void> {
   return reposApi.testScmConnection(options);
 }
 

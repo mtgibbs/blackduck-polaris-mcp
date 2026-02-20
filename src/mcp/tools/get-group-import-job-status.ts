@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { getGroupImportJobStatus } from "../../services/index.ts";
-import { errorResponse, jsonResponse, type ToolDefinition } from "../types.ts";
+import { jsonResponse, type ToolDefinition } from "../types.ts";
 
 export const schema = {
   job_id: z.string().describe("The ID of the bulk group import job"),
@@ -12,11 +12,7 @@ export const getGroupImportJobStatusTool: ToolDefinition<typeof schema> = {
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
   handler: async ({ job_id }) => {
-    try {
-      const result = await getGroupImportJobStatus(job_id);
-      return jsonResponse(result);
-    } catch (err) {
-      return errorResponse(err instanceof Error ? err.message : String(err));
-    }
+    const result = await getGroupImportJobStatus(job_id);
+    return jsonResponse(result);
   },
 };

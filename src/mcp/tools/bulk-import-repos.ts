@@ -31,28 +31,34 @@ export const bulkImportReposTool: ToolDefinition<typeof schema> = {
     issue_policy_ids,
     scan_policy_ids,
   }) => {
+    let parsedRepositories: unknown;
     try {
-      const parsedRepositories = JSON.parse(repositories);
-      const issuePolicyIds = issue_policy_ids
-        ? issue_policy_ids.split(",").map((s) => s.trim())
-        : undefined;
-      const scanPolicyIds = scan_policy_ids
-        ? scan_policy_ids.split(",").map((s) => s.trim())
-        : undefined;
-      const policySettings = issuePolicyIds || scanPolicyIds
-        ? { issuePolicyIds, scanPolicyIds }
-        : undefined;
-      const result = await bulkImportRepos({
-        applicationId: application_id,
-        scmProvider: scm_provider,
-        scmPat: scm_pat,
-        scmEmail: scm_email,
-        repositories: parsedRepositories,
-        policySettings,
-      });
-      return jsonResponse(result);
-    } catch (err) {
-      return errorResponse(err instanceof Error ? err.message : String(err));
+      parsedRepositories = JSON.parse(repositories);
+    } catch {
+      return errorResponse(
+        "Invalid JSON for 'repositories' parameter. Expected a JSON array of objects with groupName, allRepositoriesInGroup, and optional includeRepositories/excludeRepositories fields.",
+      );
     }
+    if (!Array.isArray(parsedRepositories)) {
+      return errorResponse("'repositories' must be a JSON array");
+    }
+    const issuePolicyIds = issue_policy_ids
+      ? issue_policy_ids.split(",").map((s) => s.trim())
+      : undefined;
+    const scanPolicyIds = scan_policy_ids
+      ? scan_policy_ids.split(",").map((s) => s.trim())
+      : undefined;
+    const policySettings = issuePolicyIds || scanPolicyIds
+      ? { issuePolicyIds, scanPolicyIds }
+      : undefined;
+    const result = await bulkImportRepos({
+      applicationId: application_id,
+      scmProvider: scm_provider,
+      scmPat: scm_pat,
+      scmEmail: scm_email,
+      repositories: parsedRepositories,
+      policySettings,
+    });
+    return jsonResponse(result);
   },
 };

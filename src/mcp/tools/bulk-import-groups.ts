@@ -29,28 +29,34 @@ export const bulkImportGroupsTool: ToolDefinition<typeof schema> = {
     issue_policy_ids,
     scan_policy_ids,
   }) => {
+    let parsedRepositorySelections: unknown;
     try {
-      const parsedRepositorySelections = JSON.parse(repository_selections);
-      const issuePolicyIds = issue_policy_ids
-        ? issue_policy_ids.split(",").map((s) => s.trim())
-        : undefined;
-      const scanPolicyIds = scan_policy_ids
-        ? scan_policy_ids.split(",").map((s) => s.trim())
-        : undefined;
-      const policySettings = issuePolicyIds || scanPolicyIds
-        ? { issuePolicyIds, scanPolicyIds }
-        : undefined;
-      const result = await bulkImportGroups({
-        scmProvider: scm_provider,
-        scmPat: scm_pat,
-        scmEmail: scm_email,
-        automaticMapping: automatic_mapping,
-        repositorySelections: parsedRepositorySelections,
-        policySettings,
-      });
-      return jsonResponse(result);
-    } catch (err) {
-      return errorResponse(err instanceof Error ? err.message : String(err));
+      parsedRepositorySelections = JSON.parse(repository_selections);
+    } catch {
+      return errorResponse(
+        "Invalid JSON for 'repository_selections' parameter. Expected a JSON array of repository selection objects with application mappings.",
+      );
     }
+    if (!Array.isArray(parsedRepositorySelections)) {
+      return errorResponse("'repository_selections' must be a JSON array");
+    }
+    const issuePolicyIds = issue_policy_ids
+      ? issue_policy_ids.split(",").map((s) => s.trim())
+      : undefined;
+    const scanPolicyIds = scan_policy_ids
+      ? scan_policy_ids.split(",").map((s) => s.trim())
+      : undefined;
+    const policySettings = issuePolicyIds || scanPolicyIds
+      ? { issuePolicyIds, scanPolicyIds }
+      : undefined;
+    const result = await bulkImportGroups({
+      scmProvider: scm_provider,
+      scmPat: scm_pat,
+      scmEmail: scm_email,
+      automaticMapping: automatic_mapping,
+      repositorySelections: parsedRepositorySelections,
+      policySettings,
+    });
+    return jsonResponse(result);
   },
 };

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { getScmProviderProjects } from "../../services/index.ts";
-import { errorResponse, jsonResponse, type ToolDefinition } from "../types.ts";
+import { jsonResponse, type ToolDefinition } from "../types.ts";
 
 export const schema = {
   group_name: z.string().describe("Group or organization name"),
@@ -15,15 +15,11 @@ export const getScmProjectsTool: ToolDefinition<typeof schema> = {
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
   handler: async ({ group_name, scm_pat, scm_provider }) => {
-    try {
-      const projects = await getScmProviderProjects({
-        groupName: group_name,
-        scmPat: scm_pat,
-        scmProvider: scm_provider,
-      });
-      return jsonResponse(projects);
-    } catch (err) {
-      return errorResponse(err instanceof Error ? err.message : String(err));
-    }
+    const projects = await getScmProviderProjects({
+      groupName: group_name,
+      scmPat: scm_pat,
+      scmProvider: scm_provider,
+    });
+    return jsonResponse(projects);
   },
 };

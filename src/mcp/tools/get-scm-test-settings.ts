@@ -1,10 +1,14 @@
 import { z } from "zod";
 import { getScmTestSettings } from "../../services/index.ts";
-import { errorResponse, jsonResponse, type ToolDefinition } from "../types.ts";
+import { jsonResponse, type ToolDefinition } from "../types.ts";
 
 export const schema = {
-  scope_id: z.string(),
-  scope: z.enum(["organization", "application", "project", "branch"]),
+  scope_id: z.string().describe(
+    "UUID of the scope resource (org ID, app ID, project ID, or branch ID)",
+  ),
+  scope: z.enum(["organization", "application", "project", "branch"]).describe(
+    "Scope level for test settings",
+  ),
 };
 
 export const getScmTestSettingsTool: ToolDefinition<typeof schema> = {
@@ -14,11 +18,7 @@ export const getScmTestSettingsTool: ToolDefinition<typeof schema> = {
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
   handler: async ({ scope_id, scope }) => {
-    try {
-      const data = await getScmTestSettings({ scopeId: scope_id, scope });
-      return jsonResponse(data);
-    } catch (err) {
-      return errorResponse(err instanceof Error ? err.message : String(err));
-    }
+    const data = await getScmTestSettings({ scopeId: scope_id, scope });
+    return jsonResponse(data);
   },
 };

@@ -121,7 +121,7 @@ export class PolarisClient {
     return headers;
   }
 
-  async fetch<T>(path: string, options: RequestOptions = {}): Promise<T> {
+  private async sendRequest(path: string, options: RequestOptions = {}): Promise<Response> {
     if (!this.organizationId && !path.startsWith("/api/portfolios")) {
       await this.resolveOrganizationId();
     }
@@ -160,6 +160,12 @@ export class PolarisClient {
       throw new Error(`Polaris API error ${response.status}: ${detail}`);
     }
 
+    return response;
+  }
+
+  async fetch<T>(path: string, options: RequestOptions = {}): Promise<T> {
+    const response = await this.sendRequest(path, options);
+
     if (response.status === 204) {
       return undefined as T;
     }
@@ -180,44 +186,10 @@ export class PolarisClient {
    * Used for endpoints that return 202 with a Location header and no body.
    */
   async fetchLocation(path: string, options: RequestOptions = {}): Promise<string> {
-    if (!this.organizationId && !path.startsWith("/api/portfolios")) {
-      await this.resolveOrganizationId();
-    }
-
-    const url = this.buildUrl(path, options.params);
-    const headers = this.buildHeaders(options.accept, options.contentType);
-
-    if (options.headers) {
-      for (const [key, value] of Object.entries(options.headers)) {
-        headers.set(key, value);
-      }
-    }
-
-    const fetchOptions: globalThis.RequestInit = {
-      method: options.method ?? "POST",
-      headers,
-    };
-
-    if (options.body) {
-      fetchOptions.body = JSON.stringify(options.body);
-      if (!options.contentType) {
-        headers.set("Content-Type", "application/json");
-      }
-    }
-
-    const response = await globalThis.fetch(url, fetchOptions);
-
-    if (!response.ok) {
-      let detail = "";
-      try {
-        const problem = (await response.json()) as ProblemDetail;
-        detail = problem.detail ?? problem.title;
-      } catch {
-        detail = await response.text();
-      }
-      throw new Error(`Polaris API error ${response.status}: ${detail}`);
-    }
-
+    const response = await this.sendRequest(path, {
+      method: "POST",
+      ...options,
+    });
     return response.headers.get("Location") ?? "";
   }
 

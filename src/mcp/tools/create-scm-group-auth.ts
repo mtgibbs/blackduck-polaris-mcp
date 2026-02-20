@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { createScmGroupAuth } from "../../services/index.ts";
-import { errorResponse, jsonResponse, type ToolDefinition } from "../types.ts";
+import { jsonResponse, type ToolDefinition } from "../types.ts";
 
 export const schema = {
   application_id: z.string().describe("Polaris application ID"),
@@ -30,19 +30,15 @@ export const createScmGroupAuthTool: ToolDefinition<typeof schema> = {
     auth_email,
     group_url,
   }) => {
-    try {
-      await createScmGroupAuth({
-        applicationId: application_id,
-        scmProvider: scm_provider,
-        authName: auth_name,
-        authMode: auth_mode,
-        authToken: auth_token,
-        authEmail: auth_email,
-        groupUrl: group_url,
-      });
-      return jsonResponse({ success: true });
-    } catch (err) {
-      return errorResponse(err instanceof Error ? err.message : String(err));
-    }
+    await createScmGroupAuth({
+      applicationId: application_id,
+      scmProvider: scm_provider,
+      authName: auth_name,
+      authMode: auth_mode,
+      authToken: auth_token,
+      authEmail: auth_email,
+      groupUrl: group_url,
+    });
+    return jsonResponse({ success: true });
   },
 };

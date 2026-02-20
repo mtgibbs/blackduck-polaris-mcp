@@ -1,10 +1,10 @@
 import { z } from "zod";
 import { getScmGroupMappingStatus } from "../../services/index.ts";
-import { errorResponse, jsonResponse, type ToolDefinition } from "../types.ts";
+import { jsonResponse, type ToolDefinition } from "../types.ts";
 
 export const schema = {
-  application_id: z.string(),
-  project_id: z.string().optional(),
+  application_id: z.string().describe("Polaris application ID"),
+  project_id: z.string().optional().describe("Filter by specific project ID"),
 };
 
 export const getScmGroupMappingStatusTool: ToolDefinition<typeof schema> = {
@@ -14,14 +14,10 @@ export const getScmGroupMappingStatusTool: ToolDefinition<typeof schema> = {
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
   handler: async ({ application_id, project_id }) => {
-    try {
-      const result = await getScmGroupMappingStatus({
-        applicationId: application_id,
-        projectId: project_id,
-      });
-      return jsonResponse(result);
-    } catch (err) {
-      return errorResponse(err instanceof Error ? err.message : String(err));
-    }
+    const result = await getScmGroupMappingStatus({
+      applicationId: application_id,
+      projectId: project_id,
+    });
+    return jsonResponse(result);
   },
 };

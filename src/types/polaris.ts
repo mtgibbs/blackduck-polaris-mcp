@@ -487,48 +487,13 @@ export interface ScmRepository {
   _links?: LinkEntry[];
 }
 
-export interface ScmRepositoryWithBranch {
-  id: string;
-  organizationId: string;
-  repositoryUrl: string;
-  scmProvider: ScmProvider;
-  applicationId: string;
-  projectId: string;
-  createdAt: string;
-  updatedAt: string;
-  createdBy: string;
-  updatedBy: string;
+export interface ScmRepositoryWithBranch extends ScmRepository {
   defaultBranchName?: string;
-  _links?: LinkEntry[];
 }
 
-export interface ScmRepositoryCreateResponse {
-  id: string;
-  organizationId: string;
-  repositoryUrl: string;
-  scmProvider: ScmProvider;
-  applicationId: string;
-  projectId: string;
-  createdAt: string;
-  updatedAt: string;
-  createdBy: string;
-  updatedBy: string;
-  _links?: LinkEntry[];
-}
+export interface ScmRepositoryCreateResponse extends ScmRepository {}
 
-export interface ScmRepositoryPatchResponse {
-  id: string;
-  organizationId: string;
-  repositoryUrl: string;
-  scmProvider: ScmProvider;
-  applicationId: string;
-  projectId: string;
-  createdAt: string;
-  updatedAt: string;
-  createdBy: string;
-  updatedBy: string;
-  _links?: LinkEntry[];
-}
+export interface ScmRepositoryPatchResponse extends ScmRepository {}
 
 export interface ScmRepositoryTestConnectionResponse {
   object: boolean;

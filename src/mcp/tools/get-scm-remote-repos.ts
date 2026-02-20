@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { getScmProviderRepositories } from "../../services/index.ts";
-import { errorResponse, jsonResponse, type ToolDefinition } from "../types.ts";
+import { jsonResponse, type ToolDefinition } from "../types.ts";
 
 export const schema = {
   scm_pat: z.string().describe("Personal Access Token for SCM provider"),
@@ -30,19 +30,15 @@ export const getScmRemoteReposTool: ToolDefinition<typeof schema> = {
     repo_search_term,
     include_sub_groups,
   }) => {
-    try {
-      const repos = await getScmProviderRepositories({
-        scmPat: scm_pat,
-        scmProvider: scm_provider,
-        scmEmail: scm_email,
-        groupName: group_name,
-        projectName: project_name,
-        repoSearchTerm: repo_search_term,
-        includeSubGroups: include_sub_groups,
-      });
-      return jsonResponse(repos);
-    } catch (err) {
-      return errorResponse(err instanceof Error ? err.message : String(err));
-    }
+    const repos = await getScmProviderRepositories({
+      scmPat: scm_pat,
+      scmProvider: scm_provider,
+      scmEmail: scm_email,
+      groupName: group_name,
+      projectName: project_name,
+      repoSearchTerm: repo_search_term,
+      includeSubGroups: include_sub_groups,
+    });
+    return jsonResponse(repos);
   },
 };
