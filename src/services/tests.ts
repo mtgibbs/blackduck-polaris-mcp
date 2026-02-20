@@ -38,7 +38,7 @@ export function getTestComments(
   return testsApi.getTestComments(options.testId);
 }
 
-export interface CreateArtifactOptions {
+export interface CreateTestArtifactOptions {
   fileName: string;
   fileHash: string;
   fileSize: string;
@@ -49,7 +49,7 @@ export interface CreateArtifactOptions {
 }
 
 export function createTestArtifact(
-  options: CreateArtifactOptions,
+  options: CreateTestArtifactOptions,
 ): Promise<CreateArtifactResponse> {
   return testsApi.createTestArtifact(options);
 }
