@@ -19,6 +19,14 @@ import { triageIssuesTool } from "./triage-issues.ts";
 import { getIssueCountTool } from "./get-issue-count.ts";
 import { getTestsTool } from "./get-tests.ts";
 import { getTestMetricsTool } from "./get-test-metrics.ts";
+import { getTestCommentsTool } from "./get-test-comments.ts";
+import { createTestTool } from "./create-test.ts";
+import { updateTestTool } from "./update-test.ts";
+import { createTestArtifactTool } from "./create-test-artifact.ts";
+import { getTestArtifactsTool } from "./get-test-artifacts.ts";
+import { getTestProfilesTool } from "./get-test-profiles.ts";
+import { getSubscriptionMetricsTool } from "./get-subscription-metrics.ts";
+import { getLastRunTestsTool } from "./get-last-run-tests.ts";
 import { getBugTrackingConfigsTool } from "./get-bug-tracking-configs.ts";
 import { getExternalProjectsTool } from "./get-external-projects.ts";
 import { getExternalProjectByKeyTool } from "./get-external-project-by-key.ts";
@@ -152,6 +160,14 @@ export const tools: AnyToolDefinition[] = [
   getIssueCountTool,
   getTestsTool,
   getTestMetricsTool,
+  getTestCommentsTool,
+  createTestTool,
+  updateTestTool,
+  createTestArtifactTool,
+  getTestArtifactsTool,
+  getTestProfilesTool,
+  getSubscriptionMetricsTool,
+  getLastRunTestsTool,
   getBugTrackingConfigsTool,
   getExternalProjectsTool,
   getExternalProjectByKeyTool,

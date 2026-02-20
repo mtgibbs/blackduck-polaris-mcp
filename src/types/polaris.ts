@@ -594,6 +594,78 @@ export interface TestMetrics {
   lowIssues?: number;
 }
 
+export interface CreateTestRequest {
+  projectId: string;
+  branchId?: string;
+  assessmentTypes: string[];
+  testMode?: string;
+  scanMode?: string;
+  artifacts?: string[];
+  notes?: string;
+  triage?: string;
+  profileDetails?: {
+    id?: string;
+    content?: string;
+  };
+}
+
+export type TestAction = "RESUME" | "CANCEL" | "FAILED";
+
+export interface UpdateTestRequest {
+  action: TestAction;
+  artifacts?: string[];
+  toolId?: string;
+  notes?: string;
+}
+
+export interface TestComment {
+  id: string;
+  testId: string;
+  text: string;
+  createdAt: string;
+  author?: string;
+  _links?: LinkEntry[];
+}
+
+export interface TestArtifactMetadata {
+  id: string;
+  type: string;
+  filename?: string;
+  status?: string;
+  signedUrl?: string;
+  _links?: LinkEntry[];
+}
+
+export interface TestProfile {
+  id: string;
+  name: string;
+  url?: string;
+  configuration?: Record<string, unknown>;
+  _links?: LinkEntry[];
+}
+
+export interface SubscriptionMetrics {
+  subscriptionId: string;
+  metrics: Record<string, unknown>;
+  _links?: LinkEntry[];
+}
+
+export interface CreateArtifactResponse {
+  artifactId: string;
+  signedUrl: string;
+  createdAt: string;
+  _links?: LinkEntry[];
+}
+
+export interface CreateTestResponse {
+  _items: Array<{
+    status: number;
+    headers: Record<string, string>;
+    body: Test;
+  }>;
+  _links?: LinkEntry[];
+}
+
 // --- Bug Tracking ---
 
 export type BugTrackingSystemType = "JIRA" | "AZURE";
