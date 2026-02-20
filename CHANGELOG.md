@@ -1,5 +1,29 @@
 # Changelog
 
+## [1.0.0](https://github.com/mtgibbs/blackduck-polaris-mcp/compare/blackduck-polaris-mcp-v0.1.3...blackduck-polaris-mcp-v1.0.0) (2026-02-20)
+
+
+### Features
+
+* Bug Tracking Integration API - config CRUD, project mappings, issue management ([2d66d80](https://github.com/mtgibbs/blackduck-polaris-mcp/commit/2d66d80c9fba6e17033d399d3a663540b8a53863))
+* Complete Portfolio API implementation (35 endpoints) ([bc69633](https://github.com/mtgibbs/blackduck-polaris-mcp/commit/bc69633a80d34bbea949831fca3b1f4fe9bca710))
+* PRD-T2 - Implement create test and update test endpoints ([efa7ba2](https://github.com/mtgibbs/blackduck-polaris-mcp/commit/efa7ba2def1a4786f01d788b68f3f620c0049639))
+* PRD-T3 - Implement comments, artifacts, and profiles endpoints ([f9c69fd](https://github.com/mtgibbs/blackduck-polaris-mcp/commit/f9c69fd58e75646c0d3bcea5f989fd6f27814347))
+* PRD-T4 - Implement subscription metrics and last-run endpoints ([d4f16f0](https://github.com/mtgibbs/blackduck-polaris-mcp/commit/d4f16f0693fb1b5f22a337a940c0d3b7b7c86083))
+* PRD-TL3 - Implement version mapping and version matrix endpoints ([f3ad781](https://github.com/mtgibbs/blackduck-polaris-mcp/commit/f3ad78152a0a451cfdbbb04a8f26119dfa3df166))
+* Repos Integration API - full SCM repository management ([4882a1f](https://github.com/mtgibbs/blackduck-polaris-mcp/commit/4882a1fc64bba6c34cabb1a567135aeea0b5e8ce))
+* Tests API - create, update, artifacts, comments, profiles, metrics ([5766c26](https://github.com/mtgibbs/blackduck-polaris-mcp/commit/5766c260432d417447b9e164eb825699bfe4b3c2))
+* Tools API - tool listing, versions, settings management ([9cd3e50](https://github.com/mtgibbs/blackduck-polaris-mcp/commit/9cd3e503827d49d2858479bdb4ea713a6c7019da))
+
+
+### Bug Fixes
+
+* address PR review findings for Portfolio API ([820e8a3](https://github.com/mtgibbs/blackduck-polaris-mcp/commit/820e8a3915cfae5a54b4b77cfada85c63305d570))
+* clean up repos API tools and deduplicate shared plumbing ([68edeff](https://github.com/mtgibbs/blackduck-polaris-mcp/commit/68edeffe062daec1da337e56cd664d5b1758751b))
+* clean up tests API tools and remove artifact download stub ([e3e40f4](https://github.com/mtgibbs/blackduck-polaris-mcp/commit/e3e40f42276c33098da3724d3aa1bc89d028ed25))
+* clean up tools API layer and tool handlers ([20dc95f](https://github.com/mtgibbs/blackduck-polaris-mcp/commit/20dc95f9b15f8bcd8ce2f18fc571a25c20b0c889))
+* correct types and optional-param handling in bug tracking API ([3d1f06e](https://github.com/mtgibbs/blackduck-polaris-mcp/commit/3d1f06eb34093a73339e228364dac02f57dd37d5))
+
 ## [0.1.3](https://github.com/mtgibbs/blackduck-polaris-mcp/compare/blackduck-polaris-mcp-v0.1.2...blackduck-polaris-mcp-v0.1.3) (2026-02-19)
 
 
