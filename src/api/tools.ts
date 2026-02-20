@@ -1,36 +1,21 @@
 import { getClient } from "./client.ts";
 import type {
-  CompatibleToolVersions,
   CreateToolVersionSettingRequest,
   DownloadDescriptor,
-  MappedTool,
   PolarisTool,
   ToolVersionMapping,
   ToolVersionMatrix,
   ToolVersionSetting,
 } from "../types/polaris.ts";
 
-// Re-export types to avoid unused import warnings
-export type {
-  CompatibleToolVersions,
-  CreateToolVersionSettingRequest,
-  DownloadDescriptor,
-  MappedTool,
-  PolarisTool,
-  ToolVersionMapping,
-  ToolVersionMatrix,
-  ToolVersionSetting,
-};
-
-export const ACCEPT_TOOL_LIST = "application/vnd.polaris.tools.tool-list-1+json";
-export const ACCEPT_TOOL = "application/vnd.polaris.tools.tool-1+json";
-export const ACCEPT_DOWNLOAD_DESCRIPTOR =
-  "application/vnd.polaris.tools.download-descriptor-1+json";
-export const ACCEPT_VERSION_MAPPING = "application/vnd.polaris.tools.version-mapping-list-1+json";
-export const ACCEPT_VERSION_MATRIX = "application/vnd.polaris.tools.version-matrix-1+json";
-export const ACCEPT_VERSION_SETTINGS = "application/vnd.polaris.tools.version-settings-1+json";
-export const ACCEPT_TOOL_CONFIG_LIST = "application/vnd.polaris.tools.tool-config-list-1+json";
-export const CONTENT_TYPE_VERSION_SETTINGS_REQUEST =
+const ACCEPT_TOOL_LIST = "application/vnd.polaris.tools.tool-list-1+json";
+const ACCEPT_TOOL = "application/vnd.polaris.tools.tool-1+json";
+const ACCEPT_DOWNLOAD_DESCRIPTOR = "application/vnd.polaris.tools.download-descriptor-1+json";
+const ACCEPT_VERSION_MAPPING = "application/vnd.polaris.tools.version-mapping-list-1+json";
+const ACCEPT_VERSION_MATRIX = "application/vnd.polaris.tools.version-matrix-1+json";
+const ACCEPT_VERSION_SETTINGS = "application/vnd.polaris.tools.version-settings-1+json";
+const ACCEPT_TOOL_CONFIG_LIST = "application/vnd.polaris.tools.tool-config-list-1+json";
+const CONTENT_TYPE_VERSION_SETTINGS_REQUEST =
   "application/vnd.polaris.tools.version-settings-request-1+json";
 
 export interface ToolQueryParams {
@@ -137,5 +122,6 @@ export function deleteVersionSetting(id: string): Promise<void> {
   const client = getClient();
   return client.fetch<void>(`/api/tools/version-settings/${id}`, {
     method: "DELETE",
+    accept: ACCEPT_VERSION_SETTINGS,
   });
 }

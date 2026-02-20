@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { getTool } from "../../services/index.ts";
-import { errorResponse, jsonResponse, type ToolDefinition } from "../types.ts";
+import { jsonResponse, type ToolDefinition } from "../types.ts";
 
 export const schema = {
   id: z.string().describe("Tool ID in name:version format (e.g. cov_thin_client:2022.3.0)"),
@@ -13,11 +13,7 @@ export const getToolTool: ToolDefinition<typeof schema> = {
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
   handler: async ({ id }) => {
-    try {
-      const tool = await getTool({ id });
-      return jsonResponse(tool);
-    } catch (err) {
-      return errorResponse(err instanceof Error ? err.message : String(err));
-    }
+    const tool = await getTool({ id });
+    return jsonResponse(tool);
   },
 };

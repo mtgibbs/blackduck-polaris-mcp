@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { getDownloadDescriptor } from "../../services/index.ts";
-import { errorResponse, jsonResponse, type ToolDefinition } from "../types.ts";
+import { jsonResponse, type ToolDefinition } from "../types.ts";
 
 export const schema = {
   id: z
@@ -17,11 +17,7 @@ export const getDownloadDescriptorTool: ToolDefinition<typeof schema> = {
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
   handler: async ({ id }) => {
-    try {
-      const descriptor = await getDownloadDescriptor({ id });
-      return jsonResponse(descriptor);
-    } catch (err) {
-      return errorResponse(err instanceof Error ? err.message : String(err));
-    }
+    const descriptor = await getDownloadDescriptor({ id });
+    return jsonResponse(descriptor);
   },
 };
