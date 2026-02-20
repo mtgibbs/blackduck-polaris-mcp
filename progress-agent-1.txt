@@ -37,3 +37,26 @@
   - Tool handler continues to use snake_case params externally but now maps them to an options object internally
   - All new types for Tests API (comments, artifacts, profiles, subscriptions, create/update requests) added in one go to avoid multiple edits
 ---
+
+## 2026-02-20 - PRD-T3
+- Implemented all acceptance criteria for PRD-T3 (Implement comments, artifacts, and profiles endpoints)
+- Files changed:
+  - `src/api/tests.ts`: Added ACCEPT_COMMENTS, ACCEPT_ARTIFACTS, ACCEPT_ARTIFACTS_LIST, ACCEPT_PROFILES constants; added getTestComments() (offset-paginated), createTestArtifact() (POST with CreateArtifactRequest/CreateArtifactResponse), getTestArtifacts() (offset-paginated), getTestArtifact() (returns download info), getTestProfiles() (single GET)
+  - `src/services/tests.ts`: Added getTestComments(), createTestArtifact() with CreateArtifactOptions, getTestArtifacts(), getTestArtifact(), getTestProfiles() service functions
+  - `src/mcp/tools/get-test-comments.ts`: Created get_test_comments tool (readOnlyHint: true)
+  - `src/mcp/tools/create-test-artifact.ts`: Created create_test_artifact tool (readOnlyHint: false) with file_name, file_hash, file_size, artifact_type, etc.
+  - `src/mcp/tools/get-test-artifacts.ts`: Created get_test_artifacts tool (readOnlyHint: true)
+  - `src/mcp/tools/get-test-artifact.ts`: Created get_test_artifact tool (readOnlyHint: true) - returns download info instead of binary
+  - `src/mcp/tools/get-test-profiles.ts`: Created get_test_profiles tool (readOnlyHint: true) for DAST profiles
+  - `src/mcp/tools/index.ts`: Registered all five new tools
+  - `prd.json`: Set PRD-T3 passes: true
+- `deno task check` passes, `deno task lint` passes, `deno fmt --check` passes
+- **Learnings for future iterations:**
+  - Binary download endpoints (getTestArtifact) return download URL info instead of raw binary, since MCP tools use JSON responses
+  - createTestArtifact returns signedUrl for subsequent PUT upload - it does NOT upload file contents
+  - getTestComments and getTestArtifacts use client.getAllOffset() for offset pagination
+  - getTestProfiles is DAST-specific and returns a single TestProfile object using client.get()
+  - CreateArtifactResponse includes artifactId, signedUrl, createdAt, and _links
+  - Only SCREENSHOT artifact type is supported for download and listing in getTestArtifacts
+---
+
