@@ -1,10 +1,13 @@
 import * as testsApi from "../api/tests.ts";
 import type {
+  CreateTestRequest,
   Test,
+  TestAction,
   TestArtifactMetadata,
   TestComment,
   TestMetrics,
   TestProfile,
+  UpdateTestRequest,
 } from "../types/polaris.ts";
 
 export interface GetTestsOptions {
@@ -64,4 +67,54 @@ export function getTestProfiles(
   options: { testId: string },
 ): Promise<TestProfile> {
   return testsApi.getTestProfiles(options.testId);
+}
+
+export interface CreateTestOptions {
+  projectId: string;
+  branchId?: string;
+  assessmentTypes: string[];
+  testMode?: string;
+  scanMode?: string;
+  artifacts?: string[];
+  notes?: string;
+  triage?: string;
+  profileDetails?: {
+    id?: string;
+    content?: string;
+  };
+}
+
+export function createTest(
+  options: CreateTestOptions,
+): Promise<testsApi.CreateTestResponse> {
+  const body: CreateTestRequest = {
+    projectId: options.projectId,
+    branchId: options.branchId,
+    assessmentTypes: options.assessmentTypes,
+    testMode: options.testMode,
+    scanMode: options.scanMode,
+    artifacts: options.artifacts,
+    notes: options.notes,
+    triage: options.triage,
+    profileDetails: options.profileDetails,
+  };
+  return testsApi.createTest(body);
+}
+
+export interface UpdateTestOptions {
+  testId: string;
+  action: TestAction;
+  artifacts?: string[];
+  toolId?: string;
+  notes?: string;
+}
+
+export function updateTest(options: UpdateTestOptions): Promise<Test> {
+  const body: UpdateTestRequest = {
+    action: options.action,
+    artifacts: options.artifacts,
+    toolId: options.toolId,
+    notes: options.notes,
+  };
+  return testsApi.updateTest(options.testId, body);
 }

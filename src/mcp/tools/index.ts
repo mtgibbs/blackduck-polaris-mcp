@@ -16,6 +16,8 @@ import { getIssueCountTool } from "./get-issue-count.ts";
 import { getTestsTool } from "./get-tests.ts";
 import { getTestMetricsTool } from "./get-test-metrics.ts";
 import { getTestCommentsTool } from "./get-test-comments.ts";
+import { createTestTool } from "./create-test.ts";
+import { updateTestTool } from "./update-test.ts";
 import { createTestArtifactTool } from "./create-test-artifact.ts";
 import { getTestArtifactsTool } from "./get-test-artifacts.ts";
 import { getTestArtifactTool } from "./get-test-artifact.ts";
@@ -65,6 +67,8 @@ export const tools: AnyToolDefinition[] = [
   getTestsTool,
   getTestMetricsTool,
   getTestCommentsTool,
+  createTestTool,
+  updateTestTool,
   createTestArtifactTool,
   getTestArtifactsTool,
   getTestArtifactTool,

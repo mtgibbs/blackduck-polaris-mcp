@@ -1,17 +1,22 @@
 import { getClient } from "./client.ts";
 import type {
+  CreateTestRequest,
   Test,
   TestArtifactMetadata,
   TestComment,
   TestMetrics,
   TestProfile,
+  UpdateTestRequest,
 } from "../types/polaris.ts";
 
 const ACCEPT_TESTS = "application/vnd.polaris.tests-1+json";
+const ACCEPT_TEST = "application/vnd.polaris.tests.test-1+json";
 const ACCEPT_COMMENTS = "application/vnd.polaris.tests.tests-comments-1+json";
 const ACCEPT_ARTIFACTS = "application/vnd.polaris.tests.test-artifacts-1+json";
 const ACCEPT_ARTIFACTS_LIST = "application/vnd.polaris.tests.test-artifacts-list-1+json";
 const ACCEPT_PROFILES = "application/vnd.polaris.tests.test-profiles-1+json";
+const CONTENT_TYPE_CREATE = "application/vnd.polaris.tests.tests-bulk-create-1+json";
+const CONTENT_TYPE_UPDATE = "application/vnd.polaris.tests.test-actions-1+json";
 
 export interface TestQueryParams {
   projectId?: string;
@@ -109,7 +114,6 @@ export function getTestArtifact(
   testId: string,
   artifactId: string,
 ): Promise<ArtifactDownloadInfo> {
-  const client = getClient();
   // Binary downloads don't work well with JSON-based MCP tools
   // Return download info instead
   return Promise.resolve({
@@ -126,4 +130,38 @@ export function getTestProfiles(testId: string): Promise<TestProfile> {
     undefined,
     ACCEPT_PROFILES,
   );
+}
+
+export interface CreateTestResponse {
+  _items: Array<{
+    status: number;
+    headers: Record<string, string>;
+    body: Test;
+  }>;
+  _links?: Array<{ href: string; rel: string; method: string }>;
+}
+
+export function createTest(
+  body: CreateTestRequest,
+): Promise<CreateTestResponse> {
+  const client = getClient();
+  return client.fetch<CreateTestResponse>("/api/tests", {
+    method: "POST",
+    body,
+    accept: "application/vnd.polaris.tests.tests-bulk-1+json",
+    contentType: CONTENT_TYPE_CREATE,
+  });
+}
+
+export function updateTest(
+  testId: string,
+  body: UpdateTestRequest,
+): Promise<Test> {
+  const client = getClient();
+  return client.fetch<Test>(`/api/tests/${testId}`, {
+    method: "PATCH",
+    body,
+    accept: ACCEPT_TEST,
+    contentType: CONTENT_TYPE_UPDATE,
+  });
 }
