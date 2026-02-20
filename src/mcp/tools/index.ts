@@ -21,6 +21,10 @@ import { getTestsTool } from "./get-tests.ts";
 import { getTestMetricsTool } from "./get-test-metrics.ts";
 import { getBugTrackingConfigsTool } from "./get-bug-tracking-configs.ts";
 import { getExternalProjectsTool } from "./get-external-projects.ts";
+import { getExternalProjectByKeyTool } from "./get-external-project-by-key.ts";
+import { getExternalIssueTypesTool } from "./get-external-issue-types.ts";
+import { getLinkedIssuesTool } from "./get-linked-issues.ts";
+import { getLinkedIssueTool } from "./get-linked-issue.ts";
 import { exportIssuesTool } from "./export-issues.ts";
 import { exportFindingsIssuesTool } from "./export-findings-issues.ts";
 import { getIssueCountOverTimeTool } from "./get-issue-count-over-time.ts";
@@ -100,6 +104,17 @@ import { getScmGroupMappingStatusTool } from "./get-scm-group-mapping-status.ts"
 import { createScmTestSettingsTool } from "./create-scm-test-settings.ts";
 import { getScmTestSettingsTool } from "./get-scm-test-settings.ts";
 import { deleteScmTestSettingsTool } from "./delete-scm-test-settings.ts";
+import { createBugTrackingConfigTool } from "./create-bug-tracking-config.ts";
+import { updateBugTrackingConfigTool } from "./update-bug-tracking-config.ts";
+import { deleteBugTrackingConfigTool } from "./delete-bug-tracking-config.ts";
+import { testBugTrackingConnectionTool } from "./test-bug-tracking-connection.ts";
+import { deleteIssueExportTool } from "./delete-issue-export.ts";
+import { addIssueExportCommentTool } from "./add-issue-export-comment.ts";
+import { createProjectMappingTool } from "./create-project-mapping.ts";
+import { getConfigProjectMappingsTool } from "./get-config-project-mappings.ts";
+import { getConfigProjectMappingTool } from "./get-config-project-mapping.ts";
+import { updateProjectMappingTool } from "./update-project-mapping.ts";
+import { deleteProjectMappingTool } from "./delete-project-mapping.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -128,6 +143,10 @@ export const tools: AnyToolDefinition[] = [
   getTestMetricsTool,
   getBugTrackingConfigsTool,
   getExternalProjectsTool,
+  getExternalProjectByKeyTool,
+  getExternalIssueTypesTool,
+  getLinkedIssuesTool,
+  getLinkedIssueTool,
   exportIssuesTool,
   exportFindingsIssuesTool,
   getIssueCountOverTimeTool,
@@ -203,4 +222,15 @@ export const tools: AnyToolDefinition[] = [
   createScmTestSettingsTool,
   getScmTestSettingsTool,
   deleteScmTestSettingsTool,
+  createBugTrackingConfigTool,
+  updateBugTrackingConfigTool,
+  deleteBugTrackingConfigTool,
+  testBugTrackingConnectionTool,
+  deleteIssueExportTool,
+  addIssueExportCommentTool,
+  createProjectMappingTool,
+  getConfigProjectMappingsTool,
+  getConfigProjectMappingTool,
+  updateProjectMappingTool,
+  deleteProjectMappingTool,
 ];
