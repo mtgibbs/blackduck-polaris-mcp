@@ -1080,6 +1080,73 @@ export interface ComponentOriginMatch {
   _type?: string;
 }
 
+// --- Tools ---
+
+export interface PolarisTool {
+  id: string;
+  name: string;
+  type: string;
+  version: string;
+  status: string;
+  beta: boolean;
+  _type?: string;
+  _links?: LinkEntry[];
+}
+
+export interface DownloadDescriptor {
+  id: string;
+  filename: string;
+  extension: string;
+  platform: string;
+  hash: string;
+  signedUrl: string;
+  urlExpiresInMillis: number;
+  _type?: string;
+  _links?: LinkEntry[];
+}
+
+export interface MappedTool {
+  id: string;
+  type: string;
+  version: string;
+}
+
+export interface ToolVersionMapping {
+  type: string;
+  id: string;
+  version: string;
+  mappedTools: MappedTool[];
+}
+
+export interface CompatibleToolVersions {
+  tool: string;
+  version: string[];
+}
+
+export interface ToolVersionMatrix {
+  type: string;
+  version: string;
+  compatibleTools: CompatibleToolVersions[];
+}
+
+export interface ToolVersionSetting {
+  id: string;
+  toolType: string;
+  version: string;
+  context: string;
+  entityId: string;
+  settingType: string;
+  _type?: string;
+}
+
+export interface CreateToolVersionSettingRequest {
+  toolType: string;
+  version: string;
+  context: string;
+  entityId: string;
+  settingType: string;
+}
+
 // --- Common ---
 
 export interface LinkEntry {
