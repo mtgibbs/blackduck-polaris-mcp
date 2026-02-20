@@ -1,6 +1,8 @@
 import * as testsApi from "../api/tests.ts";
 import type {
+  CreateArtifactResponse,
   CreateTestRequest,
+  CreateTestResponse,
   SubscriptionMetrics,
   Test,
   TestAction,
@@ -48,7 +50,7 @@ export interface CreateArtifactOptions {
 
 export function createTestArtifact(
   options: CreateArtifactOptions,
-): Promise<testsApi.CreateArtifactResponse> {
+): Promise<CreateArtifactResponse> {
   return testsApi.createTestArtifact(options);
 }
 
@@ -56,12 +58,6 @@ export function getTestArtifacts(
   options: { testId: string },
 ): Promise<TestArtifactMetadata[]> {
   return testsApi.getTestArtifacts(options.testId);
-}
-
-export function getTestArtifact(
-  options: { testId: string; artifactId: string },
-): Promise<testsApi.ArtifactDownloadInfo> {
-  return testsApi.getTestArtifact(options.testId, options.artifactId);
 }
 
 export function getTestProfiles(
@@ -87,7 +83,7 @@ export interface CreateTestOptions {
 
 export function createTest(
   options: CreateTestOptions,
-): Promise<testsApi.CreateTestResponse> {
+): Promise<CreateTestResponse> {
   const body: CreateTestRequest = {
     projectId: options.projectId,
     branchId: options.branchId,

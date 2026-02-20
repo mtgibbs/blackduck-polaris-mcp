@@ -1,6 +1,8 @@
 import { getClient } from "./client.ts";
 import type {
+  CreateArtifactResponse,
   CreateTestRequest,
+  CreateTestResponse,
   SubscriptionMetrics,
   Test,
   TestArtifactMetadata,
@@ -76,13 +78,6 @@ export interface CreateArtifactRequest {
   createdAt?: string;
 }
 
-export interface CreateArtifactResponse {
-  artifactId: string;
-  signedUrl: string;
-  createdAt: string;
-  _links?: Array<{ href: string; rel: string; method: string }>;
-}
-
 export function createTestArtifact(
   body: CreateArtifactRequest,
 ): Promise<CreateArtifactResponse> {
@@ -106,25 +101,6 @@ export function getTestArtifacts(
   );
 }
 
-export interface ArtifactDownloadInfo {
-  testId: string;
-  artifactId: string;
-  downloadUrl: string;
-}
-
-export function getTestArtifact(
-  testId: string,
-  artifactId: string,
-): Promise<ArtifactDownloadInfo> {
-  // Binary downloads don't work well with JSON-based MCP tools
-  // Return download info instead
-  return Promise.resolve({
-    testId,
-    artifactId,
-    downloadUrl: `/api/tests/${testId}/artifacts/${artifactId}`,
-  });
-}
-
 export function getTestProfiles(testId: string): Promise<TestProfile> {
   const client = getClient();
   return client.get<TestProfile>(
@@ -132,15 +108,6 @@ export function getTestProfiles(testId: string): Promise<TestProfile> {
     undefined,
     ACCEPT_PROFILES,
   );
-}
-
-export interface CreateTestResponse {
-  _items: Array<{
-    status: number;
-    headers: Record<string, string>;
-    body: Test;
-  }>;
-  _links?: Array<{ href: string; rel: string; method: string }>;
 }
 
 export function createTest(

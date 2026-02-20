@@ -20,7 +20,6 @@ import { createTestTool } from "./create-test.ts";
 import { updateTestTool } from "./update-test.ts";
 import { createTestArtifactTool } from "./create-test-artifact.ts";
 import { getTestArtifactsTool } from "./get-test-artifacts.ts";
-import { getTestArtifactTool } from "./get-test-artifact.ts";
 import { getTestProfilesTool } from "./get-test-profiles.ts";
 import { getSubscriptionMetricsTool } from "./get-subscription-metrics.ts";
 import { getLastRunTestsTool } from "./get-last-run-tests.ts";
@@ -73,7 +72,6 @@ export const tools: AnyToolDefinition[] = [
   updateTestTool,
   createTestArtifactTool,
   getTestArtifactsTool,
-  getTestArtifactTool,
   getTestProfilesTool,
   getSubscriptionMetricsTool,
   getLastRunTestsTool,

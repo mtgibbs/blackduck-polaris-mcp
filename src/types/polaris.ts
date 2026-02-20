@@ -465,6 +465,22 @@ export interface SubscriptionMetrics {
   _links?: LinkEntry[];
 }
 
+export interface CreateArtifactResponse {
+  artifactId: string;
+  signedUrl: string;
+  createdAt: string;
+  _links?: LinkEntry[];
+}
+
+export interface CreateTestResponse {
+  _items: Array<{
+    status: number;
+    headers: Record<string, string>;
+    body: Test;
+  }>;
+  _links?: LinkEntry[];
+}
+
 // --- Bug Tracking ---
 
 export type BugTrackingSystemType = "JIRA" | "AZURE";

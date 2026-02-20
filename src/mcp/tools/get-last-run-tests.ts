@@ -1,8 +1,8 @@
 import { z } from "zod";
-import * as testsService from "../../services/tests.ts";
-import { errorResponse, jsonResponse, type ToolDefinition } from "../types.ts";
+import { getLastRunTests } from "../../services/index.ts";
+import { jsonResponse, type ToolDefinition } from "../types.ts";
 
-const schema = {
+export const schema = {
   assessment_type: z.enum(["SAST", "SCA", "DAST", "EXTERNAL_ANALYSIS"])
     .describe(
       "Assessment type to filter for. One of: SAST, SCA, DAST, EXTERNAL_ANALYSIS.",
@@ -28,18 +28,12 @@ export const getLastRunTestsTool: ToolDefinition<typeof schema> = {
     openWorldHint: true,
   },
   handler: async ({ assessment_type, project_id, branch_id, profile_id }) => {
-    try {
-      const tests = await testsService.getLastRunTests({
-        assessmentType: assessment_type,
-        projectId: project_id,
-        branchId: branch_id,
-        profileId: profile_id,
-      });
-      return jsonResponse(tests);
-    } catch (error) {
-      return errorResponse(
-        `Failed to get last run tests: ${error instanceof Error ? error.message : String(error)}`,
-      );
-    }
+    const tests = await getLastRunTests({
+      assessmentType: assessment_type,
+      projectId: project_id,
+      branchId: branch_id,
+      profileId: profile_id,
+    });
+    return jsonResponse(tests);
   },
 };

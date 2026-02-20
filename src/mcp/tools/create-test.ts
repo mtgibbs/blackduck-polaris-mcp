@@ -22,8 +22,8 @@ export const schema = {
     "Triage mode: REQUIRED or OPTIONAL (optional)",
   ),
   profile_details: z.object({
-    id: z.string().optional(),
-    content: z.string().optional(),
+    id: z.string().optional().describe("DAST profile ID"),
+    content: z.string().optional().describe("DAST profile content"),
   }).optional().describe("DAST profile details (optional)"),
 };
 
