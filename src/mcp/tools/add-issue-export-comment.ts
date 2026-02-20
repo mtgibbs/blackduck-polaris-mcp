@@ -16,11 +16,11 @@ export const addIssueExportCommentTool: ToolDefinition<typeof schema> = {
   schema,
   annotations: { readOnlyHint: false, openWorldHint: true },
   handler: async ({ config_id, issue_id, comment }) => {
-    const result = await addIssueExportComment({
+    await addIssueExportComment({
       configurationId: config_id,
       issueId: issue_id,
       comment,
     });
-    return jsonResponse(result);
+    return jsonResponse({ success: true });
   },
 };

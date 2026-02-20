@@ -195,7 +195,7 @@ export interface AddIssueExportCommentOptions {
   comment: string;
 }
 
-export function addIssueExportComment(options: AddIssueExportCommentOptions): Promise<unknown> {
+export function addIssueExportComment(options: AddIssueExportCommentOptions): Promise<void> {
   return bugTrackingApi.addIssueExportComment(options.configurationId, options.issueId, {
     comment: options.comment,
   });
@@ -219,7 +219,7 @@ export function createConfigProjectMapping(
     btsProjectKey: options.btsProjectKey,
     btsIssueType: options.btsIssueType,
   };
-  if (options.btsProjectId) body.btsProjectId = options.btsProjectId;
+  if (options.btsProjectId !== undefined) body.btsProjectId = options.btsProjectId;
   return bugTrackingApi.createConfigProjectMapping(options.configurationId, body);
 }
 
@@ -256,9 +256,9 @@ export function updateConfigProjectMapping(
   options: UpdateConfigProjectMappingOptions,
 ): Promise<ProjectMapping> {
   const body: UpdateProjectMappingRequest = {};
-  if (options.btsProjectKey) body.btsProjectKey = options.btsProjectKey;
-  if (options.btsProjectId) body.btsProjectId = options.btsProjectId;
-  if (options.btsIssueType) body.btsIssueType = options.btsIssueType;
+  if (options.btsProjectKey !== undefined) body.btsProjectKey = options.btsProjectKey;
+  if (options.btsProjectId !== undefined) body.btsProjectId = options.btsProjectId;
+  if (options.btsIssueType !== undefined) body.btsIssueType = options.btsIssueType;
   return bugTrackingApi.updateConfigProjectMapping(
     options.configurationId,
     options.projectMappingId,

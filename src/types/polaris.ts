@@ -478,7 +478,7 @@ export interface UpdateBugTrackingConfigRequest {
 }
 
 export interface TestConnectionResult {
-  status: string;
+  success: boolean;
   message?: string;
 }
 

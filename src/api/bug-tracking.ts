@@ -94,7 +94,6 @@ export function testConnection(id: string): Promise<TestConnectionResult> {
     {
       method: "POST",
       accept: ACCEPT,
-      contentType: ACCEPT,
     },
   );
 }
@@ -189,9 +188,9 @@ export function exportIssue(
     issueFamilyId: params.issueFamilyId,
   };
 
-  if (params.btsIssueTypeId) body.btsIssueTypeId = params.btsIssueTypeId;
-  if (params.btsKey) body.btsKey = params.btsKey;
-  if (params.branchId) body.branchId = params.branchId;
+  if (params.btsIssueTypeId !== undefined) body.btsIssueTypeId = params.btsIssueTypeId;
+  if (params.btsKey !== undefined) body.btsKey = params.btsKey;
+  if (params.branchId !== undefined) body.branchId = params.branchId;
 
   return client.fetch<LinkedIssue>(
     `/api/integrations/bugtracking/configurations/${params.configurationId}/issues-export`,
@@ -242,9 +241,9 @@ export function addIssueExportComment(
   configurationId: string,
   issueId: string,
   body: ExportCommentRequest,
-): Promise<unknown> {
+): Promise<void> {
   const client = getClient();
-  return client.fetch<unknown>(
+  return client.fetch<void>(
     `/api/integrations/bugtracking/configurations/${configurationId}/issues-export/${issueId}/comments`,
     {
       method: "POST",
