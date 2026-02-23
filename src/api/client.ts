@@ -153,7 +153,7 @@ export class PolarisClient {
       let detail = "";
       try {
         const problem = (await response.json()) as ProblemDetail;
-        detail = problem.detail ?? problem.title;
+        detail = problem.detail ?? problem.title ?? JSON.stringify(problem);
       } catch {
         detail = await response.text();
       }

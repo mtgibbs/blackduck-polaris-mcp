@@ -67,6 +67,7 @@ export function getTestProfiles(
 }
 
 export interface CreateTestOptions {
+  applicationId: string;
   projectId: string;
   branchId?: string;
   assessmentTypes: string[];
@@ -85,6 +86,7 @@ export function createTest(
   options: CreateTestOptions,
 ): Promise<CreateTestResponse> {
   const body: CreateTestRequest = {
+    applicationId: options.applicationId,
     projectId: options.projectId,
     branchId: options.branchId,
     assessmentTypes: options.assessmentTypes,

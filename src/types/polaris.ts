@@ -595,6 +595,7 @@ export interface TestMetrics {
 }
 
 export interface CreateTestRequest {
+  applicationId: string;
   projectId: string;
   branchId?: string;
   assessmentTypes: string[];
@@ -662,6 +663,7 @@ export interface CreateTestResponse {
     status: number;
     headers: Record<string, string>;
     body: Test;
+    error?: { type?: string; title?: string; status?: number; detail?: string };
   }>;
   _links?: LinkEntry[];
 }
