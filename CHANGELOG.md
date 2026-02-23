@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/mtgibbs/blackduck-polaris-mcp/compare/blackduck-polaris-mcp-v1.0.0...blackduck-polaris-mcp-v1.0.1) (2026-02-23)
+
+
+### Bug Fixes
+
+* **create_test:** add missing applicationId, fix error handling, improve descriptions ([2457fd0](https://github.com/mtgibbs/blackduck-polaris-mcp/commit/2457fd0e9517e7e42f8bf28bf45311fd9648603e))
+
 ## [1.0.0](https://github.com/mtgibbs/blackduck-polaris-mcp/compare/blackduck-polaris-mcp-v0.1.3...blackduck-polaris-mcp-v1.0.0) (2026-02-20)
 
 
