@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/mtgibbs/blackduck-polaris-mcp/compare/blackduck-polaris-mcp-v1.0.1...blackduck-polaris-mcp-v1.0.2) (2026-02-24)
+
+
+### Bug Fixes
+
+* **create_test:** use correct response field name from API ([d6e48ed](https://github.com/mtgibbs/blackduck-polaris-mcp/commit/d6e48eda6090a33d67c208cb493921118c87e554))
+
 ## [1.0.1](https://github.com/mtgibbs/blackduck-polaris-mcp/compare/blackduck-polaris-mcp-v1.0.0...blackduck-polaris-mcp-v1.0.1) (2026-02-23)
 
 
