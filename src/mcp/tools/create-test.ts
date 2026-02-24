@@ -81,7 +81,7 @@ Simplest usage: provide application_id, project_id, and assessment_types only. T
       profileDetails: profile_details,
     });
 
-    const failedItems = response._items.filter(
+    const failedItems = response.responses.filter(
       (item) => item.status < 200 || item.status >= 300,
     );
     if (failedItems.length > 0) {
@@ -90,7 +90,7 @@ Simplest usage: provide application_id, project_id, and assessment_types only. T
         return msg;
       }).join("; ");
       return errorResponse(
-        `Test creation failed for ${failedItems.length}/${response._items.length} item(s): ${details}`,
+        `Test creation failed for ${failedItems.length}/${response.responses.length} item(s): ${details}`,
       );
     }
 

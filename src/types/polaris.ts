@@ -658,14 +658,15 @@ export interface CreateArtifactResponse {
   _links?: LinkEntry[];
 }
 
+export interface CreateTestResponseItem {
+  status: number;
+  headers: Record<string, string>;
+  body: Test;
+  error?: { type?: string; title?: string; status?: number; detail?: string };
+}
+
 export interface CreateTestResponse {
-  _items: Array<{
-    status: number;
-    headers: Record<string, string>;
-    body: Test;
-    error?: { type?: string; title?: string; status?: number; detail?: string };
-  }>;
-  _links?: LinkEntry[];
+  responses: CreateTestResponseItem[];
 }
 
 // --- Bug Tracking ---
