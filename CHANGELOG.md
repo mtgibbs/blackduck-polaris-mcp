@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.3](https://github.com/mtgibbs/blackduck-polaris-mcp/compare/blackduck-polaris-mcp-v1.0.2...blackduck-polaris-mcp-v1.0.3) (2026-02-25)
+
+
+### Documentation
+
+* add PRDs for feedback-driven improvements ([6e03a07](https://github.com/mtgibbs/blackduck-polaris-mcp/commit/6e03a07b5d26b85f9a46ca67dcca8b0223772f24))
+* expand PRDs with triage docs, dismiss tool, error resilience, scan defaults ([27c0900](https://github.com/mtgibbs/blackduck-polaris-mcp/commit/27c0900cf1fc96152dc251b8b4f6726678c4b2df))
+
 ## [1.0.2](https://github.com/mtgibbs/blackduck-polaris-mcp/compare/blackduck-polaris-mcp-v1.0.1...blackduck-polaris-mcp-v1.0.2) (2026-02-24)
 
 
