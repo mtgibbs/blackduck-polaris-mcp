@@ -9,6 +9,8 @@ feedback identified specific gaps:
    projects across all applications
 2. **No bulk export** — exporting multiple issues requires calling `export_issues` N times
 3. **No export status overview** — no way to see which issues have/haven't been exported
+4. **No compound triage** — dismissing issues by file requires guessing filter syntax through
+   trial-and-error (5 failed attempts in real usage, ~7,500 wasted tokens)
 
 ## Goals
 
@@ -244,6 +246,122 @@ handler: async (args) => {
 **Token savings:** Replaces `get_issues` + `get_linked_issues` (both verbose) with a single
 summarized response.
 
+### Tool 4: `dismiss_issues`
+
+**Purpose:** Dismiss security issues by filename, severity, or other criteria without requiring
+users to know RSQL filter syntax or triage field exclusivity rules. Eliminates the 5-attempt
+learning curve observed in real usage.
+
+**Why a new tool:** The `triage_issues` tool is a general-purpose triage endpoint that requires
+knowing RSQL filter syntax, valid filter namespaces, and field exclusivity rules. Users consistently
+fail on first attempts. A purpose-built dismiss tool encapsulates the known-good patterns.
+
+**Schema:**
+```typescript
+name: "dismiss_issues",
+description: "Dismiss security issues matching criteria. Handles filter construction and " +
+  "triage property rules automatically. Simpler alternative to triage_issues for dismissals.\n\n" +
+  "Provide at least one filter criteria (filenames, severity, issue_ids, or filter).",
+schema: {
+  application_id: z.string().optional().describe(
+    "Application ID (mutually exclusive with project_id)"
+  ),
+  project_id: z.string().optional().describe(
+    "Project ID (mutually exclusive with application_id)"
+  ),
+  branch_id: z.string().optional().describe(
+    "Branch ID (defaults to default branch)"
+  ),
+  test_id: z.string().optional().describe(
+    "Test ID or 'latest' (default: 'latest')"
+  ),
+  filenames: z.array(z.string()).optional().describe(
+    "Dismiss issues found in these files. " +
+    "Example: ['TestFile1.cs', 'TestFile2.cs']"
+  ),
+  severity: z.string().optional().describe(
+    "Dismiss issues of this severity (comma-separated): critical, high, medium, low"
+  ),
+  issue_ids: z.array(z.string()).optional().describe(
+    "Dismiss specific issues by occurrence ID"
+  ),
+  reason: z.enum(["false-positive", "intentional", "component-excluded", "other"]).describe(
+    "Dismissal reason"
+  ),
+  comment: z.string().optional().describe(
+    "Explanation for why issues are being dismissed"
+  ),
+},
+annotations: { readOnlyHint: false, openWorldHint: true },
+```
+
+**Handler Logic:**
+```typescript
+handler: async (args) => {
+  const { application_id, project_id, branch_id, test_id,
+          filenames, severity, issue_ids, reason, comment } = args;
+
+  // Validate scope
+  if ((!application_id && !project_id) || (application_id && project_id)) {
+    return errorResponse("Provide exactly one of application_id or project_id.");
+  }
+
+  // Build RSQL filter from convenience parameters
+  const filterParts: string[] = [];
+
+  if (filenames?.length) {
+    const quoted = filenames.map(f => `'${f}'`).join(",");
+    filterParts.push(`occurrence:filename=in=(${quoted})`);
+  }
+
+  if (severity) {
+    const levels = severity.split(",").map(s => `'${s.trim()}'`).join(",");
+    filterParts.push(`occurrence:severity=in=(${levels})`);
+  }
+
+  if (issue_ids?.length) {
+    const quoted = issue_ids.map(id => `'${id}'`).join(",");
+    filterParts.push(`occurrence:occurrence-id=in=(${quoted})`);
+  }
+
+  if (filterParts.length === 0) {
+    return errorResponse(
+      "Provide at least one filter criteria: filenames, severity, or issue_ids. " +
+      "Refusing to dismiss all issues without a filter."
+    );
+  }
+
+  const filter = filterParts.join(";"); // AND logic
+
+  // Build triage properties — known-good combination for dismissal
+  const triageProperties = [
+    { key: "dismissal-reason", value: reason },
+  ];
+  if (comment) {
+    triageProperties.push({ key: "comment", value: comment });
+  }
+
+  const result = await findingsService.triageIssues({
+    applicationId: application_id,
+    projectId: project_id,
+    branchId: branch_id,
+    testId: test_id,
+    filter,
+    triageProperties,
+  });
+
+  return jsonResponse({
+    dismissed: result.count,
+    reason,
+    filter,
+    comment: comment ?? null,
+  });
+};
+```
+
+**Token savings:** 1 call with clear parameters vs. 5+ attempts learning filter syntax and field
+exclusivity rules. Eliminates ~7,500 tokens of trial-and-error per session.
+
 ## Implementation Plan
 
 ### Phase 1: Shared Auto-Resolution Helper
@@ -256,23 +374,31 @@ summarized response.
 4. Implement handler using portfolio-level project filter
 5. Add tests
 
-### Phase 3: bulk_export_issues
-6. Add `bulk_export_issues` tool definition
-7. Implement handler with already-exported detection and dry_run support
-8. Add tests (mock API calls, test skip/export/fail paths)
+### Phase 3: dismiss_issues
+6. Add `dismiss_issues` tool definition
+7. Implement handler with filter construction and known-good triage property combinations
+8. Add tests (mock API calls, test filter construction for filenames/severity/issue_ids)
 
-### Phase 4: get_export_status
-9. Add `get_export_status` tool definition
-10. Implement handler with parallel fetch and cross-reference
-11. Add tests
+### Phase 4: bulk_export_issues
+9. Add `bulk_export_issues` tool definition
+10. Implement handler with already-exported detection and dry_run support
+11. Add tests (mock API calls, test skip/export/fail paths)
 
-### Phase 5: Registration & Documentation
-12. Add all new tools to `src/mcp/tools/index.ts`
-13. Update tool table in CLAUDE.md
-14. Update README if needed
+### Phase 5: get_export_status
+12. Add `get_export_status` tool definition
+13. Implement handler with parallel fetch and cross-reference
+14. Add tests
+
+### Phase 6: Registration & Documentation
+15. Add all new tools to `src/mcp/tools/index.ts`
+16. Update tool table in CLAUDE.md
+17. Update README if needed
 
 ## Implementation Dependencies
 
+- **PRD-04 (Filter Documentation):** `dismiss_issues` encapsulates the triage filter patterns
+  documented in PRD-04. PRD-04's triage validation (Phase 1) should land first so `triage_issues`
+  also improves, but `dismiss_issues` is independently implementable.
 - **PRD-05 (Smart Export):** The `resolveExportParams` helper should be built as part of PRD-05 and
   reused here. If PRD-06 is implemented first, build the helper here and PRD-05 can reuse it.
 - **PRD-03 (Summarization):** `get_export_status` inherently returns summarized data. No dependency,
@@ -281,6 +407,8 @@ summarized response.
 ## Success Metrics
 
 - `search_projects`: Find a project by name in 1 call (was: multiple `get_projects` calls)
+- `dismiss_issues`: Dismiss test file issues in 1 call on first attempt (was: 5 attempts, ~7,500
+  tokens)
 - `bulk_export_issues`: Export 10 issues in 1 call (was: 10+ calls)
 - `get_export_status`: Full export overview in 1 call (was: 2 verbose calls + manual cross-reference)
 - All new tools have `summary`-style concise responses by default
@@ -293,6 +421,8 @@ summarized response.
 | `search_projects` name filter is exact match only | Document this; RSQL `=like=` operator may not be supported |
 | Large projects with 500+ issues in `get_export_status` | Cap at 500 issues (API default); document limitation |
 | Compound tools harder to test | Each tool delegates to existing service functions; test at handler level with mocks |
+| `dismiss_issues` filter construction has edge cases | Filename values with quotes/special chars need escaping; validate input |
+| `dismiss_issues` with no filter could dismiss everything | Require at least one filter criteria; refuse to dismiss without filter |
 
 ## Open Questions
 
@@ -302,3 +432,5 @@ summarized response.
 2. Should `get_export_status` also show triage status (dismissed, fix-by date) for each issue?
    Useful context for deciding what to export but adds response size.
 3. Rate limiting — should `bulk_export_issues` have a configurable delay between API calls?
+4. Should `dismiss_issues` support a `dry_run` mode that returns matching issue count without
+   dismissing? Would help users verify their filter before committing.
