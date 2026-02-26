@@ -1,0 +1,37 @@
+## Codebase Patterns
+
+- **3-layer architecture**: MCP Tool → Service Layer → API Layer
+  - Tools in src/mcp/tools/ define schemas and call services
+  - Services in src/services/ contain business logic
+  - API layer in src/api/ handles HTTP calls with vendor media types
+- **Service imports**: Always import from services/index.ts, never from api/ directly
+- **ProjectMapping structure**: Has `id`, `projectId`, `configurationId`, `btsProjectKey`, `btsIssueType` (default issue type)
+- **Error patterns**: Return `{error: string}` for user-facing error messages with actionable guidance
+
+---
+
+## 2026-02-26T03:40:00Z - S05-1
+
+**What was implemented:**
+- Created src/mcp/export-helpers.ts with resolveExportParams() function
+- Function auto-resolves project_mapping_id from config_id + project_id
+- Function auto-resolves bts_issue_type_id from mapping default or explicit parameter
+- Returns {projectMappingId, issueTypeId} on success
+- Returns {error: string} with clear guidance when resolution fails
+- Handles case where no mapping found → guides user to get_config_project_mappings or create_config_project_mapping
+- Handles case where no default issue type → guides user to get_external_issue_types
+- Respects explicit btsIssueTypeId parameter (skips auto-resolution)
+
+**Files changed:**
+- src/mcp/export-helpers.ts (created)
+- prp.json (updated S05-1 passes: true)
+
+**Learnings for future iterations:**
+- Network access is restricted in this sandboxed environment — cannot download Deno or external dependencies
+- Deno verification commands (deno task check, deno task lint, deno fmt --check) cannot be run locally
+- Manual code review against existing patterns is necessary: verify imports, types, and logic flow
+- getConfigProjectMappings() is already available in services layer and returns ProjectMapping[]
+- ProjectMapping.btsIssueType contains the default issue type ID for the mapping
+- Follow the union type pattern for success/error: `{success: data} | {error: string}`
+
+---
