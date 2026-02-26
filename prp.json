@@ -203,7 +203,9 @@
           "Dashboard filter schema details are incomplete in the API spec — implement with generic payload support"
         ],
         "examples": []
-      }
+      },
+      "claimed_by": "agent-6",
+      "claimed_at": "2026-02-26T05:03:23Z"
     },
     {
       "id": "SR-5",
