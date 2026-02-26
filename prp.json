@@ -117,7 +117,9 @@
         "examples": [
           "// Handler pattern:\nhandler: async (args) => {\n  const { summary = true, ...rest } = args;\n  const results = await getProjects(rest);\n  if (summary) {\n    return jsonResponse(summarizeResponse(results, summarizeProject));\n  }\n  return jsonResponse(results);\n},"
         ]
-      }
+      },
+      "claimed_by": "agent-1",
+      "claimed_at": "2026-02-26T03:47:46Z"
     },
     {
       "id": "S03-3",
