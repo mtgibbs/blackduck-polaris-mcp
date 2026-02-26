@@ -161,8 +161,8 @@
         ],
         "examples": []
       },
-      "claimed_by": null,
-      "claimed_at": null
+      "claimed_by": "agent-1",
+      "claimed_at": "2026-02-26T07:11:30Z"
     },
     {
       "id": "S03-4",
