@@ -160,7 +160,9 @@
           "Check get_issue_count — if it only returns a number, skip it; if it returns items with counts, add summary"
         ],
         "examples": []
-      }
+      },
+      "claimed_by": "agent-1",
+      "claimed_at": "2026-02-26T06:00:19Z"
     },
     {
       "id": "S03-4",
