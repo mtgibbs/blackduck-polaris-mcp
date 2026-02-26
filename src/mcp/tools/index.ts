@@ -138,6 +138,12 @@ import { runReportTool } from "./run-report.ts";
 import { getReportsTool } from "./get-reports.ts";
 import { getReportTool } from "./get-report.ts";
 import { deleteReportTool } from "./delete-report.ts";
+import { getReportConfigurationsTool } from "./get-report-configurations.ts";
+import { getReportConfigurationTool } from "./get-report-configuration.ts";
+import { createReportConfigurationTool } from "./create-report-configuration.ts";
+import { updateReportConfigurationTool } from "./update-report-configuration.ts";
+import { deleteReportConfigurationTool } from "./delete-report-configuration.ts";
+import { runReportConfigurationTool } from "./run-report-configuration.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -279,4 +285,10 @@ export const tools: AnyToolDefinition[] = [
   getReportsTool,
   getReportTool,
   deleteReportTool,
+  getReportConfigurationsTool,
+  getReportConfigurationTool,
+  createReportConfigurationTool,
+  updateReportConfigurationTool,
+  deleteReportConfigurationTool,
+  runReportConfigurationTool,
 ];
