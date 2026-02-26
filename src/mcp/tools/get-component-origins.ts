@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { getComponentOrigins } from "../../services/index.ts";
+import { summarizeComponentOrigin, summarizeResponse } from "../summarize.ts";
 import { jsonResponse, type ToolDefinition } from "../types.ts";
 
 export const schema = {
@@ -16,6 +17,9 @@ export const schema = {
     .number()
     .optional()
     .describe("Maximum number of component origins to return (default: 100)"),
+  summary: z.boolean().optional().describe(
+    "Return summarized results with only essential fields. Default: true. Set to false for full API response.",
+  ),
 };
 
 export const getComponentOriginsTool: ToolDefinition<typeof schema> = {
@@ -24,12 +28,17 @@ export const getComponentOriginsTool: ToolDefinition<typeof schema> = {
     "List component origins (SCA package provenance) for a project. Returns external namespace, external ID, package URL, security risk counts, and upgrade guidance.",
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
-  handler: async ({ project_id, filter, max_results }) => {
+  handler: async ({ summary = true, project_id, filter, max_results }) => {
     const origins = await getComponentOrigins({
       projectId: project_id,
       filter,
       first: max_results,
     });
+    if (summary) {
+      return jsonResponse(
+        summarizeResponse(origins, summarizeComponentOrigin),
+      );
+    }
     return jsonResponse(origins);
   },
 };
