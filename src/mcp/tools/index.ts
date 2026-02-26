@@ -135,6 +135,7 @@ import { getVersionSettingsByContextTool } from "./get-version-settings-by-conte
 import { updateVersionSettingTool } from "./update-version-setting.ts";
 import { deleteVersionSettingTool } from "./delete-version-setting.ts";
 import { searchProjectsTool } from "./search-projects.ts";
+import { getExportStatusTool } from "./get-export-status.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -273,4 +274,5 @@ export const tools: AnyToolDefinition[] = [
   updateVersionSettingTool,
   deleteVersionSettingTool,
   searchProjectsTool,
+  getExportStatusTool,
 ];
