@@ -24,8 +24,7 @@ export async function resolveExportParams(
 
   if (!mapping) {
     return {
-      error:
-        `No project mapping found for projectId '${projectId}' under config '${configId}'. ` +
+      error: `No project mapping found for projectId '${projectId}' under config '${configId}'. ` +
         `Use get_config_project_mappings to list available mappings, or create_config_project_mapping to create one.`,
     };
   }
