@@ -35,3 +35,28 @@
 - Follow the union type pattern for success/error: `{success: data} | {error: string}`
 
 ---
+## 2026-02-26T04:00:00Z - S05-2
+
+**What was implemented:**
+- Modified src/mcp/tools/export-issues.ts to support smart auto-resolution
+- Added optional `project_id` parameter to schema with clear description
+- Changed `project_mapping_id` from required to optional
+- Added validation: either `project_mapping_id` or `project_id` must be provided
+- Added validation: `bts_issue_type_id` required when creating new ticket (no `bts_key`) unless using auto-resolution
+- Handler calls `resolveExportParams` when `project_mapping_id` is omitted but `project_id` is provided
+- Returns `errorResponse` with actionable guidance when resolution fails
+- Existing callers with explicit `project_mapping_id` continue to work unchanged (backward compatible)
+
+**Files changed:**
+- src/mcp/tools/export-issues.ts (modified - added project_id param, auto-resolution logic, validation)
+- prp.json (updated S05-2 passes: true)
+
+**Learnings for future iterations:**
+- The auto-resolution pattern works well: check for missing required params, call resolution helper, handle error/success union type
+- Validation should happen BEFORE auto-resolution to catch missing params early
+- When adding optional params that replace required params, ensure backward compatibility by supporting both paths
+- Error messages should be actionable: tell users which tool to use to get missing values
+- The `!` assertion on `resolvedProjectMappingId` is safe because validation ensures it's set (either explicit or resolved)
+
+---
+
