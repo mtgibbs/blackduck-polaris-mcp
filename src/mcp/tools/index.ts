@@ -136,6 +136,7 @@ import { updateVersionSettingTool } from "./update-version-setting.ts";
 import { deleteVersionSettingTool } from "./delete-version-setting.ts";
 import { searchProjectsTool } from "./search-projects.ts";
 import { getExportStatusTool } from "./get-export-status.ts";
+import { bulkExportIssuesTool } from "./bulk-export-issues.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -275,4 +276,5 @@ export const tools: AnyToolDefinition[] = [
   deleteVersionSettingTool,
   searchProjectsTool,
   getExportStatusTool,
+  bulkExportIssuesTool,
 ];
