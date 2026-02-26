@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { exportIssue } from "../../services/index.ts";
-import { jsonResponse, type ToolDefinition } from "../types.ts";
+import { errorResponse, jsonResponse, type ToolDefinition } from "../types.ts";
+import { resolveExportParams } from "../export-helpers.ts";
 
 export const schema = {
   config_id: z
@@ -8,7 +9,16 @@ export const schema = {
     .describe("Bug tracking configuration ID (from get_bug_tracking_configurations)"),
   project_mapping_id: z
     .string()
-    .describe("Project mapping ID that links a Polaris project to an external BTS project"),
+    .optional()
+    .describe(
+      "Project mapping ID that links a Polaris project to an external BTS project. If omitted, auto-resolves from project_id.",
+    ),
+  project_id: z
+    .string()
+    .optional()
+    .describe(
+      "Polaris project ID for auto-resolution of project_mapping_id. Either project_mapping_id or project_id must be provided.",
+    ),
   issue_id: z
     .string()
     .describe("Polaris issue family ID to export"),
@@ -16,7 +26,7 @@ export const schema = {
     .string()
     .optional()
     .describe(
-      "BTS issue type ID (required when creating a new ticket, from get_external_projects)",
+      "BTS issue type ID (required when creating a new ticket, from get_external_projects). Auto-resolved from project mapping default if omitted.",
     ),
   bts_key: z
     .string()
@@ -39,16 +49,52 @@ export const exportIssuesTool: ToolDefinition<typeof schema> = {
   handler: async ({
     config_id,
     project_mapping_id,
+    project_id,
     issue_id,
     bts_issue_type_id,
     bts_key,
     branch_id,
   }) => {
+    // Validate that either project_mapping_id or project_id is provided
+    if (!project_mapping_id && !project_id) {
+      return errorResponse(
+        "Either project_mapping_id or project_id must be provided. " +
+          "Use get_config_project_mappings to find project_mapping_id, or provide project_id for auto-resolution.",
+      );
+    }
+
+    // Validate that bts_issue_type_id is present when creating a new ticket (no bts_key)
+    if (!bts_key && !bts_issue_type_id && !project_id) {
+      return errorResponse(
+        "bts_issue_type_id is required when creating a new ticket (bts_key not provided). " +
+          "Use get_external_issue_types to find available issue types, or provide project_id for auto-resolution.",
+      );
+    }
+
+    // Auto-resolve project_mapping_id and bts_issue_type_id if needed
+    let resolvedProjectMappingId = project_mapping_id;
+    let resolvedBtsIssueTypeId = bts_issue_type_id;
+
+    if (!project_mapping_id && project_id) {
+      const resolution = await resolveExportParams(
+        config_id,
+        project_id,
+        bts_issue_type_id,
+      );
+
+      if ("error" in resolution) {
+        return errorResponse(resolution.error);
+      }
+
+      resolvedProjectMappingId = resolution.projectMappingId;
+      resolvedBtsIssueTypeId = resolution.issueTypeId;
+    }
+
     const result = await exportIssue({
       configurationId: config_id,
-      projectMappingId: project_mapping_id,
+      projectMappingId: resolvedProjectMappingId!,
       issueFamilyId: issue_id,
-      btsIssueTypeId: bts_issue_type_id,
+      btsIssueTypeId: resolvedBtsIssueTypeId,
       btsKey: bts_key,
       branchId: branch_id,
     });
