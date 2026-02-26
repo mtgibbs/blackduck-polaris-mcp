@@ -191,7 +191,9 @@
           "Look at export-issues.ts for the exact service call pattern"
         ],
         "examples": []
-      }
+      },
+      "claimed_by": "agent-4",
+      "claimed_at": "2026-02-26T04:00:02Z"
     },
     {
       "id": "S06-5",
