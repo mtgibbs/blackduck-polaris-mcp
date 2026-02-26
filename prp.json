@@ -4,7 +4,6 @@
   "description": "Convenience & Compound Tools — 4 new tools: search_projects, bulk_export_issues, get_export_status, dismiss_issues",
   "version": 1,
   "previousVersion": null,
-
   "constraints": [
     "Follow existing 3-layer pattern: MCP Tool → Service → API",
     "Use Zod schemas as plain objects (not z.object()), matching existing tools",
@@ -15,19 +14,16 @@
     "bulk_export_issues max 50 issues per call",
     "dismiss_issues requires at least one filter criterion — refuse to dismiss without a filter"
   ],
-
   "nonGoals": [
     "Replacing existing atomic tools",
     "Implementing full workflow orchestration",
     "Adding write operations beyond what the API supports"
   ],
-
   "glossary": {
     "compound tool": "A tool that combines multiple API calls into a single operation for common workflows",
     "auto-resolution": "Handler logic that resolves project_mapping_id and bts_issue_type_id from config_id + project_id",
     "RSQL": "REST query language used by Polaris for filter parameters"
   },
-
   "userStories": [
     {
       "id": "S06-1",
@@ -64,7 +60,9 @@
         "examples": [
           "export async function resolveExportParams(\n  configId: string,\n  projectId: string,\n  btsIssueTypeId?: string,\n): Promise<{projectMappingId: string; issueTypeId: string} | {error: string}> {\n  const mappings = await getConfigProjectMappings({configurationId: configId});\n  const mapping = mappings.find(m => m.projectId === projectId);\n  if (!mapping) return {error: `No project mapping for project ${projectId} in config ${configId}. Use get_config_project_mappings to see available mappings.`};\n  const typeId = btsIssueTypeId ?? mapping.btsIssueType?.id;\n  if (!typeId) return {error: `No default issue type on mapping. Use get_external_issue_types to find valid types.`};\n  return {projectMappingId: mapping.id, issueTypeId: typeId};\n}"
         ]
-      }
+      },
+      "claimed_by": "agent-4",
+      "claimed_at": "2026-02-26T03:39:49Z"
     },
     {
       "id": "S06-2",
@@ -125,7 +123,9 @@
         "deno task lint",
         "deno fmt --check"
       ],
-      "dependsOn": ["S06-1"],
+      "dependsOn": [
+        "S06-1"
+      ],
       "priority": 3,
       "passes": false,
       "notes": "",
@@ -166,7 +166,9 @@
         "deno task lint",
         "deno fmt --check"
       ],
-      "dependsOn": ["S06-1"],
+      "dependsOn": [
+        "S06-1"
+      ],
       "priority": 4,
       "passes": false,
       "notes": "",
