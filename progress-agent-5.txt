@@ -1,0 +1,37 @@
+## Codebase Patterns
+
+- **3-Layer Architecture**: MCP Tool → Service → API
+- **API Module Pattern**: Use `getClient()` from client.ts, create endpoint functions with vendor media types
+- **Service Module Pattern**: Wrap API functions with Options interfaces, following naming convention (e.g., GetXOptions, CreateXOptions)
+- **Type Organization**: Add domain types to src/types/polaris.ts, keep organized by feature area
+- **Vendor Media Types**: All Polaris API calls require specific Accept/Content-Type headers (e.g., `application/vnd.polaris.policies.issue-policy-1+json`)
+- **Pagination**: Use `client.getAllOffset()` for offset-based pagination (max 100 per page)
+
+## 2026-02-26 - SP-1
+- Implemented policy types and API client infrastructure
+- Added type definitions to src/types/polaris.ts:
+  - IssuePolicy, IssuePolicyPayload
+  - PrPolicy, PrPolicyPayload
+  - TestSchedulingPolicy, TestSchedulingPolicyPayload
+  - PolicyAssignment, BulkAssignmentsPayload
+  - PolicyAction, PolicySettingsPayload
+- Created src/api/policies.ts with endpoint functions for:
+  - Issue Policies (CRUD)
+  - PR Policies (CRUD)
+  - Test Scheduling Policies (create, list, get, update)
+  - Policy Assignments V2 (bulk create/delete)
+  - Policy Actions (read-only)
+  - Policy Settings (update)
+- Created src/services/policies.ts with service wrappers following existing patterns
+- Exported policies service from src/services/index.ts
+- Files changed: src/types/polaris.ts, src/api/policies.ts (new), src/services/policies.ts (new), src/services/index.ts
+
+**Learnings for future iterations:**
+- All policy API endpoints use /api/policies/ base path
+- Issue policies use filterGroups with rules array
+- PR policies use rules directly (not wrapped in filterGroups)
+- Policy assignments require filter parameter for GET operations
+- Policy settings endpoint uses Content-Type: application/json (not vendor type)
+- Test scheduling policies do not support DELETE operation
+- Maximum 5 rules per policy, 5 fixByRule entries per rule
+---
