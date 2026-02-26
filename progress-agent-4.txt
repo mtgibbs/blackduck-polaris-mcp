@@ -33,3 +33,17 @@
   - Project.defaultBranch has id and name fields that should be included in search results
   - When mapping API responses, filter out undefined fields for cleaner output
 ---
+## 2026-02-26 03:47 - S06-3
+- Created `src/mcp/tools/get-export-status.ts` implementing get_export_status tool
+- Fetches issues and linked_issues in parallel using Promise.all for efficiency
+- Partitions issues into exported (with issueKey and issueLink) and not-exported categories
+- Returns {project_id, totalIssues, exported: {count, items}, notExported: {count, items}}
+- Tool registered in src/mcp/tools/index.ts
+- Files changed: src/mcp/tools/get-export-status.ts (new), src/mcp/tools/index.ts (import + registration), prp.json (updated passes: true)
+- **Learnings for future iterations:**
+  - LinkedIssue interface has issueId, issueKey (optional), and issueLink (optional) fields
+  - Use Map for O(1) lookup when matching issues to linked issues by issueId
+  - Issue.occurrenceProperties contains key-value pairs, with severity as a key
+  - Issue.type._localized.name is the preferred display name, fallback to altName
+  - Promise.all is the correct pattern for parallel API calls as specified in the acceptance criteria
+---
