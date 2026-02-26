@@ -4,7 +4,6 @@
   "description": "Policies API — Full CRUD for Issue Policies, PR Policies, Test Scheduling Policies, Policy Assignments V2, Policy Settings, Policy Actions",
   "version": 1,
   "previousVersion": null,
-
   "constraints": [
     "Follow existing 3-layer pattern: MCP Tool → Service → API",
     "Use Zod schemas as plain objects (not z.object()), matching existing tools",
@@ -15,14 +14,12 @@
     "Offset-based pagination (max 100 per page)",
     "Maximum 5 rules per policy, 5 fixByRule entries per rule"
   ],
-
   "nonGoals": [
     "Component Policies (endpoints not fully documented)",
     "Policy Evaluations and Violations (endpoints truncated in spec)",
     "V1 Policy Assignments (deprecated, sunset 2026-03-24)",
     "Portfolio Policy Configuration (endpoints not fully documented)"
   ],
-
   "glossary": {
     "issue policy": "Policy that triggers actions (email, break build, Jira ticket) when issues match severity/tool filters",
     "PR policy": "Policy that blocks pull requests when findings match severity/tool criteria",
@@ -31,7 +28,6 @@
     "powerFilterQuery": "RSQL-style query inside policy rules for matching issues (e.g., context:tool-type=in=('sast'))",
     "criteriaQuery": "RSQL-style query inside PR policy rules (same syntax as powerFilterQuery)"
   },
-
   "userStories": [
     {
       "id": "SP-1",
@@ -81,7 +77,9 @@
         "examples": [
           "// API function pattern from bug-tracking.ts:\nexport async function getIssuePolicies(opts?: {filter?: string; offset?: number; limit?: number}) {\n  const client = getClient();\n  return client.getAllOffset<IssuePolicy>(\n    '/api/policies/issue-policies',\n    {_filter: opts?.filter, _offset: opts?.offset, _limit: opts?.limit},\n    'application/vnd.polaris.policies.issue-policy-1+json',\n    100\n  );\n}"
         ]
-      }
+      },
+      "claimed_by": "agent-5",
+      "claimed_at": "2026-02-26T03:39:49Z"
     },
     {
       "id": "SP-2",
@@ -103,7 +101,9 @@
         "deno task lint",
         "deno fmt --check"
       ],
-      "dependsOn": ["SP-1"],
+      "dependsOn": [
+        "SP-1"
+      ],
       "priority": 2,
       "passes": false,
       "notes": "",
@@ -145,7 +145,9 @@
         "deno task lint",
         "deno fmt --check"
       ],
-      "dependsOn": ["SP-1"],
+      "dependsOn": [
+        "SP-1"
+      ],
       "priority": 3,
       "passes": false,
       "notes": "",
@@ -184,7 +186,9 @@
         "deno task lint",
         "deno fmt --check"
       ],
-      "dependsOn": ["SP-1"],
+      "dependsOn": [
+        "SP-1"
+      ],
       "priority": 4,
       "passes": false,
       "notes": "",
@@ -224,7 +228,9 @@
         "deno task lint",
         "deno fmt --check"
       ],
-      "dependsOn": ["SP-1"],
+      "dependsOn": [
+        "SP-1"
+      ],
       "priority": 5,
       "passes": false,
       "notes": "",
