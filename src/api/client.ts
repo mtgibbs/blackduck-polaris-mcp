@@ -105,6 +105,11 @@ export class PolarisClient {
     return url.toString();
   }
 
+  /** Build a public URL for a given path (no auth headers attached). */
+  buildPublicUrl(path: string): string {
+    return this.buildUrl(path);
+  }
+
   private buildHeaders(accept?: string, contentType?: string): Headers {
     const headers = new Headers({
       "Api-token": this.apiToken,

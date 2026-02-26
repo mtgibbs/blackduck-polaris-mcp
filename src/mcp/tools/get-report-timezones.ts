@@ -2,7 +2,9 @@ import { z } from "zod";
 import { getReportTimezones } from "../../services/index.ts";
 import { jsonResponse, type ToolDefinition } from "../types.ts";
 
-export const schema = {};
+export const schema = {
+  _placeholder: z.string().optional().describe("No parameters required"),
+};
 
 export const getReportTimezonesTool: ToolDefinition<typeof schema> = {
   name: "get_report_timezones",

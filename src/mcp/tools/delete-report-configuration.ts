@@ -13,7 +13,7 @@ export const deleteReportConfigurationTool: ToolDefinition<typeof schema> = {
   description:
     "Delete a report configuration by ID. Returns 204 No Content on success. Deleting a configuration does not delete reports that were generated using it.",
   schema,
-  annotations: { readOnlyHint: false, openWorldHint: true },
+  annotations: { readOnlyHint: false, destructiveHint: true, openWorldHint: true },
   handler: async ({ configuration_id }) => {
     try {
       await deleteReportConfiguration({

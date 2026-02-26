@@ -2,7 +2,9 @@ import { z } from "zod";
 import { getReportTypes } from "../../services/index.ts";
 import { jsonResponse, type ToolDefinition } from "../types.ts";
 
-export const schema = {};
+export const schema = {
+  _placeholder: z.string().optional().describe("No parameters required"),
+};
 
 export const getReportTypesTool: ToolDefinition<typeof schema> = {
   name: "get_report_types",

@@ -13,9 +13,9 @@ export const deleteReportTool: ToolDefinition<typeof schema> = {
   description:
     "Delete a report by ID. Removes the report from the system. Note: Reports are automatically deleted after 30 days.",
   schema,
-  annotations: { readOnlyHint: false, openWorldHint: true },
+  annotations: { readOnlyHint: false, destructiveHint: true, openWorldHint: true },
   handler: async ({ report_id }) => {
     await deleteReport({ reportId: report_id });
-    return jsonResponse({ success: true, message: "Report deleted successfully" });
+    return jsonResponse({ success: true });
   },
 };

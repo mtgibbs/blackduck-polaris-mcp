@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { runReport } from "../../services/index.ts";
-import { errorResponse, jsonResponse, type ToolDefinition } from "../types.ts";
+import { jsonResponse, type ToolDefinition } from "../types.ts";
 import type { ReportApplication } from "../../types/polaris.ts";
 
 export const schema = {

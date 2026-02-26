@@ -52,8 +52,8 @@ export interface DownloadReportOptions {
   reportId: string;
 }
 
-export function downloadReport(options: DownloadReportOptions): Promise<Response> {
-  return reportsApi.downloadReport(options.reportId);
+export function getReportDownloadUrl(options: DownloadReportOptions): string {
+  return reportsApi.getDownloadUrl(options.reportId);
 }
 
 export function getReportTypes(): Promise<ReportType[]> {

@@ -73,14 +73,10 @@ export function deleteReport(reportId: string): Promise<void> {
   );
 }
 
-export function downloadReport(reportId: string): Promise<Response> {
+export function getDownloadUrl(reportId: string): string {
   const client = getClient();
-  return client.fetch<Response>(
+  return client.buildPublicUrl(
     `${BASE_PATH}/reports/${reportId}/_actions/download`,
-    {
-      method: "GET",
-      accept: ACCEPT,
-    },
   );
 }
 
@@ -302,7 +298,7 @@ export function deleteDashboardFilter(
 
 // --- Timezones ---
 
-export async function getTimezones(): Promise<string[]> {
+export function getTimezones(): Promise<string[]> {
   const client = getClient();
   return client.get<string[]>(
     `${BASE_PATH}/timezones`,
