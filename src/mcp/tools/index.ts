@@ -134,6 +134,27 @@ import { getVersionSettingsTool } from "./get-version-settings.ts";
 import { getVersionSettingsByContextTool } from "./get-version-settings-by-context.ts";
 import { updateVersionSettingTool } from "./update-version-setting.ts";
 import { deleteVersionSettingTool } from "./delete-version-setting.ts";
+import { getIssuePoliciesTool } from "./get-issue-policies.ts";
+import { getIssuePolicyTool } from "./get-issue-policy.ts";
+import { createIssuePolicyTool } from "./create-issue-policy.ts";
+import { updateIssuePolicyTool } from "./update-issue-policy.ts";
+import { deleteIssuePolicyTool } from "./delete-issue-policy.ts";
+import { getPrPoliciesTool } from "./get-pr-policies.ts";
+import { getPrPolicyTool } from "./get-pr-policy.ts";
+import { createPrPolicyTool } from "./create-pr-policy.ts";
+import { updatePrPolicyTool } from "./update-pr-policy.ts";
+import { deletePrPolicyTool } from "./delete-pr-policy.ts";
+import { getTestSchedulingPoliciesTool } from "./get-test-scheduling-policies.ts";
+import { getTestSchedulingPolicyTool } from "./get-test-scheduling-policy.ts";
+import { createTestSchedulingPolicyTool } from "./create-test-scheduling-policy.ts";
+import { updateTestSchedulingPolicyTool } from "./update-test-scheduling-policy.ts";
+import { getPolicyAssignmentsTool } from "./get-policy-assignments.ts";
+import { getPolicyAssignmentTool } from "./get-policy-assignment.ts";
+import { createPolicyAssignmentsTool } from "./create-policy-assignments.ts";
+import { deletePolicyAssignmentsTool } from "./delete-policy-assignments.ts";
+import { updatePolicySettingsTool } from "./update-policy-settings.ts";
+import { getPolicyActionsTool } from "./get-policy-actions.ts";
+import { getPolicyActionTool } from "./get-policy-action.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -271,4 +292,25 @@ export const tools: AnyToolDefinition[] = [
   getVersionSettingsByContextTool,
   updateVersionSettingTool,
   deleteVersionSettingTool,
+  getIssuePoliciesTool,
+  getIssuePolicyTool,
+  createIssuePolicyTool,
+  updateIssuePolicyTool,
+  deleteIssuePolicyTool,
+  getPrPoliciesTool,
+  getPrPolicyTool,
+  createPrPolicyTool,
+  updatePrPolicyTool,
+  deletePrPolicyTool,
+  getTestSchedulingPoliciesTool,
+  getTestSchedulingPolicyTool,
+  createTestSchedulingPolicyTool,
+  updateTestSchedulingPolicyTool,
+  getPolicyAssignmentsTool,
+  getPolicyAssignmentTool,
+  createPolicyAssignmentsTool,
+  deletePolicyAssignmentsTool,
+  updatePolicySettingsTool,
+  getPolicyActionsTool,
+  getPolicyActionTool,
 ];

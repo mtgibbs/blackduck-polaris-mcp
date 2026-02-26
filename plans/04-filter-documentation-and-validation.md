@@ -41,11 +41,13 @@ the tool description string. LLM consumers read tool descriptions to understand 
 #### Example: `get_projects`
 
 **Before:**
+
 ```
 filter: z.string().optional().describe("RSQL filter string")
 ```
 
 **After:**
+
 ```
 filter: z.string().optional().describe(
   "RSQL filter string. Valid keys: name, description, subItemType, inTrash. " +
@@ -60,40 +62,40 @@ These should be extracted from the OpenAPI specs in `specs/` and documented per 
 
 #### Portfolio API Tools
 
-| Tool | Valid Filter Keys |
-|------|------------------|
-| `get_applications` | `name`, `description`, `subscriptionType`, `inTrash` |
-| `get_projects` | `name`, `description`, `subItemType`, `inTrash` |
-| `get_branches` | `name`, `isDefault` |
-| `get_portfolio_branches` | `name`, `isDefault`, `projectId`, `applicationId` |
+| Tool                        | Valid Filter Keys                                                        |
+| --------------------------- | ------------------------------------------------------------------------ |
+| `get_applications`          | `name`, `description`, `subscriptionType`, `inTrash`                     |
+| `get_projects`              | `name`, `description`, `subItemType`, `inTrash`                          |
+| `get_branches`              | `name`, `isDefault`                                                      |
+| `get_portfolio_branches`    | `name`, `isDefault`, `projectId`, `applicationId`                        |
 | `get_project_sub_resources` | `applicationId`, `projectId`, `branchId`, `labelId`, `name`, `isDefault` |
-| `get_labels` | `name` |
-| `get_dashboard` | `applicationId` |
+| `get_labels`                | `name`                                                                   |
+| `get_dashboard`             | `applicationId`                                                          |
 
 #### Findings API Tools
 
-| Tool | Valid Filter Keys |
-|------|------------------|
-| `get_issues` | (uses convenience params, raw filter also accepted) `occurrence:severity`, `context:tool-type`, `special:delta`, `issue:status`, `occurrence:cwe` |
-| `get_occurrences` | `occurrence:issue-id`, `occurrence:severity`, `occurrence:finding-key::filePath` |
-| `get_issue_count` | Same as `get_issues` filter keys |
-| `get_component_versions` | `componentVersion:name`, `componentVersion:version`, `componentVersion:license` |
-| `get_component_origins` | `componentOrigin:name`, `componentOrigin:type` |
-| `get_taxonomies` | `taxonomy:name`, `taxonomy:standard` |
+| Tool                     | Valid Filter Keys                                                                                                                                 |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `get_issues`             | (uses convenience params, raw filter also accepted) `occurrence:severity`, `context:tool-type`, `special:delta`, `issue:status`, `occurrence:cwe` |
+| `get_occurrences`        | `occurrence:issue-id`, `occurrence:severity`, `occurrence:finding-key::filePath`                                                                  |
+| `get_issue_count`        | Same as `get_issues` filter keys                                                                                                                  |
+| `get_component_versions` | `componentVersion:name`, `componentVersion:version`, `componentVersion:license`                                                                   |
+| `get_component_origins`  | `componentOrigin:name`, `componentOrigin:type`                                                                                                    |
+| `get_taxonomies`         | `taxonomy:name`, `taxonomy:standard`                                                                                                              |
 
 #### Tests API Tools
 
-| Tool | Valid Filter Keys |
-|------|------------------|
+| Tool        | Valid Filter Keys                                                           |
+| ----------- | --------------------------------------------------------------------------- |
 | `get_tests` | `projectId`, `branchId`, `status`, `assessmentType`, `scanMode`, `testMode` |
 
 #### Bug Tracking API Tools
 
-| Tool | Valid Filter Keys |
-|------|------------------|
-| `get_bug_tracking_configurations` | `type`, `url`, `enabled` |
-| `get_external_projects` | `key`, `name` |
-| `get_project_mappings` | `configurationId`, `projectId`, `btsProjectKey` |
+| Tool                              | Valid Filter Keys                               |
+| --------------------------------- | ----------------------------------------------- |
+| `get_bug_tracking_configurations` | `type`, `url`, `enabled`                        |
+| `get_external_projects`           | `key`, `name`                                   |
+| `get_project_mappings`            | `configurationId`, `projectId`, `btsProjectKey` |
 
 ### Part 1b: Triage API Documentation
 
@@ -105,25 +107,25 @@ documentation gap.
 
 The following rules are enforced by the Polaris API but not documented in the tool description:
 
-| Combination | Valid? | Notes |
-|-------------|--------|-------|
-| `dismissal-reason` + `comment` | Yes | Dismiss with reason. `status` auto-set to `dismissed`, `is-dismissed` auto-set to `true` |
-| `status` + `comment` | Yes | Change status (e.g., `to-be-fixed`, `not-dismissed`) |
-| `owner` + `fix-by` + `comment` | Yes | Assign ownership and fix deadline |
-| `status` + `dismissal-reason` | **No** | Mutually exclusive — API returns error |
-| `is-dismissed` + anything | **No** | `is-dismissed` is auto-calculated, cannot be set manually |
-| `status` + `is-dismissed` | **No** | Same — `is-dismissed` is read-only |
+| Combination                    | Valid? | Notes                                                                                    |
+| ------------------------------ | ------ | ---------------------------------------------------------------------------------------- |
+| `dismissal-reason` + `comment` | Yes    | Dismiss with reason. `status` auto-set to `dismissed`, `is-dismissed` auto-set to `true` |
+| `status` + `comment`           | Yes    | Change status (e.g., `to-be-fixed`, `not-dismissed`)                                     |
+| `owner` + `fix-by` + `comment` | Yes    | Assign ownership and fix deadline                                                        |
+| `status` + `dismissal-reason`  | **No** | Mutually exclusive — API returns error                                                   |
+| `is-dismissed` + anything      | **No** | `is-dismissed` is auto-calculated, cannot be set manually                                |
+| `status` + `is-dismissed`      | **No** | Same — `is-dismissed` is read-only                                                       |
 
 **Valid triage property values:**
 
-| Key | Type | Valid Values |
-|-----|------|-------------|
-| `status` | string | `"dismissed"`, `"to-be-fixed"`, `"not-dismissed (default)"` |
-| `dismissal-reason` | string | `"component-excluded"`, `"intentional"`, `"false-positive"`, `"other"`, `"unset"` |
-| `is-dismissed` | boolean | **Read-only** — auto-calculated from status, cannot be set |
-| `owner` | string/null | User UUID, or `null` to clear |
-| `fix-by` | string/null | ISO 8601 timestamp, or `null` to clear |
-| `comment` | string/null | Any string, or `null` to clear |
+| Key                | Type        | Valid Values                                                                      |
+| ------------------ | ----------- | --------------------------------------------------------------------------------- |
+| `status`           | string      | `"dismissed"`, `"to-be-fixed"`, `"not-dismissed (default)"`                       |
+| `dismissal-reason` | string      | `"component-excluded"`, `"intentional"`, `"false-positive"`, `"other"`, `"unset"` |
+| `is-dismissed`     | boolean     | **Read-only** — auto-calculated from status, cannot be set                        |
+| `owner`            | string/null | User UUID, or `null` to clear                                                     |
+| `fix-by`           | string/null | ISO 8601 timestamp, or `null` to clear                                            |
+| `comment`          | string/null | Any string, or `null` to clear                                                    |
 
 #### Updated `triage_issues` Tool Description
 
@@ -154,25 +156,27 @@ description: "Bulk triage security issues matching a filter within an applicatio
 
 #### Triage Filter Keys
 
-The triage endpoint accepts the same filter keys as the issues query endpoint, but the following
-are confirmed to work and not work in practice:
+The triage endpoint accepts the same filter keys as the issues query endpoint, but the following are
+confirmed to work and not work in practice:
 
 **Confirmed working:**
-| Filter Key | Example |
-|-----------|---------|
-| `occurrence:filename` | `occurrence:filename=in=('Test1.cs','Test2.cs')` |
-| `occurrence:severity` | `occurrence:severity=='medium'` |
-| `occurrence:occurrence-id` | `occurrence:occurrence-id=in=('uuid1','uuid2')` |
-| `triage:status` | `triage:status=='not-reviewed'` |
-| `context:tool-type` | `context:tool-type=='sast'` |
-| `type:name` | `type:name=='Null Pointer Dereference'` |
-| `special:delta` | `special:delta==new` |
+
+| Filter Key                 | Example                                          |
+| -------------------------- | ------------------------------------------------ |
+| `occurrence:filename`      | `occurrence:filename=in=('Test1.cs','Test2.cs')` |
+| `occurrence:severity`      | `occurrence:severity=='medium'`                  |
+| `occurrence:occurrence-id` | `occurrence:occurrence-id=in=('uuid1','uuid2')`  |
+| `triage:status`            | `triage:status=='not-reviewed'`                  |
+| `context:tool-type`        | `context:tool-type=='sast'`                      |
+| `type:name`                | `type:name=='Null Pointer Dereference'`          |
+| `special:delta`            | `special:delta==new`                             |
 
 **Confirmed NOT working:**
-| Filter Key | Note |
-|-----------|------|
+
+| Filter Key      | Note                                                       |
+| --------------- | ---------------------------------------------------------- |
 | `occurrence:id` | Returns 0 results — use `occurrence:occurrence-id` instead |
-| `id` (bare) | Not a valid filter key |
+| `id` (bare)     | Not a valid filter key                                     |
 
 #### `triage_properties` Schema Enhancement
 
@@ -203,20 +207,20 @@ Add pre-call validation in the `triage_issues` handler:
 
 ```typescript
 // Validate triage property combinations before API call
-const keys = args.triage_properties.map(p => p.key);
+const keys = args.triage_properties.map((p) => p.key);
 
 if (keys.includes("is-dismissed")) {
   return errorResponse(
     "Cannot set 'is-dismissed' — it is auto-calculated by the API. " +
-    "To dismiss issues, use {dismissal-reason: 'false-positive', comment: '...'} instead."
+      "To dismiss issues, use {dismissal-reason: 'false-positive', comment: '...'} instead.",
   );
 }
 
 if (keys.includes("status") && keys.includes("dismissal-reason")) {
   return errorResponse(
     "Cannot set both 'status' and 'dismissal-reason' (exclusive fields). " +
-    "To dismiss: use {dismissal-reason, comment} only — status auto-sets to 'dismissed'. " +
-    "To change status: use {status, comment} only."
+      "To dismiss: use {dismissal-reason, comment} only — status auto-sets to 'dismissed'. " +
+      "To change status: use {status, comment} only.",
   );
 }
 ```
@@ -337,11 +341,13 @@ a static test" and the agent created SAST only, when the user expected both SAST
 standard security scan workflow). This led to a follow-up request and wasted tokens.
 
 #### Current `assessment_types` Description
+
 ```
 "Assessment types: SAST, SCA, DAST, or EXTERNAL_ANALYSIS (required array)"
 ```
 
 #### Updated `assessment_types` Description
+
 ```typescript
 assessment_types: z.array(z.string()).describe(
   "Assessment types to run (required array). Valid values: SAST, SCA, DAST, EXTERNAL_ANALYSIS.\n\n" +
@@ -380,6 +386,7 @@ choose the right assessment types based on natural-language user requests.
 ## Implementation Plan
 
 ### Phase 1: Triage Documentation & Validation (Highest Impact)
+
 1. Update `triage_issues` tool description with field exclusivity rules, valid values, and filter
    namespace documentation
 2. Update `triage_properties` Zod schema descriptions with valid values per key
@@ -388,11 +395,13 @@ choose the right assessment types based on natural-language user requests.
 4. Add unit tests for triage validation logic
 
 ### Phase 2: Extract Valid Filter Keys from Specs
+
 5. Parse each OpenAPI spec in `specs/` to extract filterable fields per endpoint
 6. Cross-reference with actual API behavior (some specs may be incomplete)
 7. Build the `FILTER_KEYS` map
 
 ### Phase 3: Update Tool Descriptions
+
 8. Update all `filter` parameter descriptions with valid keys and examples
 9. Update tool-level descriptions to mention filtering capabilities
 10. Add filter namespace documentation to all Findings API tools (occurrence:, triage:, context:,
@@ -401,11 +410,13 @@ choose the right assessment types based on natural-language user requests.
     patterns and default guidance (SAST+SCA for generic "scan" requests)
 
 ### Phase 4: Add Filter Validation
+
 11. Create `src/mcp/filter-validation.ts` module
 12. Add unit tests for `extractFilterKeys` and `validateFilter`
 13. Integrate validation into tool handlers that accept `filter`
 
 ### Phase 5: Add Convenience Parameters
+
 14. Add `name` param to `get_projects` and `get_applications`
 15. Add `project_id` param to `get_project_mappings`
 16. Verify existing convenience params (`status` on `get_tests`, `severity`/`tool_type`/`delta` on
@@ -421,11 +432,11 @@ choose the right assessment types based on natural-language user requests.
 
 ## Risks & Mitigations
 
-| Risk | Mitigation |
-|------|-----------|
-| OpenAPI specs don't list all valid filter keys | Cross-reference with API testing; keep validation as advisory (warn, don't block) |
-| RSQL parsing regex misses edge cases | Simple extraction only; not a full parser. Pass-through on parse failure |
-| API adds new filter keys we don't know about | Validation is optional; unknown keys get a warning but still pass through |
-| Convenience params overlap with raw filter | Document that convenience params are combined with filter via AND |
-| Triage exclusivity rules change in future API versions | Validation is advisory; if API accepts a combo we reject, user can bypass with raw API |
-| `occurrence:id` vs `occurrence:occurrence-id` confusion | Explicitly document the non-working keys alongside working alternatives |
+| Risk                                                    | Mitigation                                                                             |
+| ------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| OpenAPI specs don't list all valid filter keys          | Cross-reference with API testing; keep validation as advisory (warn, don't block)      |
+| RSQL parsing regex misses edge cases                    | Simple extraction only; not a full parser. Pass-through on parse failure               |
+| API adds new filter keys we don't know about            | Validation is optional; unknown keys get a warning but still pass through              |
+| Convenience params overlap with raw filter              | Document that convenience params are combined with filter via AND                      |
+| Triage exclusivity rules change in future API versions  | Validation is advisory; if API accepts a combo we reject, user can bypass with raw API |
+| `occurrence:id` vs `occurrence:occurrence-id` confusion | Explicitly document the non-working keys alongside working alternatives                |

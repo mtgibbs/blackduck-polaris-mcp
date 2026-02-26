@@ -36,6 +36,7 @@ portfolio-level project list, which is a different API call pattern. Also, searc
 from including the parent application context.
 
 **Schema:**
+
 ```typescript
 name: "search_projects",
 description: "Search for projects by name across all applications in a portfolio. " +
@@ -51,8 +52,9 @@ schema: {
 ```
 
 **Handler:**
+
 ```typescript
-handler: async ({ portfolio_id, name }) => {
+handler: (async ({ portfolio_id, name }) => {
   // Use portfolio-level projects endpoint with name filter
   const projects = await portfolioApi.getProjects({
     portfolioId: portfolio_id,
@@ -60,10 +62,10 @@ handler: async ({ portfolio_id, name }) => {
   });
 
   // Enrich with application context from _links or separate lookup
-  const results = projects.map(p => ({
+  const results = projects.map((p) => ({
     id: p.id,
     name: p.name,
-    applicationId: extractApplicationId(p),  // from _links
+    applicationId: extractApplicationId(p), // from _links
     defaultBranch: p.defaultBranch ? { id: p.defaultBranch.id, name: p.defaultBranch.name } : null,
   }));
 
@@ -71,17 +73,18 @@ handler: async ({ portfolio_id, name }) => {
     total: results.length,
     items: results,
   });
-};
+});
 ```
 
-**Token savings:** Instead of fetching 100+ full project objects, returns only matching projects with
-minimal fields.
+**Token savings:** Instead of fetching 100+ full project objects, returns only matching projects
+with minimal fields.
 
 ### Tool 2: `bulk_export_issues`
 
 **Purpose:** Export multiple issues to bug tracking in a single tool call.
 
 **Schema:**
+
 ```typescript
 name: "bulk_export_issues",
 description: "Export multiple Polaris issues to an external bug tracking system (Jira/Azure DevOps) " +
@@ -109,8 +112,9 @@ annotations: { readOnlyHint: false, openWorldHint: true },
 ```
 
 **Handler Logic:**
+
 ```typescript
-handler: async (args) => {
+handler: (async (args) => {
   const { config_id, project_id, issue_ids, bts_issue_type_id, branch_id, dry_run = false } = args;
 
   // Validate max 50 issues
@@ -119,11 +123,15 @@ handler: async (args) => {
   }
 
   // Auto-resolve project mapping + issue type (same as smart export_issues)
-  const { projectMappingId, issueTypeId } = await resolveExportParams(config_id, project_id, bts_issue_type_id);
+  const { projectMappingId, issueTypeId } = await resolveExportParams(
+    config_id,
+    project_id,
+    bts_issue_type_id,
+  );
 
   // Check which issues are already exported
   const linkedIssues = await bugTrackingApi.getLinkedIssues({ configurationId: config_id });
-  const alreadyExported = new Set(linkedIssues.map(li => li.issueId));
+  const alreadyExported = new Set(linkedIssues.map((li) => li.issueId));
 
   const results = {
     exported: [] as Array<{ issueId: string; issueKey: string; issueLink: string }>,
@@ -170,7 +178,7 @@ handler: async (args) => {
     },
     ...results,
   });
-};
+});
 ```
 
 **Token savings:** One call instead of N calls, plus skip-already-exported logic avoids duplicate
@@ -181,6 +189,7 @@ work.
 **Purpose:** Show which issues in a project have been exported and which haven't.
 
 **Schema:**
+
 ```typescript
 name: "get_export_status",
 description: "Get export status for issues in a project — shows which issues have been exported " +
@@ -196,8 +205,9 @@ schema: {
 ```
 
 **Handler Logic:**
+
 ```typescript
-handler: async (args) => {
+handler: (async (args) => {
   const { config_id, project_id, branch_id, severity } = args;
 
   // Fetch issues and linked exports in parallel
@@ -214,7 +224,7 @@ handler: async (args) => {
     bugTrackingApi.getLinkedIssues({ configurationId: config_id }),
   ]);
 
-  const exportedMap = new Map(linkedIssues.map(li => [li.issueId, li]));
+  const exportedMap = new Map(linkedIssues.map((li) => [li.issueId, li]));
 
   const exported = [];
   const notExported = [];
@@ -224,7 +234,7 @@ handler: async (args) => {
     const summary = {
       issueId: issue.id,
       name: issue.type?.name,
-      severity: issue.occurrenceProperties?.find(p => p.key === "severity")?.value,
+      severity: issue.occurrenceProperties?.find((p) => p.key === "severity")?.value,
     };
 
     if (linked) {
@@ -240,7 +250,7 @@ handler: async (args) => {
     exported: { count: exported.length, items: exported },
     notExported: { count: notExported.length, items: notExported },
   });
-};
+});
 ```
 
 **Token savings:** Replaces `get_issues` + `get_linked_issues` (both verbose) with a single
@@ -257,6 +267,7 @@ knowing RSQL filter syntax, valid filter namespaces, and field exclusivity rules
 fail on first attempts. A purpose-built dismiss tool encapsulates the known-good patterns.
 
 **Schema:**
+
 ```typescript
 name: "dismiss_issues",
 description: "Dismiss security issues matching criteria. Handles filter construction and " +
@@ -296,10 +307,20 @@ annotations: { readOnlyHint: false, openWorldHint: true },
 ```
 
 **Handler Logic:**
+
 ```typescript
-handler: async (args) => {
-  const { application_id, project_id, branch_id, test_id,
-          filenames, severity, issue_ids, reason, comment } = args;
+handler: (async (args) => {
+  const {
+    application_id,
+    project_id,
+    branch_id,
+    test_id,
+    filenames,
+    severity,
+    issue_ids,
+    reason,
+    comment,
+  } = args;
 
   // Validate scope
   if ((!application_id && !project_id) || (application_id && project_id)) {
@@ -310,24 +331,24 @@ handler: async (args) => {
   const filterParts: string[] = [];
 
   if (filenames?.length) {
-    const quoted = filenames.map(f => `'${f}'`).join(",");
+    const quoted = filenames.map((f) => `'${f}'`).join(",");
     filterParts.push(`occurrence:filename=in=(${quoted})`);
   }
 
   if (severity) {
-    const levels = severity.split(",").map(s => `'${s.trim()}'`).join(",");
+    const levels = severity.split(",").map((s) => `'${s.trim()}'`).join(",");
     filterParts.push(`occurrence:severity=in=(${levels})`);
   }
 
   if (issue_ids?.length) {
-    const quoted = issue_ids.map(id => `'${id}'`).join(",");
+    const quoted = issue_ids.map((id) => `'${id}'`).join(",");
     filterParts.push(`occurrence:occurrence-id=in=(${quoted})`);
   }
 
   if (filterParts.length === 0) {
     return errorResponse(
       "Provide at least one filter criteria: filenames, severity, or issue_ids. " +
-      "Refusing to dismiss all issues without a filter."
+        "Refusing to dismiss all issues without a filter.",
     );
   }
 
@@ -356,7 +377,7 @@ handler: async (args) => {
     filter,
     comment: comment ?? null,
   });
-};
+});
 ```
 
 **Token savings:** 1 call with clear parameters vs. 5+ attempts learning filter syntax and field
@@ -365,31 +386,37 @@ exclusivity rules. Eliminates ~7,500 tokens of trial-and-error per session.
 ## Implementation Plan
 
 ### Phase 1: Shared Auto-Resolution Helper
+
 1. Extract the export parameter auto-resolution logic from PRD-05 into a shared helper
    `resolveExportParams(configId, projectId, btsIssueTypeId?)` in the bug-tracking service
 2. Unit test the helper
 
 ### Phase 2: search_projects
+
 3. Add `search_projects` tool definition
 4. Implement handler using portfolio-level project filter
 5. Add tests
 
 ### Phase 3: dismiss_issues
+
 6. Add `dismiss_issues` tool definition
 7. Implement handler with filter construction and known-good triage property combinations
 8. Add tests (mock API calls, test filter construction for filenames/severity/issue_ids)
 
 ### Phase 4: bulk_export_issues
+
 9. Add `bulk_export_issues` tool definition
 10. Implement handler with already-exported detection and dry_run support
 11. Add tests (mock API calls, test skip/export/fail paths)
 
 ### Phase 5: get_export_status
+
 12. Add `get_export_status` tool definition
 13. Implement handler with parallel fetch and cross-reference
 14. Add tests
 
 ### Phase 6: Registration & Documentation
+
 15. Add all new tools to `src/mcp/tools/index.ts`
 16. Update tool table in CLAUDE.md
 17. Update README if needed
@@ -410,19 +437,20 @@ exclusivity rules. Eliminates ~7,500 tokens of trial-and-error per session.
 - `dismiss_issues`: Dismiss test file issues in 1 call on first attempt (was: 5 attempts, ~7,500
   tokens)
 - `bulk_export_issues`: Export 10 issues in 1 call (was: 10+ calls)
-- `get_export_status`: Full export overview in 1 call (was: 2 verbose calls + manual cross-reference)
+- `get_export_status`: Full export overview in 1 call (was: 2 verbose calls + manual
+  cross-reference)
 - All new tools have `summary`-style concise responses by default
 
 ## Risks & Mitigations
 
-| Risk | Mitigation |
-|------|-----------|
-| Bulk export rate limiting from Polaris API | Sequential calls with configurable batch size; max 50 per call |
-| `search_projects` name filter is exact match only | Document this; RSQL `=like=` operator may not be supported |
-| Large projects with 500+ issues in `get_export_status` | Cap at 500 issues (API default); document limitation |
-| Compound tools harder to test | Each tool delegates to existing service functions; test at handler level with mocks |
-| `dismiss_issues` filter construction has edge cases | Filename values with quotes/special chars need escaping; validate input |
-| `dismiss_issues` with no filter could dismiss everything | Require at least one filter criteria; refuse to dismiss without filter |
+| Risk                                                     | Mitigation                                                                          |
+| -------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Bulk export rate limiting from Polaris API               | Sequential calls with configurable batch size; max 50 per call                      |
+| `search_projects` name filter is exact match only        | Document this; RSQL `=like=` operator may not be supported                          |
+| Large projects with 500+ issues in `get_export_status`   | Cap at 500 issues (API default); document limitation                                |
+| Compound tools harder to test                            | Each tool delegates to existing service functions; test at handler level with mocks |
+| `dismiss_issues` filter construction has edge cases      | Filename values with quotes/special chars need escaping; validate input             |
+| `dismiss_issues` with no filter could dismiss everything | Require at least one filter criteria; refuse to dismiss without filter              |
 
 ## Open Questions
 

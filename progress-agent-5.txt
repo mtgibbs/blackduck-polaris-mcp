@@ -1,0 +1,126 @@
+## Codebase Patterns
+
+- **3-Layer Architecture**: MCP Tool → Service → API
+- **API Module Pattern**: Use `getClient()` from client.ts, create endpoint functions with vendor media types
+- **Service Module Pattern**: Wrap API functions with Options interfaces, following naming convention (e.g., GetXOptions, CreateXOptions)
+- **Type Organization**: Add domain types to src/types/polaris.ts, keep organized by feature area
+- **Vendor Media Types**: All Polaris API calls require specific Accept/Content-Type headers (e.g., `application/vnd.polaris.policies.issue-policy-1+json`)
+- **Pagination**: Use `client.getAllOffset()` for offset-based pagination (max 100 per page)
+
+## 2026-02-26 - SP-1
+- Implemented policy types and API client infrastructure
+- Added type definitions to src/types/polaris.ts:
+  - IssuePolicy, IssuePolicyPayload
+  - PrPolicy, PrPolicyPayload
+  - TestSchedulingPolicy, TestSchedulingPolicyPayload
+  - PolicyAssignment, BulkAssignmentsPayload
+  - PolicyAction, PolicySettingsPayload
+- Created src/api/policies.ts with endpoint functions for:
+  - Issue Policies (CRUD)
+  - PR Policies (CRUD)
+  - Test Scheduling Policies (create, list, get, update)
+  - Policy Assignments V2 (bulk create/delete)
+  - Policy Actions (read-only)
+  - Policy Settings (update)
+- Created src/services/policies.ts with service wrappers following existing patterns
+- Exported policies service from src/services/index.ts
+- Files changed: src/types/polaris.ts, src/api/policies.ts (new), src/services/policies.ts (new), src/services/index.ts
+
+**Learnings for future iterations:**
+- All policy API endpoints use /api/policies/ base path
+- Issue policies use filterGroups with rules array
+- PR policies use rules directly (not wrapped in filterGroups)
+- Policy assignments require filter parameter for GET operations
+- Policy settings endpoint uses Content-Type: application/json (not vendor type)
+- Test scheduling policies do not support DELETE operation
+- Maximum 5 rules per policy, 5 fixByRule entries per rule
+---
+
+## 2026-02-26 - SP-2
+- Implemented Issue Policies CRUD tools following existing bug-tracking-config patterns
+- Created 5 new tool files:
+  - src/mcp/tools/get-issue-policies.ts - list policies with filter/pagination
+  - src/mcp/tools/get-issue-policy.ts - get single policy by ID
+  - src/mcp/tools/create-issue-policy.ts - create new policy (returns 201)
+  - src/mcp/tools/update-issue-policy.ts - full replacement update (returns 200)
+  - src/mcp/tools/delete-issue-policy.ts - delete policy (returns 204)
+- Registered all 5 tools in src/mcp/tools/index.ts
+- All tools include proper Zod schemas as plain objects (not wrapped in z.object())
+- All tools follow 3-layer architecture: Tool → Service → API
+- Tool descriptions document:
+  - Valid powerFilterQuery syntax examples
+  - Valid actions: SEND_EMAIL, BREAK_THE_BUILD, CREATE_BUNDLE_JIRA_TICKET
+  - Constraints: max 5 rules per policy, max 5 fixByRule entries per rule
+- Files changed: 
+  - 5 new tool files in src/mcp/tools/
+  - src/mcp/tools/index.ts (added imports and tool registrations)
+
+**Learnings for future iterations:**
+- Tool schemas use nested Zod objects for complex structures (filterGroups, rules, fixByRule)
+- Create tools should return 201, update returns 200, delete returns 204
+- Delete tools should have `destructiveHint: true` annotation
+- Tool descriptions should include constraints and valid values inline to help users
+- Deno not available in this container - verification commands couldn't be run, but code follows exact patterns from existing tools
+---
+
+## 2026-02-26 - SP-3
+- Implemented PR Policies and Test Scheduling Policies MCP tools
+- Created 5 PR policy tools:
+  - src/mcp/tools/get-pr-policies.ts - list policies with filter/pagination
+  - src/mcp/tools/get-pr-policy.ts - get single policy by ID
+  - src/mcp/tools/create-pr-policy.ts - create new policy (returns 201)
+  - src/mcp/tools/update-pr-policy.ts - full replacement update (returns 200)
+  - src/mcp/tools/delete-pr-policy.ts - delete policy (returns 204)
+- Created 4 test scheduling policy tools:
+  - src/mcp/tools/get-test-scheduling-policies.ts - list policies
+  - src/mcp/tools/get-test-scheduling-policy.ts - get single policy by ID
+  - src/mcp/tools/create-test-scheduling-policy.ts - create new policy (returns 201)
+  - src/mcp/tools/update-test-scheduling-policy.ts - full replacement update (returns 200)
+- All tools follow 3-layer architecture: Tool → Service → API
+- PR policy tools document:
+  - Rules use criteriaQuery (not powerFilterQuery)
+  - Actions only support BLOCK_PR
+  - Rules are NOT wrapped in filterGroups (unlike issue policies)
+- Test scheduling policy tools document:
+  - scheduleGroups with rules array
+  - Each rule has ruleNumber and frequency ('daily' or 'weekly')
+  - No DELETE operation supported
+  - Maximum 5 rules per policy
+- Registered all 9 tools in src/mcp/tools/index.ts
+- Files changed:
+  - 9 new tool files in src/mcp/tools/
+  - src/mcp/tools/index.ts (added imports and tool registrations)
+
+**Learnings for future iterations:**
+- PR policies have a different structure than issue policies - rules are direct (not in filterGroups)
+- Test scheduling policies don't support DELETE operations (API limitation)
+- PR policy actions are restricted to BLOCK_PR only
+- Test scheduling frequency values are limited to 'daily' or 'weekly'
+- Deno not available in this container - verification commands couldn't be run, but code follows exact patterns from existing tools
+---
+
+## 2026-02-26 - SP-4
+- Implemented Policy Assignments V2 MCP tools
+- Created 4 new tool files:
+  - src/mcp/tools/get-policy-assignments.ts - list assignments with required filter parameter
+  - src/mcp/tools/get-policy-assignment.ts - get single assignment by ID
+  - src/mcp/tools/create-policy-assignments.ts - bulk create assignments (returns 204)
+  - src/mcp/tools/delete-policy-assignments.ts - bulk delete assignments (returns 204)
+- Registered all 4 tools in src/mcp/tools/index.ts
+- All tools use V2 media type: application/vnd.polaris.policies.policy-bulk-assignment-2+json
+- Tool descriptions document:
+  - Filter parameter is REQUIRED for GET (API requirement)
+  - Bulk operations use assignments array with type, associationId, policyId
+  - Limits: up to 5 issue policies per project, 1 test scheduling policy per project
+  - Both create and delete return 204 No Content
+- Files changed:
+  - 4 new tool files in src/mcp/tools/
+  - src/mcp/tools/index.ts (added imports and tool registrations)
+
+**Learnings for future iterations:**
+- Policy assignments V2 API requires filter parameter for GET operations (unlike some other APIs)
+- Bulk operations (create/delete) use the same payload structure with assignments array
+- Delete tool properly marked with destructiveHint: true annotation
+- Type field is typically 'project' for assignments
+- Deno not available in this container - verification commands couldn't be run, but code follows exact patterns from existing tools
+---

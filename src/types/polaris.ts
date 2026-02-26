@@ -1222,6 +1222,122 @@ export interface CreateToolVersionSettingRequest {
   settingType: string;
 }
 
+// --- Policies ---
+
+export type PolicyUseCase = "issue_policy" | "component_policy";
+
+export interface PolicyRule {
+  ruleNumber: number;
+  powerFilterQuery: string;
+  actions?: string[];
+  fixByRule?: Array<{
+    fixByAction: string;
+    fixByPeriod: number;
+  }>;
+}
+
+export interface PolicyFilterGroup {
+  rules: PolicyRule[];
+}
+
+export interface IssuePolicy {
+  id: string;
+  name: string;
+  description?: string;
+  filterGroups?: PolicyFilterGroup[];
+  isDefault?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+  _links?: LinkEntry[];
+}
+
+export interface IssuePolicyPayload {
+  name: string;
+  description?: string;
+  filterGroups?: PolicyFilterGroup[];
+}
+
+export interface PrPolicyRule {
+  ruleNumber: number;
+  criteriaQuery: string;
+  actions?: string[];
+}
+
+export interface PrPolicy {
+  id: string;
+  name: string;
+  description?: string;
+  rules?: PrPolicyRule[];
+  createdAt?: string;
+  updatedAt?: string;
+  _links?: LinkEntry[];
+}
+
+export interface PrPolicyPayload {
+  name: string;
+  description?: string;
+  rules?: PrPolicyRule[];
+}
+
+export interface TestSchedulingPolicyRule {
+  ruleNumber: number;
+  frequency: "daily" | "weekly";
+}
+
+export interface TestSchedulingPolicyScheduleGroup {
+  rules: TestSchedulingPolicyRule[];
+}
+
+export interface TestSchedulingPolicy {
+  id: string;
+  name: string;
+  description?: string;
+  scheduleGroups?: TestSchedulingPolicyScheduleGroup[];
+  isDefault?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+  _links?: LinkEntry[];
+}
+
+export interface TestSchedulingPolicyPayload {
+  name: string;
+  description?: string;
+  scheduleGroups?: TestSchedulingPolicyScheduleGroup[];
+}
+
+export interface PolicyAssignment {
+  id: string;
+  type: string;
+  associationId: string;
+  policyId: string;
+  createdAt?: string;
+  updatedAt?: string;
+  _links?: LinkEntry[];
+}
+
+export interface BulkAssignmentsPayload {
+  assignments: Array<{
+    type: string;
+    associationId: string;
+    policyId: string;
+  }>;
+}
+
+export interface PolicyAction {
+  id: string;
+  name: string;
+  description?: string;
+  policyUseCase?: PolicyUseCase;
+  createdAt?: string;
+  updatedAt?: string;
+  _links?: LinkEntry[];
+}
+
+export interface PolicySettingsPayload {
+  policyId: string;
+  defaultPolicyStatus: boolean;
+}
+
 // --- Common ---
 
 export interface LinkEntry {
