@@ -64,3 +64,24 @@
   - errorResponse() helper is available from ../types.ts for validation errors
   - Bulk operations should provide detailed breakdown: summary counts + detailed lists for each category
 ---
+## 2026-02-26 04:38 - S06-5
+- Created `src/mcp/tools/dismiss-issues.ts` implementing dismiss_issues tool
+- Builds RSQL filters from convenience parameters: filenames, severity, and issue_ids
+- Validates exactly one of application_id or project_id is provided (mutually exclusive)
+- Validates at least one filter criterion is provided (refuses to dismiss without filters)
+- Builds RSQL filter with proper namespaces: occurrence:filename, occurrence:severity, occurrence:occurrence-id
+- Escapes single quotes in filenames to prevent RSQL injection
+- Calls triage service with ONLY dismissal-reason and optionally comment (never includes status field)
+- Supports dismissal reasons: false-positive, intentional, component-excluded, other
+- Returns {dismissed: count, reason, filter, comment}
+- Tool registered in src/mcp/tools/index.ts
+- Files changed: src/mcp/tools/dismiss-issues.ts (new), src/mcp/tools/index.ts (import + registration), prp.json (updated passes: true)
+- **Learnings for future iterations:**
+  - Use occurrence:filename NOT occurrence:filePath for triage filters (confirmed working pattern)
+  - Use occurrence:occurrence-id NOT occurrence:id for triage filters (confirmed working pattern)
+  - Dismissal triage properties should ONLY include dismissal-reason and optionally comment - never status
+  - RSQL injection prevention: escape single quotes in user-provided strings with `f.replace(/'/g, "\\'")`
+  - Convenience tools that build filters should validate at least one criterion to prevent accidental bulk operations
+  - Filter parts joined with `;` for AND logic (all conditions must match)
+  - Enum values in Zod schemas should match the API's expected values exactly
+---
