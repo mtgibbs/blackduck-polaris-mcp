@@ -1,0 +1,248 @@
+{
+  "project": "blackduck-polaris-mcp",
+  "branchName": "ralph/prd-06-policies",
+  "description": "Policies API — Full CRUD for Issue Policies, PR Policies, Test Scheduling Policies, Policy Assignments V2, Policy Settings, Policy Actions",
+  "version": 1,
+  "previousVersion": null,
+
+  "constraints": [
+    "Follow existing 3-layer pattern: MCP Tool → Service → API",
+    "Use Zod schemas as plain objects (not z.object()), matching existing tools",
+    "All tools must be registered in src/mcp/tools/index.ts",
+    "Vendor media types required for all API calls (Accept + Content-Type headers)",
+    "deno task check && deno task lint && deno fmt --check must all pass",
+    "Use ONLY /api/policies/ endpoints (NOT deprecated /api/risk/policies/)",
+    "Offset-based pagination (max 100 per page)",
+    "Maximum 5 rules per policy, 5 fixByRule entries per rule"
+  ],
+
+  "nonGoals": [
+    "Component Policies (endpoints not fully documented)",
+    "Policy Evaluations and Violations (endpoints truncated in spec)",
+    "V1 Policy Assignments (deprecated, sunset 2026-03-24)",
+    "Portfolio Policy Configuration (endpoints not fully documented)"
+  ],
+
+  "glossary": {
+    "issue policy": "Policy that triggers actions (email, break build, Jira ticket) when issues match severity/tool filters",
+    "PR policy": "Policy that blocks pull requests when findings match severity/tool criteria",
+    "test scheduling policy": "Policy controlling automatic test frequency (daily/weekly)",
+    "policy assignment": "Link between a policy and a project — assigns the policy to that project",
+    "powerFilterQuery": "RSQL-style query inside policy rules for matching issues (e.g., context:tool-type=in=('sast'))",
+    "criteriaQuery": "RSQL-style query inside PR policy rules (same syntax as powerFilterQuery)"
+  },
+
+  "userStories": [
+    {
+      "id": "SP-1",
+      "title": "Add Policies types and API client",
+      "description": "Add type definitions to src/types/polaris.ts for all policy-related types. Create src/api/policies.ts with endpoint functions. Create src/services/policies.ts with service wrappers. Export from src/services/index.ts.",
+      "acceptanceCriteria": [
+        "src/types/polaris.ts exports: IssuePolicy, IssuePolicyPayload, PrPolicy, PrPolicyPayload, TestSchedulingPolicy, TestSchedulingPolicyPayload, PolicyAssignment, BulkAssignmentsPayload, PolicyAction, PolicySettingsPayload",
+        "IssuePolicy type includes: id, name, description, filterGroups (with rules array), isDefault, createdAt, updatedAt, _links",
+        "PrPolicy type includes: id, name, description, rules (with criteriaQuery and actions), createdAt, updatedAt, _links",
+        "TestSchedulingPolicy type includes: id, name, description, scheduleGroups (with rules array), isDefault, createdAt, updatedAt, _links",
+        "src/api/policies.ts creates all endpoint functions using the PolarisClient pattern from existing API modules",
+        "All API functions use correct vendor media types: application/vnd.polaris.policies.issue-policy-1+json, application/vnd.polaris.policies.pr-policies-1+json, application/vnd.polaris.policies.test-scheduling-policy-1+json, application/vnd.polaris.policies.policy-bulk-assignment-2+json, application/vnd.polaris.policies.action-1+json",
+        "src/services/policies.ts wraps API functions following existing service patterns",
+        "Services exported from src/services/index.ts",
+        "Typecheck passes: deno task check"
+      ],
+      "verificationCommands": [
+        "deno task check",
+        "deno task lint",
+        "deno fmt --check"
+      ],
+      "dependsOn": [],
+      "priority": 1,
+      "passes": false,
+      "notes": "",
+      "context": {
+        "relevantFiles": [
+          "src/types/polaris.ts",
+          "src/api/client.ts",
+          "src/api/bug-tracking.ts",
+          "src/api/portfolio.ts",
+          "src/services/bug-tracking.ts",
+          "src/services/index.ts"
+        ],
+        "hints": [
+          "Follow the exact pattern from existing API modules (e.g., bug-tracking.ts) for the policies API client",
+          "The PolarisClient has methods like get(), post(), put(), delete() — use these",
+          "All collection endpoints return PaginatedResponse<T> with _items, _links, _collection",
+          "Base path for all endpoints: /api/policies/",
+          "Issue policies path: /api/policies/issue-policies",
+          "PR policies path: /api/policies/pr-policies",
+          "Test scheduling path: /api/policies/test-scheduling-policies",
+          "Assignments path: /api/policies/assignments",
+          "Actions path: /api/policies/actions",
+          "Policy settings path: /api/policies/policy-settings"
+        ],
+        "examples": [
+          "// API function pattern from bug-tracking.ts:\nexport async function getIssuePolicies(opts?: {filter?: string; offset?: number; limit?: number}) {\n  const client = getClient();\n  return client.getAllOffset<IssuePolicy>(\n    '/api/policies/issue-policies',\n    {_filter: opts?.filter, _offset: opts?.offset, _limit: opts?.limit},\n    'application/vnd.polaris.policies.issue-policy-1+json',\n    100\n  );\n}"
+        ]
+      }
+    },
+    {
+      "id": "SP-2",
+      "title": "Implement Issue Policies CRUD tools",
+      "description": "Create MCP tools: get_issue_policies, get_issue_policy, create_issue_policy, update_issue_policy, delete_issue_policy.",
+      "acceptanceCriteria": [
+        "get_issue_policies tool: schema has filter (optional), offset (optional), limit (optional), associationId (optional). Returns paginated list.",
+        "get_issue_policy tool: schema has policy_id (required). Returns single policy.",
+        "create_issue_policy tool: schema has name (required, max 255), description (optional, max 512), filter_groups with rules array. Each rule has ruleNumber, powerFilterQuery, actions array, optional fixByRule array.",
+        "update_issue_policy tool: schema has policy_id (required) plus same fields as create (full replacement).",
+        "delete_issue_policy tool: schema has policy_id (required). Returns 204.",
+        "All tools describe valid powerFilterQuery syntax: context:tool-type=in=('sast','sca','dast'), issueProperties:severity=in=('critical','high','medium','low')",
+        "All tools describe valid actions: SEND_EMAIL, BREAK_THE_BUILD, CREATE_BUNDLE_JIRA_TICKET",
+        "All tools registered in src/mcp/tools/index.ts",
+        "Typecheck passes: deno task check"
+      ],
+      "verificationCommands": [
+        "deno task check",
+        "deno task lint",
+        "deno fmt --check"
+      ],
+      "dependsOn": ["SP-1"],
+      "priority": 2,
+      "passes": false,
+      "notes": "",
+      "context": {
+        "relevantFiles": [
+          "src/mcp/tools/get-bug-tracking-configs.ts",
+          "src/mcp/tools/create-bug-tracking-config.ts",
+          "src/mcp/tools/update-bug-tracking-config.ts",
+          "src/mcp/tools/delete-bug-tracking-config.ts",
+          "src/services/policies.ts",
+          "src/mcp/tools/index.ts",
+          "src/mcp/types.ts"
+        ],
+        "hints": [
+          "Follow the same CRUD pattern as bug-tracking-config tools",
+          "create_issue_policy returns 201, update returns 200, delete returns 204",
+          "Include rule constraints in tool descriptions: max 5 rules, max 5 fixByRule per rule",
+          "Put each tool in its own file following naming convention: get-issue-policies.ts, create-issue-policy.ts, etc."
+        ],
+        "examples": []
+      }
+    },
+    {
+      "id": "SP-3",
+      "title": "Implement PR Policies and Test Scheduling Policies tools",
+      "description": "Create MCP tools for PR policies (CRUD) and test scheduling policies (create, list, get, update — no delete).",
+      "acceptanceCriteria": [
+        "get_pr_policies, get_pr_policy, create_pr_policy, update_pr_policy, delete_pr_policy tools created",
+        "PR policy tools describe rules with criteriaQuery (same syntax as powerFilterQuery) and actions (only BLOCK_PR)",
+        "get_test_scheduling_policies, get_test_scheduling_policy, create_test_scheduling_policy, update_test_scheduling_policy tools created",
+        "Test scheduling tools describe scheduleGroups with rules having ruleNumber and frequency (daily/weekly)",
+        "No delete tool for test scheduling policies (not supported by API)",
+        "All tools use correct vendor media types",
+        "All tools registered in src/mcp/tools/index.ts",
+        "Typecheck passes: deno task check"
+      ],
+      "verificationCommands": [
+        "deno task check",
+        "deno task lint",
+        "deno fmt --check"
+      ],
+      "dependsOn": ["SP-1"],
+      "priority": 3,
+      "passes": false,
+      "notes": "",
+      "context": {
+        "relevantFiles": [
+          "src/services/policies.ts",
+          "src/mcp/tools/index.ts",
+          "src/mcp/types.ts"
+        ],
+        "hints": [
+          "PR policies use 'rules' directly (not wrapped in filterGroups like issue policies)",
+          "PR policy actions only support BLOCK_PR",
+          "Test scheduling policies have scheduleGroups.rules with ruleNumber and frequency",
+          "Frequency values: 'daily' or 'weekly' only",
+          "Multi-policy support is not available for test scheduling (one per project/branch)"
+        ],
+        "examples": []
+      }
+    },
+    {
+      "id": "SP-4",
+      "title": "Implement Policy Assignments V2 tools",
+      "description": "Create MCP tools: get_policy_assignments, get_policy_assignment, create_policy_assignments (bulk), delete_policy_assignments (bulk).",
+      "acceptanceCriteria": [
+        "get_policy_assignments tool: schema has filter (required — API requires it), offset, limit. Description notes filter is required (e.g., policyId=='uuid')",
+        "get_policy_assignment tool: schema has assignment_id (required). Returns single assignment.",
+        "create_policy_assignments tool: schema has assignments array of {type, associationId, policyId}. POST to /api/policies/assignments. Returns 204.",
+        "delete_policy_assignments tool: schema has same assignments array. DELETE to /api/policies/assignments. Returns 204.",
+        "All tools use V2 media type: application/vnd.polaris.policies.policy-bulk-assignment-2+json",
+        "Tool descriptions note: up to 5 issue policies per project, 1 test scheduling policy per project",
+        "All tools registered in src/mcp/tools/index.ts",
+        "Typecheck passes: deno task check"
+      ],
+      "verificationCommands": [
+        "deno task check",
+        "deno task lint",
+        "deno fmt --check"
+      ],
+      "dependsOn": ["SP-1"],
+      "priority": 4,
+      "passes": false,
+      "notes": "",
+      "context": {
+        "relevantFiles": [
+          "src/services/policies.ts",
+          "src/api/policies.ts",
+          "src/mcp/tools/index.ts",
+          "src/mcp/types.ts"
+        ],
+        "hints": [
+          "create and delete both send an assignments array in the request body",
+          "create is POST, delete is DELETE — both return 204 No Content",
+          "GET requires a filter — document this clearly (e.g., policyId=='uuid' or associationId=='uuid')",
+          "type field is typically 'project'"
+        ],
+        "examples": []
+      }
+    },
+    {
+      "id": "SP-5",
+      "title": "Implement Policy Settings and Policy Actions tools",
+      "description": "Create MCP tools: update_policy_settings (set default policy), get_policy_actions, get_policy_action.",
+      "acceptanceCriteria": [
+        "update_policy_settings tool: schema has policy_id (required), default_policy_status (required boolean). POST to /api/policies/policy-settings. Returns 204.",
+        "Tool description notes: new default policy will NOT be reassigned to existing projects",
+        "get_policy_actions tool: schema has filter (optional, e.g., policyUseCase=='issue_policy'), offset, limit. Returns paginated list.",
+        "get_policy_action tool: schema has action_id (required). Returns single action.",
+        "Tool descriptions list supported actions: SEND_EMAIL, BREAK_THE_BUILD, CREATE_BUNDLE_JIRA_TICKET, BLOCK_PR",
+        "All tools registered in src/mcp/tools/index.ts",
+        "Typecheck passes: deno task check",
+        "deno task lint passes",
+        "deno fmt --check passes"
+      ],
+      "verificationCommands": [
+        "deno task check",
+        "deno task lint",
+        "deno fmt --check"
+      ],
+      "dependsOn": ["SP-1"],
+      "priority": 5,
+      "passes": false,
+      "notes": "",
+      "context": {
+        "relevantFiles": [
+          "src/services/policies.ts",
+          "src/api/policies.ts",
+          "src/mcp/tools/index.ts",
+          "src/mcp/types.ts"
+        ],
+        "hints": [
+          "Policy settings uses Content-Type: application/json (not vendor type)",
+          "Policy actions are read-only — only GET endpoints",
+          "Actions can be filtered by policyUseCase: 'issue_policy' or 'component_policy'",
+          "update_policy_settings is actually a POST (not PUT/PATCH)"
+        ],
+        "examples": []
+      }
+    }
+  ]
+}
