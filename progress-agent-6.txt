@@ -1,0 +1,37 @@
+## Codebase Patterns
+
+### Reports API Module Pattern
+- Reports API uses standard JSON (Content-Type: application/json), NOT vendor media types
+- Base path: /api/insights/ for all report-related endpoints
+- Use `getAllOffset` for paginated list endpoints
+- Service layer wraps API functions with Options interfaces
+- API functions use client.get(), client.fetch(), etc. from PolarisClient
+
+---
+
+## 2026-02-26 - SR-1
+- Implemented Reports API types and service layer
+- Added type definitions to src/types/polaris.ts:
+  - Report, RunReportPayload, ReportConfiguration, ConfigurationPayload
+  - ReportScheduler, SchedulerPayload, DashboardFilter, ReportType
+  - Supporting types: ReportStatus, ReportScope, ReportApplication, ReportProject, ReportBranch
+- Created src/api/reports.ts with endpoint functions:
+  - Reports: getReports, getReport, runReport, deleteReport, downloadReport, getReportTypes
+  - Configurations: getConfigurations, getConfiguration, createConfiguration, updateConfiguration, deleteConfiguration, runConfiguration
+  - Schedulers: createScheduler, getScheduler, updateScheduler
+  - Dashboard Filters: getDashboardFilters, createDashboardFilter, updateDashboardFilter, deleteDashboardFilter
+  - Timezones: getTimezones
+- Created src/services/reports.ts with service wrappers following existing patterns
+- Updated src/services/index.ts to export reports module
+- Files changed:
+  - src/types/polaris.ts (added report types)
+  - src/api/reports.ts (created)
+  - src/services/reports.ts (created)
+  - src/services/index.ts (added export)
+- **Learnings for future iterations:**
+  - Reports API is unique in using standard JSON instead of vendor media types
+  - All report endpoints are under /api/insights/ base path
+  - Scheduler and dashboard filter endpoints are nested under their parent resources
+  - getTimezones returns a flat string array, not paginated
+- **Note:** Unable to run deno verification commands (check/lint/fmt) as deno is not installed in the container environment, but code follows all existing patterns correctly
+---
