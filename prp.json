@@ -217,7 +217,7 @@
       ],
       "dependsOn": [],
       "priority": 5,
-      "passes": false,
+      "passes": true,
       "notes": "",
       "context": {
         "relevantFiles": [
