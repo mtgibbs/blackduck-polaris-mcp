@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { getBranches } from "../../services/index.ts";
+import { summarizeBranch, summarizeResponse } from "../summarize.ts";
 import { jsonResponse, type ToolDefinition } from "../types.ts";
 
 export const schema = {
@@ -13,6 +14,9 @@ export const schema = {
     .string()
     .optional()
     .describe("Sort expression. Sortable fields: name, source. Format: field|direction"),
+  summary: z.boolean().optional().describe(
+    "Return summarized results with only essential fields. Default: true. Set to false for full API response.",
+  ),
 };
 
 export const getBranchesTool: ToolDefinition<typeof schema> = {
@@ -20,14 +24,18 @@ export const getBranchesTool: ToolDefinition<typeof schema> = {
   description: "List branches for a project. Each branch can have its own scan results and issues.",
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
-  handler: async ({ portfolio_id, application_id, project_id, filter, sort }) => {
+  handler: async (args) => {
+    const { summary = true, ...rest } = args;
     const branches = await getBranches({
-      portfolioId: portfolio_id,
-      applicationId: application_id,
-      projectId: project_id,
-      filter,
-      sort,
+      portfolioId: rest.portfolio_id,
+      applicationId: rest.application_id,
+      projectId: rest.project_id,
+      filter: rest.filter,
+      sort: rest.sort,
     });
+    if (summary) {
+      return jsonResponse(summarizeResponse(branches, summarizeBranch));
+    }
     return jsonResponse(branches);
   },
 };

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { getProjectSubResources } from "../../services/index.ts";
+import { summarizeProjectSubResource, summarizeResponse } from "../summarize.ts";
 import { jsonResponse, type ToolDefinition } from "../types.ts";
 
 export const schema = {
@@ -9,6 +10,9 @@ export const schema = {
   ),
   sort: z.string().optional().describe("Sort expression. Format: field|direction"),
   consider_inherited_labels: z.boolean().optional().describe("Include inherited labels in results"),
+  summary: z.boolean().optional().describe(
+    "Return summarized results with only essential fields. Default: true. Set to false for full API response.",
+  ),
 };
 
 export const getProjectSubResourcesTool: ToolDefinition<typeof schema> = {
@@ -16,13 +20,19 @@ export const getProjectSubResourcesTool: ToolDefinition<typeof schema> = {
   description: "List project sub-resources (branches and profiles) across a portfolio.",
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
-  handler: async ({ portfolio_id, filter, sort, consider_inherited_labels }) => {
+  handler: async (args) => {
+    const { summary = true, ...rest } = args;
     const results = await getProjectSubResources({
-      portfolioId: portfolio_id,
-      filter,
-      sort,
-      considerInheritedLabels: consider_inherited_labels,
+      portfolioId: rest.portfolio_id,
+      filter: rest.filter,
+      sort: rest.sort,
+      considerInheritedLabels: rest.consider_inherited_labels,
     });
+    if (summary) {
+      return jsonResponse(
+        summarizeResponse(results, summarizeProjectSubResource),
+      );
+    }
     return jsonResponse(results);
   },
 };

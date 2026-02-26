@@ -6,10 +6,12 @@ import type {
   BugTrackingConfiguration,
   ExternalProject,
   Issue,
+  Label,
   LinkedIssue,
   Occurrence,
   Portfolio,
   Project,
+  ProjectSubResource,
   Test,
 } from "../types/polaris.ts";
 
@@ -208,5 +210,32 @@ export function summarizeExternalProject(project: ExternalProject) {
     id: project.id,
     key: project.key,
     name: project.name,
+  };
+}
+
+/**
+ * Summarizes a Label, keeping only essential fields.
+ * Strips: _links, _type, createdAt, updatedAt
+ */
+export function summarizeLabel(label: Label) {
+  return {
+    id: label.id,
+    name: label.name,
+    description: label.description,
+  };
+}
+
+/**
+ * Summarizes a Project Sub Resource (branch or profile), keeping only essential fields.
+ * Strips: _type and keeps essential identifying info
+ */
+export function summarizeProjectSubResource(resource: ProjectSubResource) {
+  return {
+    id: resource.id,
+    name: resource.name,
+    projectSubResourceType: resource.projectSubResourceType,
+    default: resource.default,
+    project: resource.project,
+    application: resource.application,
   };
 }

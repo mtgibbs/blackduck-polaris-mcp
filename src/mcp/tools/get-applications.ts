@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { getApplications } from "../../services/index.ts";
+import { summarizeApplication, summarizeResponse } from "../summarize.ts";
 import { jsonResponse, type ToolDefinition } from "../types.ts";
 
 export const schema = {
@@ -10,6 +11,9 @@ export const schema = {
   sort: z.string().optional().describe(
     "Sort expression. Format: field|direction. Sortable fields: id, name, description. Example: name|asc",
   ),
+  summary: z.boolean().optional().describe(
+    "Return summarized results with only essential fields. Default: true. Set to false for full API response.",
+  ),
 };
 
 export const getApplicationsTool: ToolDefinition<typeof schema> = {
@@ -17,12 +21,16 @@ export const getApplicationsTool: ToolDefinition<typeof schema> = {
   description: "List applications in a portfolio. Applications group related projects together.",
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
-  handler: async ({ portfolio_id, filter, sort }) => {
+  handler: async (args) => {
+    const { summary = true, ...rest } = args;
     const apps = await getApplications({
-      portfolioId: portfolio_id,
-      filter,
-      sort,
+      portfolioId: rest.portfolio_id,
+      filter: rest.filter,
+      sort: rest.sort,
     });
+    if (summary) {
+      return jsonResponse(summarizeResponse(apps, summarizeApplication));
+    }
     return jsonResponse(apps);
   },
 };
