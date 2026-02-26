@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { getOccurrences } from "../../services/index.ts";
+import { summarizeOccurrence, summarizeResponse } from "../summarize.ts";
 import { errorResponse, jsonResponse, type ToolDefinition } from "../types.ts";
 
 export const schema = {
@@ -25,6 +26,9 @@ export const schema = {
     .number()
     .optional()
     .describe("Maximum number of occurrences to return (default: 100, max: 500)"),
+  summary: z.boolean().optional().describe(
+    "Return summarized results with only essential fields. Default: true. Set to false for full API response.",
+  ),
 };
 
 export const getOccurrencesTool: ToolDefinition<typeof schema> = {
@@ -33,16 +37,18 @@ export const getOccurrencesTool: ToolDefinition<typeof schema> = {
     "Get individual occurrences (specific instances) of security issues. Provide exactly one of project_id or application_id (they are mutually exclusive). Each occurrence represents a finding at a specific location. Properties include file path, line number, severity, CWE, and more. Filter by issue_id to see all locations of a specific issue.",
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
-  handler: async ({
-    application_id,
-    project_id,
-    issue_id,
-    branch_id,
-    test_id,
-    filter,
-    sort,
-    max_results,
-  }) => {
+  handler: async (args) => {
+    const {
+      summary = true,
+      application_id,
+      project_id,
+      issue_id,
+      branch_id,
+      test_id,
+      filter,
+      sort,
+      max_results,
+    } = args;
     if (!application_id && !project_id) {
       return errorResponse("Either application_id or project_id must be provided");
     }
@@ -60,6 +66,9 @@ export const getOccurrencesTool: ToolDefinition<typeof schema> = {
       sort,
       first: max_results,
     });
+    if (summary) {
+      return jsonResponse(summarizeResponse(occurrences, summarizeOccurrence));
+    }
     return jsonResponse(occurrences);
   },
 };

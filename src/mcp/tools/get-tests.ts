@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { getTests } from "../../services/index.ts";
+import { summarizeResponse, summarizeTest } from "../summarize.ts";
 import { jsonResponse, type ToolDefinition } from "../types.ts";
 
 export const schema = {
@@ -7,6 +8,9 @@ export const schema = {
   branch_id: z.string().optional().describe("Branch ID to filter tests"),
   status: z.string().optional().describe("Test status filter (e.g., completed, running, failed)"),
   filter: z.string().optional().describe("RSQL filter expression"),
+  summary: z.boolean().optional().describe(
+    "Return summarized results with only essential fields. Default: true. Set to false for full API response.",
+  ),
 };
 
 export const getTestsTool: ToolDefinition<typeof schema> = {
@@ -15,13 +19,16 @@ export const getTestsTool: ToolDefinition<typeof schema> = {
     "List security scan tests (SAST, SCA, DAST). Shows scan history with status, assessment type, and timing information.",
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
-  handler: async ({ project_id, branch_id, status, filter }) => {
+  handler: async ({ summary = true, project_id, branch_id, status, filter }) => {
     const tests = await getTests({
       projectId: project_id,
       branchId: branch_id,
       status,
       filter,
     });
+    if (summary) {
+      return jsonResponse(summarizeResponse(tests, summarizeTest));
+    }
     return jsonResponse(tests);
   },
 };

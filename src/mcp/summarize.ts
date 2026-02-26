@@ -4,14 +4,20 @@ import type {
   Application,
   Branch,
   BugTrackingConfiguration,
+  ComponentOrigin,
+  ComponentVersion,
   ExternalProject,
   Issue,
   Label,
   LinkedIssue,
   Occurrence,
+  PolarisTool,
   Portfolio,
   Project,
+  ProjectMapping,
   ProjectSubResource,
+  ScmRepository,
+  Taxonomy,
   Test,
 } from "../types/polaris.ts";
 
@@ -105,9 +111,8 @@ export function summarizeIssue(issue: Issue) {
     ?.value as string | undefined;
   const line = issue.occurrenceProperties?.find((p) => p.key === "line")
     ?.value as number | undefined;
-  const toolTypeFromOccurrence = issue.occurrenceProperties?.find((p) =>
-    p.key === "tool-type"
-  )?.value as string | undefined;
+  const toolTypeFromOccurrence = issue.occurrenceProperties?.find((p) => p.key === "tool-type")
+    ?.value as string | undefined;
 
   // toolType might also be in context
   const toolType = toolTypeFromOccurrence ?? issue.context?.toolType;
@@ -237,5 +242,86 @@ export function summarizeProjectSubResource(resource: ProjectSubResource) {
     default: resource.default,
     project: resource.project,
     application: resource.application,
+  };
+}
+
+/**
+ * Summarizes a ComponentVersion, keeping only essential fields.
+ * Strips: _links, _type, matchTypes details, triageProperties
+ */
+export function summarizeComponentVersion(cv: ComponentVersion) {
+  const licenseId = cv.licenseDefinition?.licenses?.[0]?.id ??
+    cv.licenseDefinition?.license?.[0]?.id;
+  return {
+    id: cv.id,
+    name: cv.component?.name,
+    version: cv.version,
+    license: licenseId,
+  };
+}
+
+/**
+ * Summarizes a ComponentOrigin, keeping only essential fields.
+ * Strips: _links, _type, upgrade guidance details
+ */
+export function summarizeComponentOrigin(co: ComponentOrigin) {
+  return {
+    id: co.id,
+    name: co.externalId,
+    type: co.externalNamespace,
+  };
+}
+
+/**
+ * Summarizes a Taxonomy, keeping only essential fields.
+ * Strips: subtaxa array, keeps localized name
+ */
+export function summarizeTaxonomy(taxonomy: Taxonomy) {
+  return {
+    id: taxonomy.id,
+    name: taxonomy._localized?.name,
+    standard: taxonomy._localized?.otherDetails?.find(
+      (d) => d.key === "standard",
+    )?.value,
+  };
+}
+
+/**
+ * Summarizes a ProjectMapping, keeping only essential fields.
+ * Strips: _links
+ */
+export function summarizeProjectMapping(mapping: ProjectMapping) {
+  return {
+    id: mapping.id,
+    projectId: mapping.projectId,
+    btsProjectKey: mapping.btsProjectKey,
+    btsIssueType: mapping.btsIssueType,
+  };
+}
+
+/**
+ * Summarizes an SCM Repository, keeping only essential fields.
+ * Strips: _links, organizationId, createdBy, updatedBy, timestamps
+ */
+export function summarizeScmRepository(repo: ScmRepository) {
+  return {
+    id: repo.id,
+    name: repo.repositoryUrl,
+    url: repo.repositoryUrl,
+    provider: repo.scmProvider,
+  };
+}
+
+/**
+ * Summarizes a Polaris Tool, keeping only essential fields.
+ * Strips: _links, _type, beta flag
+ */
+export function summarizePolarisTool(tool: PolarisTool) {
+  return {
+    id: tool.id,
+    name: tool.name,
+    type: tool.type,
+    version: tool.version,
+    status: tool.status,
   };
 }

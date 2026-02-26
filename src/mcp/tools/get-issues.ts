@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { getIssues } from "../../services/index.ts";
+import { summarizeIssue, summarizeResponse } from "../summarize.ts";
 import { errorResponse, jsonResponse, type ToolDefinition } from "../types.ts";
 
 export const schema = {
@@ -45,6 +46,9 @@ export const schema = {
     .boolean()
     .optional()
     .describe("Include component locations in the response"),
+  summary: z.boolean().optional().describe(
+    "Return summarized results with only essential fields. Default: true. Set to false for full API response.",
+  ),
 };
 
 export const getIssuesTool: ToolDefinition<typeof schema> = {
@@ -53,20 +57,22 @@ export const getIssuesTool: ToolDefinition<typeof schema> = {
     "Get security issues for a project or application from the latest scan. Provide exactly one of project_id or application_id (they are mutually exclusive). Returns vulnerability details including type, severity, CWE, file path, triage state, and tool context. Use severity and tool_type filters to focus on critical findings. Use delta filter to see new/resolved issues.",
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
-  handler: async ({
-    application_id,
-    project_id,
-    branch_id,
-    test_id,
-    severity,
-    tool_type,
-    delta,
-    sort,
-    max_results,
-    include_issue_exclusion,
-    include_extension_properties,
-    include_component_locations,
-  }) => {
+  handler: async (args) => {
+    const {
+      summary = true,
+      application_id,
+      project_id,
+      branch_id,
+      test_id,
+      severity,
+      tool_type,
+      delta,
+      sort,
+      max_results,
+      include_issue_exclusion,
+      include_extension_properties,
+      include_component_locations,
+    } = args;
     if (!application_id && !project_id) {
       return errorResponse("Either application_id or project_id must be provided");
     }
@@ -88,6 +94,9 @@ export const getIssuesTool: ToolDefinition<typeof schema> = {
       includeExtensionProperties: include_extension_properties,
       includeComponentLocations: include_component_locations,
     });
+    if (summary) {
+      return jsonResponse(summarizeResponse(issues, summarizeIssue));
+    }
     return jsonResponse(issues);
   },
 };

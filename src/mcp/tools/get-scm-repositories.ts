@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { getScmRepositories } from "../../services/index.ts";
+import { summarizeResponse, summarizeScmRepository } from "../summarize.ts";
 import { jsonResponse, type ToolDefinition } from "../types.ts";
 
 export const schema = {
@@ -7,6 +8,9 @@ export const schema = {
     .string()
     .optional()
     .describe("RSQL filter. Supported keys: repositoryId, projectId. Operator: =in= only"),
+  summary: z.boolean().optional().describe(
+    "Return summarized results with only essential fields. Default: true. Set to false for full API response.",
+  ),
 };
 
 export const getScmRepositoriesTool: ToolDefinition<typeof schema> = {
@@ -15,8 +19,11 @@ export const getScmRepositoriesTool: ToolDefinition<typeof schema> = {
     "List SCM repositories integrated with Polaris. Supports filtering by repositoryId or projectId.",
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
-  handler: async ({ filter }) => {
+  handler: async ({ summary = true, filter }) => {
     const repos = await getScmRepositories({ filter });
+    if (summary) {
+      return jsonResponse(summarizeResponse(repos, summarizeScmRepository));
+    }
     return jsonResponse(repos);
   },
 };
