@@ -248,7 +248,9 @@
           "Consider checking report status before attempting download — only COMPLETED reports can be downloaded"
         ],
         "examples": []
-      }
+      },
+      "claimed_by": "agent-6",
+      "claimed_at": "2026-02-26T05:19:55Z"
     }
   ]
 }
