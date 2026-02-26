@@ -146,7 +146,9 @@
           "Look at get_issues handler to understand how to call the findings service"
         ],
         "examples": []
-      }
+      },
+      "claimed_by": "agent-4",
+      "claimed_at": "2026-02-26T03:46:04Z"
     },
     {
       "id": "S06-4",
