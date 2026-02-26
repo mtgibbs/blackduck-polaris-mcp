@@ -115,3 +115,25 @@
   - Both scheduler and dashboard filter updates use PATCH with optional fields
   - All PATCH handlers must build payload dynamically to only include provided fields
 ---
+## 2026-02-26 - SR-5
+- Implemented MCP tools for report download and utility functions
+- Created three tool files:
+  - src/mcp/tools/download-report.ts - Downloads a completed report (returns download URL or file info, not binary content)
+  - src/mcp/tools/get-report-types.ts - Lists all supported report type identifiers with descriptions
+  - src/mcp/tools/get-report-timezones.ts - Lists valid timezone identifier strings for scheduler configuration
+- Registered all three tools in src/mcp/tools/index.ts
+- Files changed:
+  - src/mcp/tools/download-report.ts (created)
+  - src/mcp/tools/get-report-types.ts (created)
+  - src/mcp/tools/get-report-timezones.ts (created)
+  - src/mcp/tools/index.ts (added 3 imports and tool registrations)
+- **Learnings for future iterations:**
+  - download_report returns download URL or file metadata, not binary content (per non-goals)
+  - Only report creators can download reports
+  - Reports auto-delete after 30 days
+  - Reports must have status=COMPLETED before download
+  - get_report_types returns paginated list of {reportType, description}
+  - get_report_timezones returns flat string array (not paginated)
+  - All 13 report types documented in get_report_types description for user reference
+---
+
