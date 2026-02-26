@@ -47,3 +47,20 @@
   - Issue.type._localized.name is the preferred display name, fallback to altName
   - Promise.all is the correct pattern for parallel API calls as specified in the acceptance criteria
 ---
+## 2026-02-26 04:01 - S06-4
+- Created `src/mcp/tools/bulk-export-issues.ts` implementing bulk_export_issues tool
+- Validates max 50 issue_ids per call (returns error if exceeded)
+- Auto-resolves project_mapping_id and bts_issue_type_id using resolveExportParams helper
+- Fetches linked issues once upfront to build Set of already-exported issueIds
+- Exports each non-exported issue sequentially (not parallel) to avoid rate limiting
+- Catches errors per-issue - failures don't stop the batch
+- Returns summary with counts and details: {summary: {total, exported, skipped, failed}, exported: [...], skipped: [...], failed: [...]}
+- Tool registered in src/mcp/tools/index.ts
+- Files changed: src/mcp/tools/bulk-export-issues.ts (new), src/mcp/tools/index.ts (import + registration), prp.json (updated passes: true)
+- **Learnings for future iterations:**
+  - Use Set for O(1) membership checking when filtering already-exported issues
+  - Sequential exports (for loop with await) prevent rate limiting issues
+  - Try-catch per-issue allows batch to continue even if individual exports fail
+  - errorResponse() helper is available from ../types.ts for validation errors
+  - Bulk operations should provide detailed breakdown: summary counts + detailed lists for each category
+---
