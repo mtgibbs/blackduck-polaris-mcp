@@ -225,12 +225,16 @@ export function createConfigProjectMapping(
 
 export interface GetConfigProjectMappingsOptions {
   configurationId: string;
+  filter?: string;
 }
 
 export function getConfigProjectMappings(
   options: GetConfigProjectMappingsOptions,
 ): Promise<ProjectMapping[]> {
-  return bugTrackingApi.getConfigProjectMappings(options.configurationId);
+  return bugTrackingApi.getConfigProjectMappings({
+    configurationId: options.configurationId,
+    filter: options.filter,
+  });
 }
 
 export interface GetConfigProjectMappingOptions {

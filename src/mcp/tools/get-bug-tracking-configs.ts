@@ -1,12 +1,15 @@
 import { z } from "zod";
 import { getBugTrackingConfigurations } from "../../services/index.ts";
-import { jsonResponse, type ToolDefinition } from "../types.ts";
+import { errorResponse, jsonResponse, type ToolDefinition } from "../types.ts";
+import { validateFilter } from "../filter-validation.ts";
 
 export const schema = {
   filter: z
     .string()
     .optional()
-    .describe("RSQL filter expression for bug tracking configurations"),
+    .describe(
+      "RSQL filter expression. Valid keys: type, url, enabled. Examples: type=='JIRA', enabled==true, url=like='%atlassian%'",
+    ),
 };
 
 export const getBugTrackingConfigsTool: ToolDefinition<typeof schema> = {
@@ -16,6 +19,14 @@ export const getBugTrackingConfigsTool: ToolDefinition<typeof schema> = {
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
   handler: async ({ filter }) => {
+    // Validate filter if present
+    if (filter) {
+      const validationError = validateFilter(filter, "bugtracking.configurations");
+      if (validationError) {
+        return errorResponse(validationError);
+      }
+    }
+
     const configs = await getBugTrackingConfigurations({
       filter,
     });

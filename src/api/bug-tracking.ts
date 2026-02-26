@@ -272,11 +272,20 @@ export function createConfigProjectMapping(
   );
 }
 
-export function getConfigProjectMappings(configurationId: string): Promise<ProjectMapping[]> {
+export interface GetConfigProjectMappingsParams {
+  configurationId: string;
+  filter?: string;
+}
+
+export function getConfigProjectMappings(
+  params: GetConfigProjectMappingsParams,
+): Promise<ProjectMapping[]> {
   const client = getClient();
+  const queryParams: Record<string, string | undefined> = {};
+  if (params.filter) queryParams._filter = params.filter;
   return client.getAllOffset<ProjectMapping>(
-    `/api/integrations/bugtracking/configurations/${configurationId}/project-mappings`,
-    undefined,
+    `/api/integrations/bugtracking/configurations/${params.configurationId}/project-mappings`,
+    queryParams,
     ACCEPT,
   );
 }
