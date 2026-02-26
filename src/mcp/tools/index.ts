@@ -148,6 +148,10 @@ import { getTestSchedulingPoliciesTool } from "./get-test-scheduling-policies.ts
 import { getTestSchedulingPolicyTool } from "./get-test-scheduling-policy.ts";
 import { createTestSchedulingPolicyTool } from "./create-test-scheduling-policy.ts";
 import { updateTestSchedulingPolicyTool } from "./update-test-scheduling-policy.ts";
+import { getPolicyAssignmentsTool } from "./get-policy-assignments.ts";
+import { getPolicyAssignmentTool } from "./get-policy-assignment.ts";
+import { createPolicyAssignmentsTool } from "./create-policy-assignments.ts";
+import { deletePolicyAssignmentsTool } from "./delete-policy-assignments.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -299,4 +303,8 @@ export const tools: AnyToolDefinition[] = [
   getTestSchedulingPolicyTool,
   createTestSchedulingPolicyTool,
   updateTestSchedulingPolicyTool,
+  getPolicyAssignmentsTool,
+  getPolicyAssignmentTool,
+  createPolicyAssignmentsTool,
+  deletePolicyAssignmentsTool,
 ];
