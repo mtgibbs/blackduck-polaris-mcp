@@ -151,6 +151,9 @@ import { getDashboardFiltersTool } from "./get-dashboard-filters.ts";
 import { createDashboardFilterTool } from "./create-dashboard-filter.ts";
 import { updateDashboardFilterTool } from "./update-dashboard-filter.ts";
 import { deleteDashboardFilterTool } from "./delete-dashboard-filter.ts";
+import { downloadReportTool } from "./download-report.ts";
+import { getReportTypesTool } from "./get-report-types.ts";
+import { getReportTimezonesTool } from "./get-report-timezones.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -305,4 +308,7 @@ export const tools: AnyToolDefinition[] = [
   createDashboardFilterTool,
   updateDashboardFilterTool,
   deleteDashboardFilterTool,
+  downloadReportTool,
+  getReportTypesTool,
+  getReportTimezonesTool,
 ];
