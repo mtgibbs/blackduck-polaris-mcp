@@ -158,7 +158,9 @@
           "409 Conflict is returned for duplicate names"
         ],
         "examples": []
-      }
+      },
+      "claimed_by": "agent-6",
+      "claimed_at": "2026-02-26T04:00:09Z"
     },
     {
       "id": "SR-4",
