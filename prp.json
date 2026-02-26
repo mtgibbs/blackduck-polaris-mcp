@@ -4,7 +4,6 @@
   "description": "Reports API — Full Reports/Insights API: run reports, manage configurations, schedulers, download reports",
   "version": 1,
   "previousVersion": null,
-
   "constraints": [
     "Follow existing 3-layer pattern: MCP Tool → Service → API",
     "Use Zod schemas as plain objects (not z.object()), matching existing tools",
@@ -15,14 +14,12 @@
     "Offset-based pagination (default 25, max 100)",
     "Use V3 run endpoint (POST /reports/{reportType}/_actions/run), NOT deprecated generate/export"
   ],
-
   "nonGoals": [
     "Implementing deprecated V2 generate/export endpoints",
     "Implementing deprecated /api/report-service/ path endpoints",
     "Report status polling/waiting (report status is returned; client polls)",
     "Binary file content return (download returns a download URL or reports the file exists)"
   ],
-
   "glossary": {
     "report type": "One of 13 report formats: issues-report, standard-compliance, security-audit, spdx, cyclonedx, etc.",
     "configuration": "A saved report setup that can be re-run or scheduled",
@@ -30,7 +27,6 @@
     "dashboard filter": "A saved filter for the reporting dashboard UI",
     "scope": "Report coverage: ALL_APPLICATIONS, SELECTED_APPLICATIONS, or SELECTED_BRANCHES"
   },
-
   "userStories": [
     {
       "id": "SR-1",
@@ -77,7 +73,9 @@
         "examples": [
           "// API function pattern:\nexport async function runReport(reportType: string, payload: RunReportPayload) {\n  const client = getClient();\n  return client.post<Report>(\n    `/api/insights/reports/${reportType}/_actions/run`,\n    payload,\n    'application/json',\n    'application/json'\n  );\n}"
         ]
-      }
+      },
+      "claimed_by": "agent-6",
+      "claimed_at": "2026-02-26T03:39:49Z"
     },
     {
       "id": "SR-2",
@@ -98,7 +96,9 @@
         "deno task lint",
         "deno fmt --check"
       ],
-      "dependsOn": ["SR-1"],
+      "dependsOn": [
+        "SR-1"
+      ],
       "priority": 2,
       "passes": false,
       "notes": "",
@@ -137,7 +137,9 @@
         "deno task lint",
         "deno fmt --check"
       ],
-      "dependsOn": ["SR-1"],
+      "dependsOn": [
+        "SR-1"
+      ],
       "priority": 3,
       "passes": false,
       "notes": "",
@@ -176,7 +178,9 @@
         "deno task lint",
         "deno fmt --check"
       ],
-      "dependsOn": ["SR-3"],
+      "dependsOn": [
+        "SR-3"
+      ],
       "priority": 4,
       "passes": false,
       "notes": "",
@@ -216,7 +220,9 @@
         "deno task lint",
         "deno fmt --check"
       ],
-      "dependsOn": ["SR-2"],
+      "dependsOn": [
+        "SR-2"
+      ],
       "priority": 5,
       "passes": false,
       "notes": "",
