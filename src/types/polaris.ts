@@ -978,6 +978,127 @@ export interface TaxonIssueType {
   _localized: TaxonIssueTypeLocalized;
 }
 
+// --- Reports ---
+
+export type ReportStatus = "INITIATED" | "IN_PROGRESS" | "COMPLETED" | "FAILED";
+
+export type ReportScope = "ALL_APPLICATIONS" | "SELECTED_APPLICATIONS" | "SELECTED_BRANCHES";
+
+export interface ReportType {
+  reportType: string;
+  description: string;
+}
+
+export interface ReportApplication {
+  id: string;
+  name: string;
+  projects: ReportProject[];
+}
+
+export interface ReportProject {
+  id: string;
+  name: string;
+  branches: ReportBranch[];
+}
+
+export interface ReportBranch {
+  id: string;
+  name: string;
+  isDefault?: boolean;
+}
+
+export interface Report {
+  id: string;
+  name?: string;
+  configurationId?: string;
+  reportType: string;
+  reportTypeDescription?: string;
+  startDate?: string;
+  completedDate?: string;
+  createdBy?: string;
+  configuration?: Record<string, unknown>;
+  customizations?: Record<string, unknown>;
+  format?: string;
+  status: ReportStatus;
+  failureReason?: string;
+  fileSize?: number;
+  message?: string;
+  _links?: LinkEntry[];
+}
+
+export interface RunReportPayload {
+  applications: ReportApplication[];
+  severities: string[];
+  tools: string[];
+  standard?: string;
+  timePeriod?: string;
+  filter?: string;
+  scope?: ReportScope;
+  customizations?: Record<string, unknown>;
+  issuesDiscovered?: string;
+}
+
+export interface ReportConfiguration {
+  id: string;
+  name: string;
+  appendDate?: boolean;
+  reportType: string;
+  timePeriod?: string;
+  filter?: string;
+  scope: ReportScope;
+  severities: string[];
+  tools: string[];
+  standard?: string;
+  customizations?: Record<string, unknown>;
+  issuesDiscovered?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  _links?: LinkEntry[];
+}
+
+export interface ConfigurationPayload {
+  name: string;
+  appendDate?: boolean;
+  reportType: string;
+  timePeriod?: string;
+  filter?: string;
+  scope: ReportScope;
+  severities: string[];
+  tools: string[];
+  standard?: string;
+  customizations?: Record<string, unknown>;
+  issuesDiscovered?: string;
+}
+
+export interface ReportScheduler {
+  id: string;
+  configurationId: string;
+  frequency: string;
+  timezone: string;
+  day?: string;
+  time?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  _links?: LinkEntry[];
+}
+
+export interface SchedulerPayload {
+  frequency: string;
+  timezone: string;
+  day?: string;
+  time?: string;
+}
+
+export interface DashboardFilter {
+  id: string;
+  dashboardId: string;
+  name?: string;
+  filter?: Record<string, unknown>;
+  createdAt?: string;
+  updatedAt?: string;
+  _links?: LinkEntry[];
+}
+
 // --- Component Versions ---
 
 export type SecurityRisk = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";

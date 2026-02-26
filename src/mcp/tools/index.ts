@@ -134,6 +134,26 @@ import { getVersionSettingsTool } from "./get-version-settings.ts";
 import { getVersionSettingsByContextTool } from "./get-version-settings-by-context.ts";
 import { updateVersionSettingTool } from "./update-version-setting.ts";
 import { deleteVersionSettingTool } from "./delete-version-setting.ts";
+import { runReportTool } from "./run-report.ts";
+import { getReportsTool } from "./get-reports.ts";
+import { getReportTool } from "./get-report.ts";
+import { deleteReportTool } from "./delete-report.ts";
+import { getReportConfigurationsTool } from "./get-report-configurations.ts";
+import { getReportConfigurationTool } from "./get-report-configuration.ts";
+import { createReportConfigurationTool } from "./create-report-configuration.ts";
+import { updateReportConfigurationTool } from "./update-report-configuration.ts";
+import { deleteReportConfigurationTool } from "./delete-report-configuration.ts";
+import { runReportConfigurationTool } from "./run-report-configuration.ts";
+import { createReportSchedulerTool } from "./create-report-scheduler.ts";
+import { getReportSchedulerTool } from "./get-report-scheduler.ts";
+import { updateReportSchedulerTool } from "./update-report-scheduler.ts";
+import { getDashboardFiltersTool } from "./get-dashboard-filters.ts";
+import { createDashboardFilterTool } from "./create-dashboard-filter.ts";
+import { updateDashboardFilterTool } from "./update-dashboard-filter.ts";
+import { deleteDashboardFilterTool } from "./delete-dashboard-filter.ts";
+import { downloadReportTool } from "./download-report.ts";
+import { getReportTypesTool } from "./get-report-types.ts";
+import { getReportTimezonesTool } from "./get-report-timezones.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -271,4 +291,24 @@ export const tools: AnyToolDefinition[] = [
   getVersionSettingsByContextTool,
   updateVersionSettingTool,
   deleteVersionSettingTool,
+  runReportTool,
+  getReportsTool,
+  getReportTool,
+  deleteReportTool,
+  getReportConfigurationsTool,
+  getReportConfigurationTool,
+  createReportConfigurationTool,
+  updateReportConfigurationTool,
+  deleteReportConfigurationTool,
+  runReportConfigurationTool,
+  createReportSchedulerTool,
+  getReportSchedulerTool,
+  updateReportSchedulerTool,
+  getDashboardFiltersTool,
+  createDashboardFilterTool,
+  updateDashboardFilterTool,
+  deleteDashboardFilterTool,
+  downloadReportTool,
+  getReportTypesTool,
+  getReportTimezonesTool,
 ];
