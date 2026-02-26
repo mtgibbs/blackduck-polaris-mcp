@@ -19,3 +19,17 @@
   - Error messages should reference related MCP tools by name to guide users
   - Deno not available in this container environment - verification commands cannot be run locally
 ---
+## 2026-02-26 03:43 - S06-2
+- Created `src/mcp/tools/search-projects.ts` implementing search_projects tool
+- Searches for projects by exact name match across all applications in a portfolio
+- Uses portfolio-level projects endpoint with RSQL filter: `name=='value'`
+- Returns summarized response with {total, items: [{id, name, applicationId, defaultBranch}]}
+- Tool registered in src/mcp/tools/index.ts
+- Files changed: src/mcp/tools/search-projects.ts (new), src/mcp/tools/index.ts (import + registration), prp.json (updated passes: true)
+- **Learnings for future iterations:**
+  - Portfolio-level project queries use `/api/portfolios/${portfolioId}/projects` endpoint (no applicationId)
+  - RSQL exact match syntax: `name=='value'` (double equals, single quotes)
+  - Project.applicationId is available in portfolio-level response
+  - Project.defaultBranch has id and name fields that should be included in search results
+  - When mapping API responses, filter out undefined fields for cleaner output
+---

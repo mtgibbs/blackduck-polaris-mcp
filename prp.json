@@ -83,7 +83,7 @@
       ],
       "dependsOn": [],
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "notes": "",
       "context": {
         "relevantFiles": [
