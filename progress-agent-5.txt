@@ -35,3 +35,30 @@
 - Test scheduling policies do not support DELETE operation
 - Maximum 5 rules per policy, 5 fixByRule entries per rule
 ---
+
+## 2026-02-26 - SP-2
+- Implemented Issue Policies CRUD tools following existing bug-tracking-config patterns
+- Created 5 new tool files:
+  - src/mcp/tools/get-issue-policies.ts - list policies with filter/pagination
+  - src/mcp/tools/get-issue-policy.ts - get single policy by ID
+  - src/mcp/tools/create-issue-policy.ts - create new policy (returns 201)
+  - src/mcp/tools/update-issue-policy.ts - full replacement update (returns 200)
+  - src/mcp/tools/delete-issue-policy.ts - delete policy (returns 204)
+- Registered all 5 tools in src/mcp/tools/index.ts
+- All tools include proper Zod schemas as plain objects (not wrapped in z.object())
+- All tools follow 3-layer architecture: Tool → Service → API
+- Tool descriptions document:
+  - Valid powerFilterQuery syntax examples
+  - Valid actions: SEND_EMAIL, BREAK_THE_BUILD, CREATE_BUNDLE_JIRA_TICKET
+  - Constraints: max 5 rules per policy, max 5 fixByRule entries per rule
+- Files changed: 
+  - 5 new tool files in src/mcp/tools/
+  - src/mcp/tools/index.ts (added imports and tool registrations)
+
+**Learnings for future iterations:**
+- Tool schemas use nested Zod objects for complex structures (filterGroups, rules, fixByRule)
+- Create tools should return 201, update returns 200, delete returns 204
+- Delete tools should have `destructiveHint: true` annotation
+- Tool descriptions should include constraints and valid values inline to help users
+- Deno not available in this container - verification commands couldn't be run, but code follows exact patterns from existing tools
+---
