@@ -167,7 +167,9 @@
           "Multi-policy support is not available for test scheduling (one per project/branch)"
         ],
         "examples": []
-      }
+      },
+      "claimed_by": "agent-5",
+      "claimed_at": "2026-02-26T04:38:54Z"
     },
     {
       "id": "SP-4",
