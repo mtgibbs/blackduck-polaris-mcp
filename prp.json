@@ -4,7 +4,6 @@
   "description": "Filter Documentation & Validation — Enhance tool descriptions with valid filter keys, add client-side validation, convenience params",
   "version": 1,
   "previousVersion": null,
-
   "constraints": [
     "Follow existing 3-layer pattern: MCP Tool → Service → API",
     "Use Zod schemas as plain objects (not z.object()), matching existing tools",
@@ -14,21 +13,18 @@
     "Filter validation is advisory — warn but do not block if a key is unknown (API may add new keys)",
     "RSQL key extraction uses simple regex, not a full parser"
   ],
-
   "nonGoals": [
     "Implementing a full RSQL parser",
     "Supporting every possible filter combination",
     "Changing the Polaris API's filter behavior",
     "Server-side filter validation"
   ],
-
   "glossary": {
     "RSQL": "REST query language used by Polaris for filter parameters. Operators: == != =in=() =out=(). Logical: ; (AND), , (OR)",
     "filter namespace": "Prefix used in Findings API filters: occurrence:, triage:, context:, type:, special:",
     "convenience parameter": "A tool-level parameter that auto-generates RSQL filter syntax (e.g., name param generates name=='value')",
     "triage exclusivity": "API rule that dismissal-reason and status cannot be set together; is-dismissed is read-only"
   },
-
   "userStories": [
     {
       "id": "S04-1",
@@ -65,7 +61,9 @@
         "examples": [
           "// Usage pattern:\nconst error = validateFilter(\"name=='test'\", \"portfolio.projects\");\nif (error) return errorResponse(error);"
         ]
-      }
+      },
+      "claimed_by": "agent-2",
+      "claimed_at": "2026-02-26T03:39:48Z"
     },
     {
       "id": "S04-2",
@@ -89,7 +87,9 @@
         "deno task lint",
         "deno fmt --check"
       ],
-      "dependsOn": ["S04-1"],
+      "dependsOn": [
+        "S04-1"
+      ],
       "priority": 2,
       "passes": false,
       "notes": "",
@@ -130,7 +130,9 @@
         "deno task lint",
         "deno fmt --check"
       ],
-      "dependsOn": ["S04-1"],
+      "dependsOn": [
+        "S04-1"
+      ],
       "priority": 3,
       "passes": false,
       "notes": "",
@@ -174,7 +176,9 @@
         "deno task lint",
         "deno fmt --check"
       ],
-      "dependsOn": ["S04-1"],
+      "dependsOn": [
+        "S04-1"
+      ],
       "priority": 4,
       "passes": false,
       "notes": "",
@@ -213,7 +217,9 @@
         "deno task lint",
         "deno fmt --check"
       ],
-      "dependsOn": ["S04-3"],
+      "dependsOn": [
+        "S04-3"
+      ],
       "priority": 5,
       "passes": false,
       "notes": "",
