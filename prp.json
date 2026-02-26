@@ -4,7 +4,6 @@
   "description": "Response Summarization & Token Optimization — Add summary parameter to all list tools for 70%+ token reduction",
   "version": 1,
   "previousVersion": null,
-
   "constraints": [
     "Follow existing 3-layer pattern: MCP Tool → Service → API",
     "Use Zod schemas as plain objects (not z.object()), matching existing tools",
@@ -15,20 +14,17 @@
     "summary parameter must default to true",
     "Summarized responses must use {total, items, note} wrapper format"
   ],
-
   "nonGoals": [
     "Server-side pagination UI or cursor management",
     "New API endpoints or Polaris API changes",
     "Changing the underlying service/API layer",
     "Adding summary to single-resource get tools"
   ],
-
   "glossary": {
     "summary mode": "When summary=true (default), responses are trimmed to essential fields only",
     "summarizer": "A function that takes a full API object and returns a trimmed version with only essential fields",
     "universal strip fields": "_links, _type, tenantId, _collection — always removed in summary mode"
   },
-
   "userStories": [
     {
       "id": "S03-1",
@@ -74,7 +70,9 @@
         "examples": [
           "// summarizeResponse wrapper pattern:\nexport function summarizeResponse<T, S>(items: T[], summarizer: (item: T) => S, note?: string) {\n  return {\n    total: items.length,\n    items: items.map(summarizer),\n    note: note ?? \"Showing summarized results. Use summary=false for full API response.\",\n  };\n}"
         ]
-      }
+      },
+      "claimed_by": "agent-1",
+      "claimed_at": "2026-02-26T03:39:48Z"
     },
     {
       "id": "S03-2",
@@ -93,7 +91,9 @@
         "deno task lint",
         "deno fmt --check"
       ],
-      "dependsOn": ["S03-1"],
+      "dependsOn": [
+        "S03-1"
+      ],
       "priority": 2,
       "passes": false,
       "notes": "",
@@ -137,7 +137,9 @@
         "deno task lint",
         "deno fmt --check"
       ],
-      "dependsOn": ["S03-1"],
+      "dependsOn": [
+        "S03-1"
+      ],
       "priority": 3,
       "passes": false,
       "notes": "",
@@ -176,7 +178,9 @@
         "deno task lint",
         "deno fmt --check"
       ],
-      "dependsOn": ["S03-1"],
+      "dependsOn": [
+        "S03-1"
+      ],
       "priority": 4,
       "passes": false,
       "notes": "",
@@ -213,7 +217,9 @@
         "deno task lint",
         "deno fmt --check"
       ],
-      "dependsOn": ["S03-1"],
+      "dependsOn": [
+        "S03-1"
+      ],
       "priority": 5,
       "passes": false,
       "notes": "",
