@@ -1,0 +1,36 @@
+## Codebase Patterns
+
+(No patterns yet - this will be populated as reusable patterns are discovered)
+
+---
+
+## 2026-02-26 - S03-1
+- **Story**: Create summarization utility module
+- **What was implemented**:
+  - Created `src/mcp/summarize.ts` with complete summarization functionality
+  - Implemented `summarizeResponse()` wrapper that returns {total, items, note} format
+  - Implemented 10 resource-specific summarizers:
+    - `summarizePortfolio`: keeps id, name, organizationId
+    - `summarizeApplication`: keeps id, name, description
+    - `summarizeProject`: keeps id, name, defaultBranch.{id, name}
+    - `summarizeBranch`: keeps id, name, isDefault
+    - `summarizeIssue`: extracts from occurrenceProperties (severity, cwe, file, line, toolType) and triageProperties (status), plus type._localized.name and firstDetectedOn
+    - `summarizeOccurrence`: extracts from properties array (issueId, severity, file, line, toolType)
+    - `summarizeTest`: keeps id, status, assessmentType, scanMode, startedAt, completedAt
+    - `summarizeBugTrackingConfig`: keeps id, type, url, enabled
+    - `summarizeLinkedIssue`: keeps id, issueId, issueKey, issueLink, status
+    - `summarizeExternalProject`: keeps id, key, name
+  - All summarizers strip universal fields: _links, _type, tenantId, _collection
+  - Used optional chaining throughout for safe property access
+- **Files changed**:
+  - `src/mcp/summarize.ts` (new file, 212 lines)
+  - `prp.json` (updated passes: true for S03-1)
+- **Learnings for future iterations**:
+  - Issue data has complex nested structure: type._localized.name for issue name, occurrenceProperties array for vulnerability details
+  - Property extraction pattern: `properties?.find((p) => p.key === "field")?.value` works for both Issues and Occurrences
+  - Occurrence uses `properties`, Issue uses `occurrenceProperties` (different field names)
+  - Issue toolType can come from either occurrenceProperties or context.toolType (need to check both)
+  - TypeScript type imports require `.ts` extension in Deno (e.g., `from "../types/polaris.ts"`)
+  - Default note message follows pattern: "Showing summarized results. Use summary=false for full API response."
+
+---
