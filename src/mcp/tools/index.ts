@@ -144,6 +144,13 @@ import { createReportConfigurationTool } from "./create-report-configuration.ts"
 import { updateReportConfigurationTool } from "./update-report-configuration.ts";
 import { deleteReportConfigurationTool } from "./delete-report-configuration.ts";
 import { runReportConfigurationTool } from "./run-report-configuration.ts";
+import { createReportSchedulerTool } from "./create-report-scheduler.ts";
+import { getReportSchedulerTool } from "./get-report-scheduler.ts";
+import { updateReportSchedulerTool } from "./update-report-scheduler.ts";
+import { getDashboardFiltersTool } from "./get-dashboard-filters.ts";
+import { createDashboardFilterTool } from "./create-dashboard-filter.ts";
+import { updateDashboardFilterTool } from "./update-dashboard-filter.ts";
+import { deleteDashboardFilterTool } from "./delete-dashboard-filter.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -291,4 +298,11 @@ export const tools: AnyToolDefinition[] = [
   updateReportConfigurationTool,
   deleteReportConfigurationTool,
   runReportConfigurationTool,
+  createReportSchedulerTool,
+  getReportSchedulerTool,
+  updateReportSchedulerTool,
+  getDashboardFiltersTool,
+  createDashboardFilterTool,
+  updateDashboardFilterTool,
+  deleteDashboardFilterTool,
 ];
