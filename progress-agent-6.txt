@@ -85,3 +85,33 @@
   - Name field has max length of 256 characters
   - The update handler must build the payload dynamically to only include provided fields
 ---
+
+## 2026-02-26 - SR-4
+- Implemented MCP tools for report scheduler and dashboard filter operations
+- Created seven tool files:
+  - src/mcp/tools/create-report-scheduler.ts - Creates a scheduler for a configuration
+  - src/mcp/tools/get-report-scheduler.ts - Gets scheduler details by ID
+  - src/mcp/tools/update-report-scheduler.ts - Updates scheduler using PATCH
+  - src/mcp/tools/get-dashboard-filters.ts - Lists dashboard filters with pagination
+  - src/mcp/tools/create-dashboard-filter.ts - Creates a new dashboard filter
+  - src/mcp/tools/update-dashboard-filter.ts - Updates dashboard filter using PATCH
+  - src/mcp/tools/delete-dashboard-filter.ts - Deletes a dashboard filter
+- Registered all seven tools in src/mcp/tools/index.ts
+- Files changed:
+  - src/mcp/tools/create-report-scheduler.ts (created)
+  - src/mcp/tools/get-report-scheduler.ts (created)
+  - src/mcp/tools/update-report-scheduler.ts (created)
+  - src/mcp/tools/get-dashboard-filters.ts (created)
+  - src/mcp/tools/create-dashboard-filter.ts (created)
+  - src/mcp/tools/update-dashboard-filter.ts (created)
+  - src/mcp/tools/delete-dashboard-filter.ts (created)
+  - src/mcp/tools/index.ts (added 7 imports and tool registrations)
+- **Learnings for future iterations:**
+  - Scheduler endpoints are nested under configurations: /configurations/{id}/schedulers
+  - Dashboard filter endpoints are nested under dashboards: /dashboards/{id}/filters
+  - Scheduler frequency enum: daily, weekly, monthly
+  - Schedulers support timezone configuration - get_report_timezones provides valid values
+  - Dashboard filter payloads use generic Record<string, unknown> for flexibility
+  - Both scheduler and dashboard filter updates use PATCH with optional fields
+  - All PATCH handlers must build payload dynamically to only include provided fields
+---
