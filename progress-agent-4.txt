@@ -1,0 +1,21 @@
+## Codebase Patterns
+- Bug tracking project mappings use `getConfigProjectMappings({configurationId})` from services layer
+- `ProjectMapping.btsIssueType` is a string, not an object (contains the type ID directly)
+- Service layer functions should be imported from `../services/index.ts`
+- TypeScript return types for helpers use union types for success/error: `Promise<{success} | {error}>`
+
+---
+
+## 2026-02-26 03:40 - S06-1
+- Created `src/mcp/export-helpers.ts` with `resolveExportParams()` function
+- Function resolves project_mapping_id and bts_issue_type_id for export operations
+- Fetches project mappings from config, finds matching projectId
+- Returns clear error messages guiding users to appropriate tools on failure
+- Files changed: src/mcp/export-helpers.ts (new), prp.json (updated passes: true)
+- **Learnings for future iterations:**
+  - The ProjectMapping interface has btsIssueType as a string (the ID itself), not an object with an id field
+  - Import services from `../services/index.ts` not from API layer directly
+  - Helper functions for MCP tools should be placed in `src/mcp/` directory
+  - Error messages should reference related MCP tools by name to guide users
+  - Deno not available in this container environment - verification commands cannot be run locally
+---
