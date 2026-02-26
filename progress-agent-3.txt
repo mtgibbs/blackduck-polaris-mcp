@@ -60,3 +60,31 @@
 
 ---
 
+## 2026-02-26T04:05:00Z - S05-3
+
+**What was implemented:**
+- Moved bts_issue_type_id validation to AFTER auto-resolution (critical fix)
+  - Previous validation checked `!bts_key && !bts_issue_type_id && !project_id` which was too early
+  - New validation checks `!bts_key && !resolvedBtsIssueTypeId` after resolution completes
+  - This catches cases where auto-resolution runs but doesn't provide an issue type
+- Updated bts_issue_type_id description to reference get_external_issue_types (was incorrectly referencing get_external_projects)
+- Updated branch_id description to clarify default branch behavior: "If omitted, the project default branch is used."
+- Improved error message clarity with actionable guidance:
+  - "Use get_config_project_mappings to find project_mapping_id for your project."
+  - "Use get_external_issue_types to find available issue types for your bug tracking system."
+
+**Files changed:**
+- src/mcp/tools/export-issues.ts (validation logic reordered, schema descriptions updated)
+- prp.json (updated S05-3 passes: true)
+
+**Learnings for future iterations:**
+- **Validation timing is critical**: When you have auto-resolution logic, validate AFTER resolution, not before
+  - Early validation can't check if resolution succeeded in providing required values
+  - Post-resolution validation catches all failure modes (missing params + failed resolution)
+- **Schema descriptions matter**: Tool parameter descriptions should reference the correct tools users need to call
+  - Incorrect tool references (like get_external_projects vs get_external_issue_types) confuse LLMs and users
+- **Error messages should be specific and actionable**: Instead of generic "missing parameter" errors, tell users exactly which tool to call
+- **Comment your non-obvious logic**: The validation reordering needed a comment explaining WHY it happens after resolution
+
+---
+
