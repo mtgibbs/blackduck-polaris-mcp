@@ -4,3 +4,4 @@ export * from "./tests.ts";
 export * from "./bug-tracking.ts";
 export * from "./repos.ts";
 export * from "./tools.ts";
+export * from "./policies.ts";
