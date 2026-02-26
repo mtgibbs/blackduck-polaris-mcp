@@ -88,3 +88,32 @@
 
 ---
 
+## 2026-02-26T04:40:00Z - S05-4
+
+**What was implemented:**
+- Fixed getExternalProjects() pagination limit from default 100 to explicit 50
+- Added comment explaining API max limit is 50
+- Verified all other getAllOffset() calls use appropriate limits (default 100 is correct for their respective APIs)
+- Confirmed branch_id descriptions already correctly updated in S05-3 (export-issues.ts and export-findings-issues.ts both have proper descriptions)
+
+**Files changed:**
+- src/api/bug-tracking.ts (modified - added explicit limit parameter to getExternalProjects getAllOffset call)
+- prp.json (updated S05-4 passes: true)
+
+**Learnings for future iterations:**
+- **Pagination limits vary by API endpoint**: Not all Polaris APIs have the same max limit
+  - External projects API: max 50
+  - Most other APIs: max 100
+  - Check API documentation or context hints for specific limits
+- **getAllOffset default parameter**: The client.getAllOffset() method has a default limit of 100 (4th parameter)
+  - When an API has a lower max, pass an explicit limit to the getAllOffset call
+  - The explicit limit should include a comment explaining why it differs from the default
+- **Verification across multiple calls**: When acceptance criteria mention "verify all other calls", use grep/search to find all instances
+  - Pattern: grep for the function name (getAllOffset) across relevant directories
+  - Verify each call either uses an appropriate explicit limit or the default is correct
+- **Branch_id descriptions**: These were already fixed in S05-3, showing that stories can have overlapping scope
+  - Always check prior work in related stories before implementing
+  - The progress log helps identify what's already been done
+
+---
+
