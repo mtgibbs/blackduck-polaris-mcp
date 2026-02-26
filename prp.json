@@ -116,7 +116,9 @@
           "Tool enum values: DAST_POLARIS, SCA_PACKAGE, SCA_SIGNATURE, STATIC_POLARIS, STATIC_RAPID, EXTERNAL_ANALYSIS"
         ],
         "examples": []
-      }
+      },
+      "claimed_by": "agent-6",
+      "claimed_at": "2026-02-26T03:46:41Z"
     },
     {
       "id": "SR-3",
