@@ -62,3 +62,39 @@
 - Tool descriptions should include constraints and valid values inline to help users
 - Deno not available in this container - verification commands couldn't be run, but code follows exact patterns from existing tools
 ---
+
+## 2026-02-26 - SP-3
+- Implemented PR Policies and Test Scheduling Policies MCP tools
+- Created 5 PR policy tools:
+  - src/mcp/tools/get-pr-policies.ts - list policies with filter/pagination
+  - src/mcp/tools/get-pr-policy.ts - get single policy by ID
+  - src/mcp/tools/create-pr-policy.ts - create new policy (returns 201)
+  - src/mcp/tools/update-pr-policy.ts - full replacement update (returns 200)
+  - src/mcp/tools/delete-pr-policy.ts - delete policy (returns 204)
+- Created 4 test scheduling policy tools:
+  - src/mcp/tools/get-test-scheduling-policies.ts - list policies
+  - src/mcp/tools/get-test-scheduling-policy.ts - get single policy by ID
+  - src/mcp/tools/create-test-scheduling-policy.ts - create new policy (returns 201)
+  - src/mcp/tools/update-test-scheduling-policy.ts - full replacement update (returns 200)
+- All tools follow 3-layer architecture: Tool → Service → API
+- PR policy tools document:
+  - Rules use criteriaQuery (not powerFilterQuery)
+  - Actions only support BLOCK_PR
+  - Rules are NOT wrapped in filterGroups (unlike issue policies)
+- Test scheduling policy tools document:
+  - scheduleGroups with rules array
+  - Each rule has ruleNumber and frequency ('daily' or 'weekly')
+  - No DELETE operation supported
+  - Maximum 5 rules per policy
+- Registered all 9 tools in src/mcp/tools/index.ts
+- Files changed:
+  - 9 new tool files in src/mcp/tools/
+  - src/mcp/tools/index.ts (added imports and tool registrations)
+
+**Learnings for future iterations:**
+- PR policies have a different structure than issue policies - rules are direct (not in filterGroups)
+- Test scheduling policies don't support DELETE operations (API limitation)
+- PR policy actions are restricted to BLOCK_PR only
+- Test scheduling frequency values are limited to 'daily' or 'weekly'
+- Deno not available in this container - verification commands couldn't be run, but code follows exact patterns from existing tools
+---
