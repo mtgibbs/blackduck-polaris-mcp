@@ -152,6 +152,9 @@ import { getPolicyAssignmentsTool } from "./get-policy-assignments.ts";
 import { getPolicyAssignmentTool } from "./get-policy-assignment.ts";
 import { createPolicyAssignmentsTool } from "./create-policy-assignments.ts";
 import { deletePolicyAssignmentsTool } from "./delete-policy-assignments.ts";
+import { updatePolicySettingsTool } from "./update-policy-settings.ts";
+import { getPolicyActionsTool } from "./get-policy-actions.ts";
+import { getPolicyActionTool } from "./get-policy-action.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -307,4 +310,7 @@ export const tools: AnyToolDefinition[] = [
   getPolicyAssignmentTool,
   createPolicyAssignmentsTool,
   deletePolicyAssignmentsTool,
+  updatePolicySettingsTool,
+  getPolicyActionsTool,
+  getPolicyActionTool,
 ];
