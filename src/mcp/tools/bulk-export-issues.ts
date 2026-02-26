@@ -1,11 +1,7 @@
 import { z } from "zod";
 import { exportIssue, getLinkedIssues } from "../../services/index.ts";
 import { resolveExportParams } from "../export-helpers.ts";
-import {
-  errorResponse,
-  jsonResponse,
-  type ToolDefinition,
-} from "../types.ts";
+import { errorResponse, jsonResponse, type ToolDefinition } from "../types.ts";
 
 export const schema = {
   config_id: z

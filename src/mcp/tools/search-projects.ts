@@ -14,8 +14,8 @@ export const searchProjectsTool: ToolDefinition<typeof schema> = {
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
   handler: async ({ portfolio_id, name }) => {
-    // Build RSQL filter for exact name match
-    const filter = `name=='${name}'`;
+    // Build RSQL filter for exact name match (escape single quotes)
+    const filter = `name=='${name.replace(/'/g, "\\'")}'`;
 
     // Query portfolio-level projects with name filter
     const projects = await getProjects({

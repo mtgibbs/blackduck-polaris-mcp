@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { triageIssues } from "../../services/index.ts";
+import type { TriagePropertyInput } from "../../types/polaris.ts";
 import { errorResponse, jsonResponse, type ToolDefinition } from "../types.ts";
 
 export const schema = {
@@ -71,12 +72,12 @@ export const dismissIssuesTool: ToolDefinition<typeof schema> = {
     }
 
     if (severity) {
-      const levels = severity.split(",").map((s) => `'${s.trim()}'`).join(",");
+      const levels = severity.split(",").map((s) => `'${s.trim().replace(/'/g, "\\'")}'`).join(",");
       filterParts.push(`occurrence:severity=in=(${levels})`);
     }
 
     if (issue_ids?.length) {
-      const quoted = issue_ids.map((id) => `'${id}'`).join(",");
+      const quoted = issue_ids.map((id) => `'${id.replace(/'/g, "\\'")}'`).join(",");
       filterParts.push(`occurrence:occurrence-id=in=(${quoted})`);
     }
 
@@ -90,11 +91,11 @@ export const dismissIssuesTool: ToolDefinition<typeof schema> = {
 
     // Build triage properties — known-good combination for dismissal
     // IMPORTANT: Only include dismissal-reason and optionally comment, never include status
-    const triageProperties = [
-      { key: "dismissal-reason" as const, value: reason },
+    const triageProperties: TriagePropertyInput[] = [
+      { key: "dismissal-reason", value: reason },
     ];
     if (comment) {
-      triageProperties.push({ key: "comment" as const, value: comment });
+      triageProperties.push({ key: "comment", value: comment });
     }
 
     const result = await triageIssues({
