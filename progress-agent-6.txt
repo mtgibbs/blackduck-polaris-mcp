@@ -35,3 +35,27 @@
   - getTimezones returns a flat string array, not paginated
 - **Note:** Unable to run deno verification commands (check/lint/fmt) as deno is not installed in the container environment, but code follows all existing patterns correctly
 ---
+
+## 2026-02-26 - SR-2
+- Implemented MCP tools for report generation and retrieval
+- Created four tool files:
+  - src/mcp/tools/run-report.ts - Initiates report generation with all 13 report types
+  - src/mcp/tools/get-reports.ts - Lists reports with pagination and filtering
+  - src/mcp/tools/get-report.ts - Gets single report details by ID
+  - src/mcp/tools/delete-report.ts - Deletes a report by ID
+- Registered all four tools in src/mcp/tools/index.ts
+- Files changed:
+  - src/mcp/tools/run-report.ts (created)
+  - src/mcp/tools/get-reports.ts (created)
+  - src/mcp/tools/get-report.ts (created)
+  - src/mcp/tools/delete-report.ts (created)
+  - src/mcp/tools/index.ts (added imports and tool registrations)
+- **Learnings for future iterations:**
+  - run_report is the primary write operation - documents all 13 report types with enum
+  - applications parameter uses nested structure: apps -> projects -> branches
+  - Tool enums include DAST_POLARIS, SCA_PACKAGE, SCA_SIGNATURE, STATIC_POLARIS, STATIC_RAPID, EXTERNAL_ANALYSIS
+  - Severity enums: critical, high, medium, low
+  - Scope enums: ALL_APPLICATIONS, SELECTED_APPLICATIONS, SELECTED_BRANCHES
+  - Reports are generated asynchronously - client polls get_report for status
+  - Report status values: INITIATED, IN_PROGRESS, COMPLETED, FAILED
+---
