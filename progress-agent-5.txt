@@ -98,3 +98,29 @@
 - Test scheduling frequency values are limited to 'daily' or 'weekly'
 - Deno not available in this container - verification commands couldn't be run, but code follows exact patterns from existing tools
 ---
+
+## 2026-02-26 - SP-4
+- Implemented Policy Assignments V2 MCP tools
+- Created 4 new tool files:
+  - src/mcp/tools/get-policy-assignments.ts - list assignments with required filter parameter
+  - src/mcp/tools/get-policy-assignment.ts - get single assignment by ID
+  - src/mcp/tools/create-policy-assignments.ts - bulk create assignments (returns 204)
+  - src/mcp/tools/delete-policy-assignments.ts - bulk delete assignments (returns 204)
+- Registered all 4 tools in src/mcp/tools/index.ts
+- All tools use V2 media type: application/vnd.polaris.policies.policy-bulk-assignment-2+json
+- Tool descriptions document:
+  - Filter parameter is REQUIRED for GET (API requirement)
+  - Bulk operations use assignments array with type, associationId, policyId
+  - Limits: up to 5 issue policies per project, 1 test scheduling policy per project
+  - Both create and delete return 204 No Content
+- Files changed:
+  - 4 new tool files in src/mcp/tools/
+  - src/mcp/tools/index.ts (added imports and tool registrations)
+
+**Learnings for future iterations:**
+- Policy assignments V2 API requires filter parameter for GET operations (unlike some other APIs)
+- Bulk operations (create/delete) use the same payload structure with assignments array
+- Delete tool properly marked with destructiveHint: true annotation
+- Type field is typically 'project' for assignments
+- Deno not available in this container - verification commands couldn't be run, but code follows exact patterns from existing tools
+---
