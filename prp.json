@@ -174,7 +174,7 @@
         "S06-1"
       ],
       "priority": 4,
-      "passes": false,
+      "passes": true,
       "notes": "",
       "context": {
         "relevantFiles": [
