@@ -4,7 +4,6 @@
   "description": "Smart Export Workflow — Reduce export from 5 calls to 1-2 via auto-resolution of project_mapping_id and bts_issue_type_id",
   "version": 1,
   "previousVersion": null,
-
   "constraints": [
     "Follow existing 3-layer pattern: MCP Tool → Service → API",
     "Use Zod schemas as plain objects (not z.object()), matching existing tools",
@@ -14,19 +13,16 @@
     "Auto-resolution only runs when explicit params are omitted — explicit params skip resolution",
     "project_mapping_id becomes optional (was required) — existing callers still work"
   ],
-
   "nonGoals": [
     "Bulk export (covered in PRD-06)",
     "Changing the Polaris API contract",
     "Auto-creating bug tracking configurations or project mappings"
   ],
-
   "glossary": {
     "auto-resolution": "Handler logic that fetches and resolves missing parameters from related API endpoints",
     "project_mapping_id": "ID linking a Polaris project to an external bug tracker project",
     "bts_issue_type_id": "ID for the external bug tracker issue type (e.g., Bug, Task in Jira)"
   },
-
   "userStories": [
     {
       "id": "S05-1",
@@ -67,7 +63,9 @@
         "examples": [
           "// Resolution pattern:\nexport async function resolveExportParams(\n  configId: string,\n  projectId: string,\n  btsIssueTypeId?: string,\n): Promise<{projectMappingId: string; issueTypeId: string} | {error: string}> {\n  const mappings = await getConfigProjectMappings({configurationId: configId});\n  const mapping = mappings.find(m => m.projectId === projectId);\n  if (!mapping) return {error: `No project mapping found...`};\n  // ...\n}"
         ]
-      }
+      },
+      "claimed_by": "agent-3",
+      "claimed_at": "2026-02-26T03:39:48Z"
     },
     {
       "id": "S05-2",
@@ -88,7 +86,9 @@
         "deno task lint",
         "deno fmt --check"
       ],
-      "dependsOn": ["S05-1"],
+      "dependsOn": [
+        "S05-1"
+      ],
       "priority": 2,
       "passes": false,
       "notes": "",
@@ -124,7 +124,9 @@
         "deno task lint",
         "deno fmt --check"
       ],
-      "dependsOn": ["S05-2"],
+      "dependsOn": [
+        "S05-2"
+      ],
       "priority": 3,
       "passes": false,
       "notes": "",
