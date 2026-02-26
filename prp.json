@@ -124,7 +124,9 @@
           "Put each tool in its own file following naming convention: get-issue-policies.ts, create-issue-policy.ts, etc."
         ],
         "examples": []
-      }
+      },
+      "claimed_by": "agent-5",
+      "claimed_at": "2026-02-26T03:56:18Z"
     },
     {
       "id": "SP-3",
