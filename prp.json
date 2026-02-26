@@ -103,7 +103,9 @@
         "examples": [
           "// Tool file pattern:\nimport { z } from \"zod\";\nimport { getPortfolioProjects } from \"../../services/index.ts\";\nimport { jsonResponse, type ToolDefinition } from \"../types.ts\";\n\nexport const schema = {\n  portfolio_id: z.string().describe(\"Portfolio ID\"),\n  name: z.string().describe(\"Project name to search for (exact match)\"),\n};\n\nexport const searchProjectsTool: ToolDefinition<typeof schema> = {\n  name: \"search_projects\",\n  // ...\n};"
         ]
-      }
+      },
+      "claimed_by": "agent-4",
+      "claimed_at": "2026-02-26T03:42:37Z"
     },
     {
       "id": "S06-3",
