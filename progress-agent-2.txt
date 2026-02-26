@@ -28,3 +28,33 @@
 - Filter validation is designed to be non-blocking for forward compatibility
 
 ---
+
+## 2026-02-26 03:50 UTC - S04-2
+
+- Enhanced Portfolio tool filter descriptions with valid filter keys
+- Added name convenience parameter to get_applications and get_projects
+  - Auto-generates RSQL filter: name=='value'
+  - Combines with existing filter param using ; (AND operator)
+- Updated filter descriptions for all Portfolio tools:
+  - get_applications: name, description, subscriptionType, inTrash
+  - get_projects: name, description, subItemType, inTrash
+  - get_branches: name, isDefault
+  - get_portfolio_branches: name, isDefault, projectId, applicationId
+  - get_labels: name
+- Integrated filter validation in all Portfolio tool handlers using validateFilter()
+- Files changed:
+  - src/mcp/tools/get-applications.ts (added name param, filter validation, enhanced docs)
+  - src/mcp/tools/get-projects.ts (added name param, filter validation, enhanced docs)
+  - src/mcp/tools/get-branches.ts (filter validation, enhanced docs)
+  - src/mcp/tools/get-portfolio-branches.ts (filter validation, enhanced docs)
+  - src/mcp/tools/get-labels.ts (filter validation, enhanced docs)
+  - prp.json (updated S04-2 passes: true)
+
+**Learnings for future iterations:**
+- Name convenience parameters follow pattern: if present, build `name=='${name}'`, then combine with existing filter via `;` (AND)
+- Filter validation uses resource type keys from FILTER_KEYS registry (e.g., "portfolio.applications", "portfolio.projects")
+- get_portfolio_branches uses "portfolio.branches.org-wide" resource type (has projectId/applicationId keys)
+- get_branches uses "portfolio.branches" resource type (no projectId/applicationId keys)
+- All Portfolio tools now import both errorResponse and validateFilter for consistent error handling
+
+---
