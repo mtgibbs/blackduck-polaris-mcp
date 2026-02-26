@@ -157,7 +157,9 @@
         "examples": [
           "// Triage tool description pattern:\ndescription: \"Bulk triage security issues matching a filter. \" +\n  \"FIELD RULES:\\n\" +\n  \"- To dismiss: use {dismissal-reason, comment} only. Status auto-sets to 'dismissed'.\\n\" +\n  \"- To change status: use {status, comment} only. Do NOT combine with dismissal-reason.\\n\" +\n  \"- NEVER set is-dismissed — it is auto-calculated.\\n\\n\" +\n  \"FILTER NAMESPACES: occurrence:, triage:, context:, type:, special:\""
         ]
-      }
+      },
+      "claimed_by": "agent-2",
+      "claimed_at": "2026-02-26T04:00:33Z"
     },
     {
       "id": "S04-4",
