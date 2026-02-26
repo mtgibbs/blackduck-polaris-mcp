@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { getOccurrences } from "../../services/index.ts";
 import { errorResponse, jsonResponse, type ToolDefinition } from "../types.ts";
+import { validateFilter } from "../filter-validation.ts";
 
 export const schema = {
   application_id: z
@@ -15,7 +16,7 @@ export const schema = {
     .string()
     .optional()
     .describe(
-      "RSQL filter expression. Example fields: occurrence:severity, occurrence:cwe, occurrence:filename, context:tool-type, type:name",
+      "RSQL filter expression. Valid filter keys (with namespaces): occurrence:issue-id, occurrence:severity, occurrence:cwe, occurrence:filename, occurrence:occurrence-id, occurrence:finding-key::filePath, context:tool-type, type:name. Example: occurrence:severity=in=('critical','high')",
     ),
   sort: z
     .string()
@@ -48,6 +49,11 @@ export const getOccurrencesTool: ToolDefinition<typeof schema> = {
     }
     if (application_id && project_id) {
       return errorResponse("application_id and project_id are mutually exclusive");
+    }
+
+    if (filter) {
+      const error = validateFilter(filter, "findings.occurrences");
+      if (error) return errorResponse(error);
     }
 
     const occurrences = await getOccurrences({

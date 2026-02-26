@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { getComponentVersions } from "../../services/index.ts";
-import { jsonResponse, type ToolDefinition } from "../types.ts";
+import { errorResponse, jsonResponse, type ToolDefinition } from "../types.ts";
+import { validateFilter } from "../filter-validation.ts";
 
 export const schema = {
   project_id: z
@@ -17,7 +18,7 @@ export const schema = {
     .string()
     .optional()
     .describe(
-      "RSQL filter. Example: component-version:security-risk=in=('HIGH','CRITICAL')",
+      "RSQL filter expression. Valid filter keys (with namespaces): componentVersion:name, componentVersion:version, componentVersion:license, component-version:security-risk. Example: component-version:security-risk=in=('HIGH','CRITICAL')",
     ),
   include_component: z
     .boolean()
@@ -49,6 +50,11 @@ export const getComponentVersionsTool: ToolDefinition<typeof schema> = {
     include_license,
     max_results,
   }) => {
+    if (filter) {
+      const error = validateFilter(filter, "findings.component_versions");
+      if (error) return errorResponse(error);
+    }
+
     const versions = await getComponentVersions({
       projectId: project_id,
       applicationId: application_id,

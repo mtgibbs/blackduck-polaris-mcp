@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { getComponentOrigins } from "../../services/index.ts";
-import { jsonResponse, type ToolDefinition } from "../types.ts";
+import { errorResponse, jsonResponse, type ToolDefinition } from "../types.ts";
+import { validateFilter } from "../filter-validation.ts";
 
 export const schema = {
   project_id: z
@@ -10,7 +11,7 @@ export const schema = {
     .string()
     .optional()
     .describe(
-      "RSQL filter. Example: component-origin:external-namespace=='maven'",
+      "RSQL filter expression. Valid filter keys (with namespaces): componentOrigin:name, componentOrigin:type, component-origin:external-namespace, component-origin:external-id. Example: component-origin:external-namespace=='maven'",
     ),
   max_results: z
     .number()
@@ -25,6 +26,11 @@ export const getComponentOriginsTool: ToolDefinition<typeof schema> = {
   schema,
   annotations: { readOnlyHint: true, openWorldHint: true },
   handler: async ({ project_id, filter, max_results }) => {
+    if (filter) {
+      const error = validateFilter(filter, "findings.component_origins");
+      if (error) return errorResponse(error);
+    }
+
     const origins = await getComponentOrigins({
       projectId: project_id,
       filter,

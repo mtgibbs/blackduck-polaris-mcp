@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { getIssues } from "../../services/index.ts";
 import { errorResponse, jsonResponse, type ToolDefinition } from "../types.ts";
+import { validateFilter } from "../filter-validation.ts";
 
 export const schema = {
   application_id: z
@@ -25,6 +26,12 @@ export const schema = {
     .string()
     .optional()
     .describe("Delta filter: new, common, resolved, new-in-test, new-post-test"),
+  filter: z
+    .string()
+    .optional()
+    .describe(
+      "RSQL filter expression. Valid filter keys (with namespaces): occurrence:severity, occurrence:cwe, occurrence:filename, occurrence:occurrence-id, context:tool-type, type:name, triage:status, special:delta. Example: triage:status=='not-reviewed';occurrence:severity=in=('critical','high')",
+    ),
   sort: z
     .string()
     .optional()
@@ -61,6 +68,7 @@ export const getIssuesTool: ToolDefinition<typeof schema> = {
     severity,
     tool_type,
     delta,
+    filter,
     sort,
     max_results,
     include_issue_exclusion,
@@ -74,6 +82,11 @@ export const getIssuesTool: ToolDefinition<typeof schema> = {
       return errorResponse("application_id and project_id are mutually exclusive");
     }
 
+    if (filter) {
+      const error = validateFilter(filter, "findings.issues");
+      if (error) return errorResponse(error);
+    }
+
     const issues = await getIssues({
       applicationId: application_id,
       projectId: project_id,
@@ -82,6 +95,7 @@ export const getIssuesTool: ToolDefinition<typeof schema> = {
       severity: severity?.split(",").map((s: string) => s.trim()),
       toolType: tool_type?.split(",").map((t: string) => t.trim()),
       delta,
+      filter,
       sort,
       first: max_results,
       includeIssueExclusion: include_issue_exclusion,
