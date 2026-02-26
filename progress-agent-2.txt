@@ -58,3 +58,41 @@
 - All Portfolio tools now import both errorResponse and validateFilter for consistent error handling
 
 ---
+## 2026-02-26 04:01 UTC - S04-3
+
+- Enhanced Findings tool filter descriptions and triage documentation
+- Added filter parameter to get_issues tool:
+  - Updated schema with filter param documenting valid namespaced keys
+  - Updated service layer GetIssuesOptions interface to support filter param
+  - Modified getIssues() service function to combine filter with convenience params
+  - Added filter validation in tool handler
+- Updated filter descriptions for existing Findings tools:
+  - get_occurrences: Expanded filter description with complete valid key list
+  - get_component_versions: Updated filter description with componentVersion: namespaced keys
+  - get_component_origins: Updated filter description with componentOrigin: namespaced keys
+- Enhanced triage_issues tool comprehensively:
+  - Updated tool description with FIELD RULES section explaining dismissal-reason/status exclusivity
+  - Added FILTER NAMESPACES section with valid filter keys and working/non-working key documentation
+  - Updated triage_properties key field description with exclusivity rules
+  - Updated triage_properties value field description with valid values per key
+  - Added filter validation in handler
+- Integrated filter validation from ../filter-validation.ts in all updated tools
+- Files changed:
+  - src/mcp/tools/get-issues.ts (added filter param, validation, enhanced docs)
+  - src/mcp/tools/get-occurrences.ts (enhanced filter docs, added validation)
+  - src/mcp/tools/get-component-versions.ts (enhanced filter docs, added validation)
+  - src/mcp/tools/get-component-origins.ts (enhanced filter docs, added validation)
+  - src/mcp/tools/triage-issues.ts (comprehensive field rules and filter namespace docs, added validation)
+  - src/services/findings.ts (added filter param to GetIssuesOptions and getIssues())
+  - prp.json (updated S04-3 passes: true)
+
+**Learnings for future iterations:**
+- get_taxonomies was intentionally skipped: the Polaris API endpoint doesn't support filter parameters for taxonomies
+- The triage_issues tool required the most extensive documentation as it's the highest-impact change (users consistently fail on first attempts)
+- Confirmed working triage filter keys documented: occurrence:filename, occurrence:severity, occurrence:occurrence-id, triage:status, context:tool-type, type:name, special:delta
+- Documented non-working keys: occurrence:id (returns 0 results) - users should use occurrence:occurrence-id instead
+- Field exclusivity rules are critical for triage: dismissal-reason auto-sets status to 'dismissed', so status + dismissal-reason cannot be combined
+- is-dismissed is a read-only calculated field and should never be set by users
+- Filter validation uses "findings.issues" resource type for both get_issues and triage_issues (they share the same filter namespace)
+
+---
