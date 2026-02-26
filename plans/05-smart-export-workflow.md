@@ -12,8 +12,8 @@ IDs:
 5. `export_issues` → finally export
 
 If any parameter is missing (e.g., `bts_issue_type_id`), the API returns a **500 error** instead of
-a helpful 400 with validation details. The first export attempt in the feedback session failed due to
-this.
+a helpful 400 with validation details. The first export attempt in the feedback session failed due
+to this.
 
 Additionally, the `get_external_projects` tool failed with a limit validation error because no
 default limit was set.
@@ -39,16 +39,18 @@ Enhance the `export_issues` tool handler to auto-resolve optional parameters whe
 unambiguously determined.
 
 #### Current Schema
+
 ```typescript
-config_id: z.string()          // required
-project_mapping_id: z.string() // required
-issue_id: z.string()           // required
-bts_issue_type_id: z.string()  // optional (but API 500s without it for new tickets)
-bts_key: z.string()            // optional (link to existing ticket)
-branch_id: z.string()          // optional
+config_id: z.string(); // required
+project_mapping_id: z.string(); // required
+issue_id: z.string(); // required
+bts_issue_type_id: z.string(); // optional (but API 500s without it for new tickets)
+bts_key: z.string(); // optional (link to existing ticket)
+branch_id: z.string(); // optional
 ```
 
 #### New Schema
+
 ```typescript
 config_id: z.string().describe(
   "Bug tracking configuration ID. Use get_bug_tracking_configurations to find this."
@@ -77,17 +79,25 @@ branch_id: z.string().optional().describe(
 #### Auto-Resolution Logic
 
 ```typescript
-handler: async (args) => {
-  let { config_id, project_id, project_mapping_id, issue_id, bts_issue_type_id, bts_key, branch_id } = args;
+handler: (async (args) => {
+  let {
+    config_id,
+    project_id,
+    project_mapping_id,
+    issue_id,
+    bts_issue_type_id,
+    bts_key,
+    branch_id,
+  } = args;
 
   // Step 1: Auto-resolve project_mapping_id from project_id + config_id
   if (!project_mapping_id && project_id) {
     const mappings = await bugTrackingApi.getConfigProjectMappings({ configurationId: config_id });
-    const mapping = mappings.find(m => m.projectId === project_id);
+    const mapping = mappings.find((m) => m.projectId === project_id);
     if (!mapping) {
       return errorResponse(
         `No project mapping found for project ${project_id} in config ${config_id}. ` +
-        `Use get_config_project_mappings to see available mappings, or create one with create_config_project_mapping.`
+          `Use get_config_project_mappings to see available mappings, or create one with create_config_project_mapping.`,
       );
     }
     project_mapping_id = mapping.id;
@@ -98,7 +108,7 @@ handler: async (args) => {
       if (!bts_issue_type_id) {
         return errorResponse(
           `Project mapping ${mapping.id} has no default issue type. ` +
-          `Provide bts_issue_type_id explicitly. Use get_external_issue_types to find valid types.`
+            `Provide bts_issue_type_id explicitly. Use get_external_issue_types to find valid types.`,
         );
       }
     }
@@ -108,14 +118,14 @@ handler: async (args) => {
   if (!project_mapping_id) {
     return errorResponse(
       "Either project_mapping_id or project_id is required. " +
-      "Use project_id for auto-resolution, or provide project_mapping_id directly."
+        "Use project_id for auto-resolution, or provide project_mapping_id directly.",
     );
   }
 
   if (!bts_issue_type_id && !bts_key) {
     return errorResponse(
       "bts_issue_type_id is required when creating a new ticket (no bts_key provided). " +
-      "Use get_external_issue_types(config_id, project_key) to find valid issue types."
+        "Use get_external_issue_types(config_id, project_key) to find valid issue types.",
     );
   }
 
@@ -130,12 +140,13 @@ handler: async (args) => {
   });
 
   return jsonResponse(result);
-};
+});
 ```
 
 #### Simplified Workflow with Auto-Resolution
 
 **Before (5 calls):**
+
 ```
 1. get_branches(portfolio_id, app_id, project_id) → branch_id
 2. get_bug_tracking_configurations() → config_id
@@ -145,6 +156,7 @@ handler: async (args) => {
 ```
 
 **After (2 calls):**
+
 ```
 1. get_bug_tracking_configurations() → config_id
 2. export_issues(config_id, project_id, issue_id)
@@ -157,11 +169,13 @@ Add explicit validation in tool handlers before calling the API, converting pote
 clear 400-style error messages.
 
 #### `export_issues` Validation
+
 - Require `project_mapping_id` or `project_id` (at least one)
 - Require `bts_issue_type_id` when `bts_key` is not provided
 - Validate that `config_id` is a valid UUID format
 
 #### `create_config_project_mapping` Validation
+
 - Validate `bts_issue_type` is provided (required by API)
 - Validate `bts_project_key` is not empty
 
@@ -184,13 +198,13 @@ getExternalProjects(opts) {
 
 #### Audit All Endpoints for Max Limits
 
-| Endpoint | Current Default | API Max | Fix |
-|----------|----------------|---------|-----|
-| Bug tracking configurations | 100 | ? | Verify |
-| External projects | 100 | **50** | **Set to 50** |
-| Project mappings | 100 | ? | Verify |
-| External issue types | 100 | ? | Verify |
-| Linked issues | 100 | ? | Verify |
+| Endpoint                    | Current Default | API Max | Fix           |
+| --------------------------- | --------------- | ------- | ------------- |
+| Bug tracking configurations | 100             | ?       | Verify        |
+| External projects           | 100             | **50**  | **Set to 50** |
+| Project mappings            | 100             | ?       | Verify        |
+| External issue types        | 100             | ?       | Verify        |
+| Linked issues               | 100             | ?       | Verify        |
 
 ### Part 4: Branch ID Default Resolution
 
@@ -202,6 +216,7 @@ the bug tracking export, ensure the same behavior — if `branch_id` is not prov
 API call and let the server use the default.
 
 Document this clearly:
+
 ```typescript
 branch_id: z.string().optional().describe(
   "Branch ID. If omitted, the project's default branch is used."
@@ -211,6 +226,7 @@ branch_id: z.string().optional().describe(
 ## Implementation Plan
 
 ### Phase 1: Export Auto-Resolution
+
 1. Update `export_issues` schema to add `project_id` parameter
 2. Make `project_mapping_id` optional (was required)
 3. Implement auto-resolution logic in handler
@@ -218,11 +234,13 @@ branch_id: z.string().optional().describe(
 5. Add unit tests for auto-resolution and validation paths
 
 ### Phase 2: Pagination Defaults
+
 6. Audit all `getAllOffset` calls against API max limits
 7. Fix `getExternalProjects` to use limit=50
 8. Fix any other endpoints with known lower limits
 
 ### Phase 3: Validation Improvements
+
 9. Add UUID format validation for ID parameters (optional, advisory)
 10. Improve error messages for missing required parameters across all bug tracking tools
 
@@ -235,9 +253,9 @@ branch_id: z.string().optional().describe(
 
 ## Risks & Mitigations
 
-| Risk | Mitigation |
-|------|-----------|
-| Auto-resolution adds latency (extra API calls) | Only when parameters are omitted; explicit params skip resolution |
-| Multiple project mappings for same project+config | Return error asking user to specify `project_mapping_id` explicitly |
-| Project mapping has no default issue type | Clear error message directing user to `get_external_issue_types` |
-| Breaking change: `project_mapping_id` no longer required | It becomes optional, not removed. Existing calls still work |
+| Risk                                                     | Mitigation                                                          |
+| -------------------------------------------------------- | ------------------------------------------------------------------- |
+| Auto-resolution adds latency (extra API calls)           | Only when parameters are omitted; explicit params skip resolution   |
+| Multiple project mappings for same project+config        | Return error asking user to specify `project_mapping_id` explicitly |
+| Project mapping has no default issue type                | Clear error message directing user to `get_external_issue_types`    |
+| Breaking change: `project_mapping_id` no longer required | It becomes optional, not removed. Existing calls still work         |

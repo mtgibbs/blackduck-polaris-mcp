@@ -73,6 +73,18 @@ export const triageIssuesTool: ToolDefinition<typeof schema> = {
       if (error) return errorResponse(error);
     }
 
+    const keys = triage_properties.map((p) => p.key);
+    if (keys.includes("is-dismissed")) {
+      return errorResponse(
+        "Cannot set 'is-dismissed' — it is auto-calculated. To dismiss, use {dismissal-reason, comment} instead.",
+      );
+    }
+    if (keys.includes("status") && keys.includes("dismissal-reason")) {
+      return errorResponse(
+        "Cannot set both 'status' and 'dismissal-reason'. To dismiss: use {dismissal-reason, comment}. To change status: use {status, comment}.",
+      );
+    }
+
     const result = await triageIssues({
       applicationId: application_id,
       projectId: project_id,

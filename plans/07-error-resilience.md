@@ -45,11 +45,11 @@ Currently, tool handlers call service functions directly with no try/catch:
 
 ```typescript
 // Current pattern (e.g., triage-issues.ts)
-handler: async (args) => {
+handler: (async (args) => {
   // ... validation ...
   const result = await findingsService.triageIssues(opts);
   return jsonResponse(result);
-};
+});
 ```
 
 If the API call throws, the error propagates as an unhandled exception. The MCP SDK converts this to
@@ -217,12 +217,22 @@ Update tool registration in `src/mcp/server.ts`:
 import { withErrorHandling } from "./error-handling.ts";
 
 // Current:
-server.tool(tool.name, tool.description, tool.schema, tool.annotations ?? {},
-  (args) => tool.handler(args));
+server.tool(
+  tool.name,
+  tool.description,
+  tool.schema,
+  tool.annotations ?? {},
+  (args) => tool.handler(args),
+);
 
 // Updated:
-server.tool(tool.name, tool.description, tool.schema, tool.annotations ?? {},
-  withErrorHandling(tool.name, (args) => tool.handler(args)));
+server.tool(
+  tool.name,
+  tool.description,
+  tool.schema,
+  tool.annotations ?? {},
+  withErrorHandling(tool.name, (args) => tool.handler(args)),
+);
 ```
 
 This is a single-line change in `server.ts` that wraps **all** tools with error handling
@@ -269,6 +279,7 @@ cases and doesn't require tracking state.
 Add optional retry for specific transient error codes in the HTTP client.
 
 #### Retryable Status Codes
+
 - **429** — Rate limited (retry after `Retry-After` header or exponential backoff)
 - **503** — Service unavailable (retry with exponential backoff)
 - **Network errors** — Connection reset, timeout (retry once)
@@ -316,11 +327,13 @@ to avoid duplicate side effects.
 #### Scenario: Export 404 — Issue Resolved
 
 **Before:**
+
 ```
 Error: Polaris API error 404: Requested issue family cannot be found
 ```
 
 **After (via TOOL_ERROR_CONTEXT):**
+
 ```
 Error: Polaris API error 404: Requested issue family cannot be found
 
@@ -331,6 +344,7 @@ Use get_issues(project_id) to verify which issues currently exist.
 #### Scenario: Triage 400 — Field Exclusivity
 
 **Before:**
+
 ```
 Error: Polaris API error 400: status and dismissal-reason are exclusive
 ```
@@ -338,6 +352,7 @@ Error: Polaris API error 400: status and dismissal-reason are exclusive
 **After (via TOOL_ERROR_CONTEXT + PRD-04 client-side validation):**
 
 With PRD-04's client-side validation, this error is caught **before** the API call:
+
 ```
 Error: Cannot set both 'status' and 'dismissal-reason' (exclusive fields).
 To dismiss: use {dismissal-reason, comment} only — status auto-sets to 'dismissed'.
@@ -347,11 +362,13 @@ To change status: use {status, comment} only.
 #### Scenario: Export 500 — Missing bts_issue_type_id
 
 **Before:**
+
 ```
 Error: Polaris API error 500: Internal Server Error
 ```
 
 **After (via TOOL_ERROR_CONTEXT):**
+
 ```
 Error: Polaris API error 500: Internal Server Error
 
@@ -363,6 +380,7 @@ Use get_external_issue_types(config_id, project_key) to find valid issue types.
 #### Scenario: get_external_projects — Limit Exceeded
 
 **Before:**
+
 ```
 Error: getBtsProjects._limit: must be less than or equal to 50
 ```
@@ -374,23 +392,27 @@ With PRD-05's fix, this error shouldn't occur. The error context is a safety net
 ## Implementation Plan
 
 ### Phase 1: Error Wrapping Infrastructure
+
 1. Create `src/mcp/error-handling.ts` with `withErrorHandling`, `parseApiErrorStatus`,
    `getStatusGuidance`
 2. Add unit tests for error parsing and message generation
 3. Integrate `withErrorHandling` in `src/mcp/server.ts` (single-line change)
 
 ### Phase 2: Tool-Specific Error Context
+
 4. Add `TOOL_ERROR_CONTEXT` entries for high-impact tools: `export_issues`, `triage_issues`,
    `get_external_projects`
 5. Add entries for new tools from PRD-05/06: `bulk_export_issues`, `dismiss_issues`
 6. Add unit tests for each tool-specific error context function
 
 ### Phase 3: Retry Logic (Optional)
+
 7. Add `sendRequestWithRetry` to `src/api/client.ts`
 8. Apply retry only to GET-based methods (`get`, `getAllOffset`, `getAllCursor`)
 9. Add tests for retry behavior (mock 429/503 responses)
 
 ### Phase 4: Stale-ID Detection (Optional)
+
 10. Add ID tracking utilities
 11. Enhance 403 messages when a previously-valid ID fails
 12. Add tests
@@ -413,13 +435,13 @@ With PRD-05's fix, this error shouldn't occur. The error context is a safety net
 
 ## Risks & Mitigations
 
-| Risk | Mitigation |
-|------|-----------|
-| Error message heuristics are wrong (e.g., 500 isn't about missing params) | Messages are additive guidance, not authoritative diagnosis |
-| Retry logic masks real errors | Only retry on 429/503; max 2 retries; log each attempt |
-| Stale-ID tracking uses memory | Bounded Set with TTL or max size; reset on session restart |
-| `withErrorHandling` catches errors that should propagate | Only catches Error instances; re-throws non-Error values |
-| Tool-specific context becomes stale as API evolves | Context is additive hints, not blocking validation; easy to update |
+| Risk                                                                      | Mitigation                                                         |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| Error message heuristics are wrong (e.g., 500 isn't about missing params) | Messages are additive guidance, not authoritative diagnosis        |
+| Retry logic masks real errors                                             | Only retry on 429/503; max 2 retries; log each attempt             |
+| Stale-ID tracking uses memory                                             | Bounded Set with TTL or max size; reset on session restart         |
+| `withErrorHandling` catches errors that should propagate                  | Only catches Error instances; re-throws non-Error values           |
+| Tool-specific context becomes stale as API evolves                        | Context is additive hints, not blocking validation; easy to update |
 
 ## Open Questions
 
@@ -427,5 +449,5 @@ With PRD-05's fix, this error shouldn't occur. The error context is a safety net
    keep it simple (2 retries, exponential backoff, max 10s delay).
 2. Should stale-ID detection be proactive (ping an endpoint before each call) or reactive (detect
    after failure)? Recommendation: reactive only — proactive adds latency to every call.
-3. Should error wrapping also log errors to stderr for debugging? Recommendation: yes, `console.error`
-   for all caught errors so users running in debug mode can see the raw error.
+3. Should error wrapping also log errors to stderr for debugging? Recommendation: yes,
+   `console.error` for all caught errors so users running in debug mode can see the raw error.
