@@ -142,7 +142,9 @@
           "Keep error messages actionable: tell the user exactly what to do next"
         ],
         "examples": []
-      }
+      },
+      "claimed_by": "agent-3",
+      "claimed_at": "2026-02-26T04:02:43Z"
     },
     {
       "id": "S05-4",
