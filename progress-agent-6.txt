@@ -59,3 +59,29 @@
   - Reports are generated asynchronously - client polls get_report for status
   - Report status values: INITIATED, IN_PROGRESS, COMPLETED, FAILED
 ---
+## 2026-02-26 - SR-3
+- Implemented MCP tools for report configuration CRUD operations
+- Created six tool files:
+  - src/mcp/tools/get-report-configurations.ts - Lists all report configurations with pagination
+  - src/mcp/tools/get-report-configuration.ts - Gets single configuration by ID
+  - src/mcp/tools/create-report-configuration.ts - Creates new configuration
+  - src/mcp/tools/update-report-configuration.ts - Updates configuration using PATCH
+  - src/mcp/tools/delete-report-configuration.ts - Deletes a configuration
+  - src/mcp/tools/run-report-configuration.ts - Runs a saved configuration
+- Registered all six tools in src/mcp/tools/index.ts
+- Files changed:
+  - src/mcp/tools/get-report-configurations.ts (created)
+  - src/mcp/tools/get-report-configuration.ts (created)
+  - src/mcp/tools/create-report-configuration.ts (created)
+  - src/mcp/tools/update-report-configuration.ts (created)
+  - src/mcp/tools/delete-report-configuration.ts (created)
+  - src/mcp/tools/run-report-configuration.ts (created)
+  - src/mcp/tools/index.ts (added 6 imports and tool registrations)
+- **Learnings for future iterations:**
+  - Configuration CRUD follows same pattern as other resource CRUD operations
+  - update_report_configuration uses PATCH (not PUT) - all fields are optional except configuration_id
+  - Configuration names must be unique - API returns 409 Conflict for duplicates
+  - run_report_configuration POSTs to /configurations/{id}/_actions/run with empty body
+  - Name field has max length of 256 characters
+  - The update handler must build the payload dynamically to only include provided fields
+---
