@@ -236,7 +236,9 @@
         "examples": [
           "// Filter construction:\nconst filterParts: string[] = [];\nif (filenames?.length) {\n  const quoted = filenames.map(f => `'${f}'`).join(',');\n  filterParts.push(`occurrence:filename=in=(${quoted})`);\n}\nif (severity) {\n  const levels = severity.split(',').map(s => `'${s.trim()}'`).join(',');\n  filterParts.push(`occurrence:severity=in=(${levels})`);\n}\nconst filter = filterParts.join(';');"
         ]
-      }
+      },
+      "claimed_by": "agent-4",
+      "claimed_at": "2026-02-26T04:37:14Z"
     }
   ]
 }
