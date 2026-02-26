@@ -134,6 +134,11 @@ import { getVersionSettingsTool } from "./get-version-settings.ts";
 import { getVersionSettingsByContextTool } from "./get-version-settings-by-context.ts";
 import { updateVersionSettingTool } from "./update-version-setting.ts";
 import { deleteVersionSettingTool } from "./delete-version-setting.ts";
+import { getIssuePoliciesTool } from "./get-issue-policies.ts";
+import { getIssuePolicyTool } from "./get-issue-policy.ts";
+import { createIssuePolicyTool } from "./create-issue-policy.ts";
+import { updateIssuePolicyTool } from "./update-issue-policy.ts";
+import { deleteIssuePolicyTool } from "./delete-issue-policy.ts";
 
 export const tools: AnyToolDefinition[] = [
   getPortfoliosTool,
@@ -271,4 +276,9 @@ export const tools: AnyToolDefinition[] = [
   getVersionSettingsByContextTool,
   updateVersionSettingTool,
   deleteVersionSettingTool,
+  getIssuePoliciesTool,
+  getIssuePolicyTool,
+  createIssuePolicyTool,
+  updateIssuePolicyTool,
+  deleteIssuePolicyTool,
 ];
