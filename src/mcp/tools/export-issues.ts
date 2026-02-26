@@ -26,7 +26,7 @@ export const schema = {
     .string()
     .optional()
     .describe(
-      "BTS issue type ID (required when creating a new ticket, from get_external_projects). Auto-resolved from project mapping default if omitted.",
+      "BTS issue type ID (required when creating a new ticket, from get_external_issue_types). Auto-resolved from project mapping default if omitted.",
     ),
   bts_key: z
     .string()
@@ -37,7 +37,7 @@ export const schema = {
   branch_id: z
     .string()
     .optional()
-    .describe("Polaris branch ID"),
+    .describe("Polaris branch ID. If omitted, the project default branch is used."),
 };
 
 export const exportIssuesTool: ToolDefinition<typeof schema> = {
@@ -59,15 +59,7 @@ export const exportIssuesTool: ToolDefinition<typeof schema> = {
     if (!project_mapping_id && !project_id) {
       return errorResponse(
         "Either project_mapping_id or project_id must be provided. " +
-          "Use get_config_project_mappings to find project_mapping_id, or provide project_id for auto-resolution.",
-      );
-    }
-
-    // Validate that bts_issue_type_id is present when creating a new ticket (no bts_key)
-    if (!bts_key && !bts_issue_type_id && !project_id) {
-      return errorResponse(
-        "bts_issue_type_id is required when creating a new ticket (bts_key not provided). " +
-          "Use get_external_issue_types to find available issue types, or provide project_id for auto-resolution.",
+          "Use get_config_project_mappings to find project_mapping_id for your project.",
       );
     }
 
@@ -88,6 +80,15 @@ export const exportIssuesTool: ToolDefinition<typeof schema> = {
 
       resolvedProjectMappingId = resolution.projectMappingId;
       resolvedBtsIssueTypeId = resolution.issueTypeId;
+    }
+
+    // Validate that bts_issue_type_id is present when creating a new ticket (no bts_key)
+    // This validation happens AFTER auto-resolution to catch cases where resolution didn't provide an issue type
+    if (!bts_key && !resolvedBtsIssueTypeId) {
+      return errorResponse(
+        "bts_issue_type_id is required when creating a new ticket (bts_key not provided). " +
+          "Use get_external_issue_types to find available issue types for your bug tracking system.",
+      );
     }
 
     const result = await exportIssue({
