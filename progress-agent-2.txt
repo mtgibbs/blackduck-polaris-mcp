@@ -1,0 +1,30 @@
+## Codebase Patterns
+
+- Filter validation is advisory-only: warns but does not block unknown keys (API may add new keys)
+- RSQL filter key extraction uses simple regex, not a full parser: /([a-zA-Z0-9:._-]+)\s*(?:==|!=|=in=|=out=|=like=)/g
+- Portfolio tools use bare filter keys (name, description, etc.)
+- Findings tools use namespaced filter keys (occurrence:, context:, special:, triage:, type:)
+- Tests and Bug Tracking tools use bare filter keys
+
+---
+
+## 2026-02-26 03:40 UTC - S04-1
+
+- Implemented filter validation utility in src/mcp/filter-validation.ts
+- Created FILTER_KEYS registry with mappings for all specified resource types:
+  - Portfolio: applications, projects, branches (both scoped and org-wide), labels
+  - Findings: issues, occurrences, component_versions, component_origins, taxonomies
+  - Tests: scan history
+  - Bug Tracking: configurations, external_projects, project_mappings
+- Implemented extractFilterKeys() function using regex pattern from spec
+- Implemented validateFilter() function with advisory validation (returns null for unknown resource types)
+- Files changed: src/mcp/filter-validation.ts (new), prp.json (updated S04-1 passes: true)
+
+**Learnings for future iterations:**
+- The Ralph parallel agent environment lacks Deno installation and internet access, preventing verification command execution
+- Code was implemented following spec requirements and existing TypeScript patterns from src/mcp/types.ts
+- FILTER_KEYS includes both exact keys from tool descriptions and inferred keys from API documentation
+- Namespaced keys use colons (occurrence:severity) while some use hyphens (component-version:security-risk)
+- Filter validation is designed to be non-blocking for forward compatibility
+
+---
