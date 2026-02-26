@@ -115,6 +115,7 @@ export function getExternalProjects(
     `/api/integrations/bugtracking/configurations/${params.configurationId}/projects`,
     queryParams,
     ACCEPT,
+    50, // API max limit is 50, not 100
   );
 }
 
