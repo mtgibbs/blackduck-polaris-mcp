@@ -9,7 +9,7 @@ export const schema = {
   project_id: z.string().describe("Project ID (required)"),
   branch_id: z.string().optional().describe("Branch ID (optional)"),
   assessment_types: z.array(z.string()).describe(
-    "Assessment types: SAST, SCA, DAST, or EXTERNAL_ANALYSIS (required array)",
+    "Assessment types: SAST, SCA, DAST, or EXTERNAL_ANALYSIS (required array). Common patterns: generic scan → ['SAST', 'SCA'] (recommended default), static analysis → ['SAST'], dependency scan → ['SCA'], web app scan → ['DAST']",
   ),
   test_mode: z.string().optional().describe(
     "Test mode: SOURCE_UPLOAD, SCM, CI, DAST_WEBAPP, DAST_PREFLIGHT, DAST_API, DAST_API_PREFLIGHT, or THIRD_PARTY_RESULT_UPLOAD. Omit to let Polaris auto-deduce from assessment type.",
@@ -34,6 +34,12 @@ export const createTestTool: ToolDefinition<typeof schema> = {
   name: "create_test",
   description:
     `Create new security scan test(s) in Polaris. Returns 207 Multi-Status with individual test creation results. If multiple assessment types are provided, a separate test is created for each.
+
+COMMON SCAN PATTERNS:
+- Generic "run a scan" request → assessment_types: ['SAST', 'SCA'] (recommended default)
+- "Static analysis" or "code analysis" → assessment_types: ['SAST']
+- "Dependency scan" or "component scan" → assessment_types: ['SCA']
+- "Web app scan" or "DAST scan" → assessment_types: ['DAST']
 
 Valid assessment type / test mode / scan mode combinations:
 - SAST + SOURCE_UPLOAD + CAPTURE_ANALYSIS — Upload source for full SAST analysis

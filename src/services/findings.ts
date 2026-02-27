@@ -36,6 +36,7 @@ export interface GetIssuesOptions {
   severity?: string[];
   toolType?: string[];
   delta?: string;
+  filter?: string;
   sort?: string;
   first?: number;
   includeIssueExclusion?: boolean;
@@ -56,6 +57,9 @@ export function getIssues(options: GetIssuesOptions): Promise<Issue[]> {
   }
   if (options.delta) {
     filters.push(`special:delta==${options.delta}`);
+  }
+  if (options.filter) {
+    filters.push(options.filter);
   }
 
   return findingsApi.getIssues({
