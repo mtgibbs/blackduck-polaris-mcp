@@ -11,7 +11,7 @@ export const schema = {
     .string()
     .optional()
     .describe(
-      "RSQL filter expression. Valid keys: key, name. Examples: key=='PROJ-123', name=like='%Security%'",
+      "RSQL filter expression. Valid keys: key, name. Examples: key=='PROJ-123', name=='Security'",
     ),
 };
 

@@ -8,7 +8,7 @@ export const schema = {
     .string()
     .optional()
     .describe(
-      "RSQL filter expression. Valid keys: type, url, enabled. Examples: type=='JIRA', enabled==true, url=like='%atlassian%'",
+      "RSQL filter expression. Valid keys: type, url, enabled. Examples: type=='JIRA', enabled==true",
     ),
 };
 

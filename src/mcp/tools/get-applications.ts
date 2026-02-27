@@ -9,7 +9,7 @@ export const schema = {
     "Filter by application name (exact match). Equivalent to filter=\"name=='value'\"",
   ),
   filter: z.string().optional().describe(
-    "RSQL filter expression. Valid keys: name, description, subscriptionType, inTrash. Examples: name=='my-app', name=like='%partial%', inTrash==false",
+    "RSQL filter expression. Valid keys: name, description, subscriptionType, inTrash. Operators: ==, !=, =in=(), =out=(). Examples: name=='my-app', inTrash==false",
   ),
   sort: z.string().optional().describe(
     "Sort expression. Format: field|direction. Sortable fields: id, name, description. Example: name|asc",
@@ -25,7 +25,7 @@ export const getApplicationsTool: ToolDefinition<typeof schema> = {
     // Build filter from convenience parameter
     let combinedFilter = filter;
     if (name) {
-      const nameFilter = `name=='${name}'`;
+      const nameFilter = `name=='${name.replace(/'/g, "\\'")}'`;
       combinedFilter = filter ? `${nameFilter};${filter}` : nameFilter;
     }
 

@@ -70,6 +70,8 @@ export const FILTER_KEYS: Record<string, string[]> = {
     "triage:status",
     // Special namespace
     "special:delta",
+    // Derived namespace
+    "derived:fix-by-status",
   ],
   "findings.occurrences": [
     // Occurrence namespace
@@ -148,7 +150,7 @@ export const FILTER_KEYS: Record<string, string[]> = {
  * // => ["occurrence:severity"]
  */
 export function extractFilterKeys(filter: string): string[] {
-  const keyPattern = /([a-zA-Z0-9:._-]+)\s*(?:==|!=|=in=|=out=|=like=)/g;
+  const keyPattern = /([a-zA-Z0-9:._-]+)\s*(?:==|!=|=in=|=out=)/g;
   const keys: string[] = [];
   let match: RegExpExecArray | null;
 

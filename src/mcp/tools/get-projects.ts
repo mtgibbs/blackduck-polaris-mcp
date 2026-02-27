@@ -29,7 +29,7 @@ export const getProjectsTool: ToolDefinition<typeof schema> = {
     // Build filter from convenience parameter
     let combinedFilter = filter;
     if (name) {
-      const nameFilter = `name=='${name}'`;
+      const nameFilter = `name=='${name.replace(/'/g, "\\'")}'`;
       combinedFilter = filter ? `${nameFilter};${filter}` : nameFilter;
     }
 
